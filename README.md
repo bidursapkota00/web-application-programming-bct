@@ -2,7 +2,7 @@
 
 ![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
-![Web Application Programming by Bidur Sapkota](/11-web-application-programming.jpg "Web Application Programming – Blog by Bidur Sapkota")
+![Web Application Programming by Bidur Sapkota](/images/11-web-application-programming.jpg "Web Application Programming – Blog by Bidur Sapkota")
 
 ## Table of Contents
 
@@ -81,6 +81,7 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
   - Easy to develop initially, simple to deploy (one file), easier debugging.
   - Hard to scale (must scale the whole app, not just bottlenecks),
   - A single bug can crash the whole system.
+  - Example: Wordpress CMS
 
 - **Microservices:**
 
@@ -88,17 +89,20 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
   - Highly scalable, fault-tolerant (if one service fails, the app survives)
   - Enables independent teams to work on different features.
   - High complexity in DevOps, monitoring, and inter-service communication.
+  - Example: Netflix, Amazon
 
 - **Event-Driven Architecture (EDA):**
 
   - Services do not call each other directly (coupling). Instead, they emit "events" (e.g., "Order Placed") to a message broker (like Kafka or RabbitMQ), and other services listen and react.
   - Extreme decoupling, real-time responsiveness, high throughput.
   - Hard to trace the flow of logic; requires complex infrastructure.
+  - Example: LinkedIn, Netflix, Amazon
 
 - **Serverless (FaaS):**
   - Developers write individual functions (e.g., AWS Lambda) triggered by events. The cloud provider manages the servers entirely.
   - Zero server management, pay-only-for-execution.
   - Cold start problem (to boot up containers), vendor lock-in, distributed complexity
+  - Example: Netflix, Amazon
     <br>
 
 **Summary Table**
@@ -107,9 +111,56 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
 | :--------------- | :--------------------- | :--------------------- | :------------------------- |
 | **Generation**   | Web 1.0 (Read)         | Web 2.0 (Social/Cloud) | Web 3.0 (Decentralized/AI) |
 | **Architecture** | Monolithic             | Microservices          | Event-Driven / Serverless  |
-| **Rendering**    | Full Page SSR (PHP)    | Client-Side (SPA)      | Hybrid / Edge (Next.js)    |
 
 ---
+
+**The Request/Response Procedure**
+<br>
+
+**Basic Request/Response Procedure**
+
+At its most basic level, the request/response process consists of a web browser or
+other **client asking the web server to send it a web page** and the server sending back
+the page. The browser then takes care of displaying or rendering the page.
+
+![Basic Request/Response Procedure](/images/basic-req-res.png)
+
+The steps in the request and response sequence are as follows:
+
+1. You enter `http://server.com` into your browser’s address bar.
+2. Your browser looks up the Internet Protocol (IP) address for server.com.
+3. Your browser issues a request for the home page at server.com.
+4. The request crosses the internet and arrives at the server.com web server.
+5. The web server, having received the request, looks for the web page on its disk.
+6. The web server retrieves the page and returns it to the browser.
+7. Your browser displays the web page.
+
+For an average web page, this process also takes place once for each object within the page: a graphic, an embedded video or Flash file, and even a CSS template.
+<br>
+
+**Dynamic Request/Response Procedure**
+
+Dynamic web pages work by using PHP to request data from a MySQL database based on what you click. MySQL sends back the needed information, and PHP turns it into HTML, which your browser displays.
+
+![Basic Request/Response Procedure](/images/basic-req-res.png)
+
+The steps are as follows:
+
+1. You enter `http://server.com` into your browser’s address bar.
+2. Your browser looks up the IP address for server.com.
+3. Your browser issues a request to that address for the web server’s home page.
+4. The request crosses the internet and arrives at the server.com web server.
+5. The web server, having received the request, fetches the home page from its hard
+   disk.
+6. With the home page now in memory, the web server notices that it is a file incor‐
+   porating PHP scripting and passes the page to the PHP interpreter.
+7. The PHP interpreter executes the PHP code.
+8. Some of the PHP contains SQL statements, which the PHP interpreter now
+   passes to the MySQL database engine.
+9. The MySQL database returns the results of the statements to the PHP interpreter.
+10. The PHP interpreter returns the results of the executed PHP code, along with the
+    results from the MySQL database, to the web server.
+11. The web server returns the page to the requesting client, which displays it.
 
 **1.2 Client-Server Architecture**
 
