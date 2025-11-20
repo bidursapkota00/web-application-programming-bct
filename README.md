@@ -2,7 +2,7 @@
 
 ![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
-![Web Application Programming by Bidur Sapkota](/wap.jpg "Web Application Programming – Blog by Bidur Sapkota")
+![Web Application Programming by Bidur Sapkota](/11-web-application-programming.jpg "Web Application Programming – Blog by Bidur Sapkota")
 
 ## Table of Contents
 
@@ -12,6 +12,11 @@
 ## Introduction
 
 **1.1 Overview of Web Applications and Evolution of Web Architecture**
+<br>
+
+**World Wide Web (WWW)**
+
+World Wide Web (WWW), commonly known as the Web, is an **information system enabling information to be shared over the Internet** through simplified ways meant to appeal to users beyond IT specialists and hobbyists, as well as documents and other web resources to be accessed over the Internet **according to specific rules, the Hypertext Transfer Protocol (HTTP).**
 <br>
 
 **What are Web Applications?**
@@ -27,7 +32,7 @@
 - Platform-independent operation
   <br>
 
-**Evolution of Web Architecture**
+**Evolution of Web**
 
 **Web 1.0 (1990s - Early 2000s) - Static Web**
 
@@ -65,6 +70,44 @@
 - Cloud-native applications taking full advantage of cloud computing's scalability and flexibility. (Google Colab, Google Docs, Figma)
 - Real-time collaborative tools
 - API-first design
+
+---
+
+**Evolution of Web Architecture**
+
+- **Monolithic Architecture:**
+
+  - The entire application (UI, business logic, data access) is built as a single, unified code base.
+  - Easy to develop initially, simple to deploy (one file), easier debugging.
+  - Hard to scale (must scale the whole app, not just bottlenecks),
+  - A single bug can crash the whole system.
+
+- **Microservices:**
+
+  - Breaking the application into small, independent services that communicate via APIs (REST or gRPC). Each service can have its own database and technology stack.
+  - Highly scalable, fault-tolerant (if one service fails, the app survives)
+  - Enables independent teams to work on different features.
+  - High complexity in DevOps, monitoring, and inter-service communication.
+
+- **Event-Driven Architecture (EDA):**
+
+  - Services do not call each other directly (coupling). Instead, they emit "events" (e.g., "Order Placed") to a message broker (like Kafka or RabbitMQ), and other services listen and react.
+  - Extreme decoupling, real-time responsiveness, high throughput.
+  - Hard to trace the flow of logic; requires complex infrastructure.
+
+- **Serverless (FaaS):**
+  - Developers write individual functions (e.g., AWS Lambda) triggered by events. The cloud provider manages the servers entirely.
+  - Zero server management, pay-only-for-execution.
+  - Cold start problem (to boot up containers), vendor lock-in, distributed complexity
+    <br>
+
+**Summary Table**
+
+| Evolution Factor | **Past / Traditional** | **Transitional**       | **Modern / Cutting Edge**  |
+| :--------------- | :--------------------- | :--------------------- | :------------------------- |
+| **Generation**   | Web 1.0 (Read)         | Web 2.0 (Social/Cloud) | Web 3.0 (Decentralized/AI) |
+| **Architecture** | Monolithic             | Microservices          | Event-Driven / Serverless  |
+| **Rendering**    | Full Page SSR (PHP)    | Client-Side (SPA)      | Hybrid / Edge (Next.js)    |
 
 ---
 
