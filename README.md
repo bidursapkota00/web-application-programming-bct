@@ -32,7 +32,7 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
 - Platform-independent operation
   <br>
 
-**Evolution of Web**
+**Evolution of Web or Rise of the World Wide Web**
 
 **Web 1.0 (1990s - Early 2000s) - Static Web**
 
@@ -107,10 +107,10 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
 
 **Summary Table**
 
-| Evolution Factor | **Past / Traditional** | **Transitional**       | **Modern / Cutting Edge**  |
-| :--------------- | :--------------------- | :--------------------- | :------------------------- |
-| **Generation**   | Web 1.0 (Read)         | Web 2.0 (Social/Cloud) | Web 3.0 (Decentralized/AI) |
-| **Architecture** | Monolithic             | Microservices          | Event-Driven / Serverless  |
+| Evolution Factor | **Past / Traditional** | **Transitional** | **Modern / Cutting Edge**   |
+| :--------------- | :--------------------- | :--------------- | :-------------------------- |
+| **Generation**   | Web 1.0 (Read)         | Web 2.0 (Social) | Web 3.0 (Decentralized, AI) |
+| **Architecture** | Monolithic             | Microservices    | Event-Driven, Serverless    |
 
 ---
 
@@ -181,23 +181,51 @@ Client-server architecture is a distributed computing model where tasks are divi
 - Manages business logic
 - Handles data storage and retrieval
 - Sends responses back to clients
-- Examples: Web servers, application servers, database servers
+- Examples: Web servers, database servers
 
-### Request-Response Cycle
+**Client-server architectures can be categorized into different tiers:**
 
-1. Client initiates a request
-2. Request travels through the network
-3. Server receives and processes the request
-4. Server sends back a response
-5. Client receives and displays the response
+**Single-tier Architecture(Monolithic Architecture):**
 
-### Advantages
+- In a single-tier architecture, the entire application runs on a single machine or server.
+- The user interface, application logic, and data storage are all combined into a single unit.
+- This architecture is typically used for small-scale applications with limited complexity.
 
-- Centralized data management
-- Easy maintenance and updates
-- Better security control
-- Resource sharing among multiple clients
-- Scalability
+![Monolithic Client-Server Architecture](/images/monolithic-client-server.jpg)
+
+**Two-tier Architecture:**
+
+- In a two-tier architecture, the application is divided into two main tiers: client and server.
+- The client tier is responsible for the user interface and user interactions.
+- The server tier handles the application logic, data processing, and storage.
+- Communication between the client and server occurs directly.
+
+![Two-tier Client-Server Architecture](/images/two-tier-client-server.jpg)
+
+**Multi-tier Architecture:**
+
+- This architecture divides the application into **three or more tiers**, each responsible for specific functionality.
+- Common tiers include the **presentation tier (client interface), application tier (business logic), and data tier (data storage and retrieval).**
+- Each additional tier represents a distinct set of responsibilities or services.
+- Additional tiers can include **caching layers, load balancers**, message queues, microservices, etc.
+- This architecture allows for **better scalability, flexibility, and modularity, but also increases complexity.**
+
+![Three-tier Client-Server Architecture](/images/three-tier-client-server.png)
+
+**Advantages of Client-Server Architecture**
+
+- Centralized management simplifies maintenance and security.
+- Scalability allows for easy addition of clients and servers.
+- Flexibility enables independent development and updating of clients and servers.
+- Enhanced security with centralized control and authentication.
+- Data recovery and backup process is easier.
+
+**Disadvantages of Client-Server Architecture**
+
+- Single point of failure can disrupt services if the server goes down.
+- Network congestion can occur with high demand on the server.
+- Complexity in design and maintenance of multi-tier systems.
+- Potential cost increase for server infrastructure and maintenance.
 
 ---
 
@@ -205,7 +233,8 @@ Client-server architecture is a distributed computing model where tasks are divi
 
 ### What is HTTP?
 
-HTTP is the foundation protocol of the World Wide Web, defining how messages are formatted and transmitted between web browsers and servers.
+- The HTTP protocol, or Hypertext Transfer Protocol, is a fundamental protocol used for communication on the World Wide Web.
+- Defines how messages are formatted and transmitted between web browsers and servers.
 
 ### Key Features
 
@@ -213,6 +242,52 @@ HTTP is the foundation protocol of the World Wide Web, defining how messages are
 - **Request-Response Model:** Client requests, server responds
 - **Text-Based:** Human-readable format
 - **Port:** Default port 80
+
+### HTTP Request
+
+![HTTP Request](/images/http-req.jpg)
+![HTTP Request](/images/http-req2.jpg)
+
+**1. Request Line:** An HTTP request starts with a request line, which includes the following:
+
+- **Method:** This indicates the action to be performed on the resource. Common methods include GET (retrieve a resource), POST (submit data to the server), PUT (update a resource), DELETE (remove a resource), and others.
+- **Request URL:** The URL of the resource being requested.
+- **HTTP Version:** The version of the HTTP protocol being used.
+
+**2. Request Headers:** Following the request line are headers, which provide additional information about the request. This can include details about the client’s browser, the types of responses that the client will accept, cookies, and more.
+
+**3. Blank Line:** A blank line indicates the end of the headers section.
+
+**4. Request Body (Optional):** Not all requests have a body. Bodies are typically included in POST or PUT requests, where you’re sending data to the server (like form inputs or file uploads). The body contains the data being sent.
+
+### HTTP Response
+
+An HTTP response is what a server sends back to the client after receiving and processing an HTTP request. Here’s a breakdown of the components of an HTTP response:
+
+**1. Status Line:** This is the first line of the response and includes:
+
+- **HTTP Version:** Indicates the HTTP protocol version used (e.g., HTTP/1.1).
+- **Status Code:** A three-digit number that indicates the outcome of the request. Common status codes include 200 (OK, request succeeded), 404 (Not Found, the resource can’t be found), 500 (Internal Server Error), etc.
+- **Status Text:** A brief, human-readable explanation of the status code (e.g., OK, Not Found, Internal Server Error).
+
+**2. Response Headers:** These are key-value pairs providing additional information about the response. They can include details such as the server type, content type, content length, caching policies, set cookies, and other metadata.
+
+**3. Blank Line:** A blank line signifies the end of the header section.
+
+**4. Response Body:** This part of the response contains the actual data or resource that the client requested. For example, it could be an HTML file, JSON data, an image, etc. In some cases, particularly when the response indicates an error (like a 404), the body might contain a message explaining the error.
+
+![HTTP Response](/images/http-res.png)
+
+- **Date:** The date and time the response was generated.
+- **Server:** Information about the web server software (e.g., Apache/1.3.29).
+- **Last-Modified:** The date and time the requested resource was last changed.
+- **ETag:** An entity tag, a unique identifier for a specific version of a resource.
+- **Accept-Ranges:** Indicates if the server supports partial requests. The server supports range requests, using byte-offsets as the unit. Support Resumable download for large files.
+- **Content-Length:** The size of the message body in bytes (e.g., 35).
+- **Connection:** How the client should handle the connection after the transaction (e.g., close).
+- **Content-Type:** The media type of the resource in the body (e.g., text/html).
+
+![HTTP Response](/images/http-res2.jpg)
 
 ### HTTP Methods (Verbs)
 
@@ -226,12 +301,22 @@ HTTP is the foundation protocol of the World Wide Web, defining how messages are
 | HEAD    | Get headers    | Like GET but only retrieves headers     |
 | OPTIONS | Get options    | Describes communication options         |
 
+**Head:**
+
+- A web cache can use a HEAD request with conditional headers (`If-Modified-Since` or `If-None-Match`) to ask the origin server if a cached resource is still fresh without requiring the content to be sent if it hasn't changed.
+- Checking File Size Before Download and confirm download with user
+- Link testing
+
 ### HTTP Status Codes
 
 **1xx - Informational:**
 
 - 100 Continue
+  - The 100 Continue response indicates that the server has received the initial part of the request (the headers) and is ready for the client to proceed with sending the request body (the payload).
+  - The client first sends only the request headers and includes a special header: `Expect: 100-continue`. This is the client asking, "Before I send this huge file, are the headers acceptable?"
 - 101 Switching Protocols
+  - The most common use of the 101 status code is when establishing a WebSocket connection for real-time, bidirectional communication (like chat applications or live feeds).
+  - The client sends an HTTP request (usually a GET) and includes the Upgrade header and the `Connection: Upgrade` header, specifying the desired new protocol (e.g., `Upgrade: websocket`).
 
 **2xx - Success:**
 
@@ -243,42 +328,32 @@ HTTP is the foundation protocol of the World Wide Web, defining how messages are
 
 - 301 Moved Permanently
 - 302 Found (Temporary Redirect)
-- 304 Not Modified
+  - A temporary redirect is ideal for short-lived content, such as directing traffic from a permanent URL (e.g., /sales) to a seasonal landing page (e.g., /holiday-sale-2025) for a few weeks.
+- 304 Not Modified (caching status)
+  - It means the resource requested by the client has not been modified since the version specified by the client in its request headers (like `If-Modified-Since` or `If-None-Match`).
 
 **4xx - Client Errors:**
 
-- 400 Bad Request
-- 401 Unauthorized
-- 403 Forbidden
+- 400 Bad Request (invalid user data)
+- 401 Unauthorized (not authenticated at all)
+- 403 Forbidden (authenticated but not like admin user)
 - 404 Not Found
 - 429 Too Many Requests
 
 **5xx - Server Errors:**
 
 - 500 Internal Server Error
+  - It is the server's way of saying, "Something went wrong, and I don't know exactly what."
+  - Common Causes:
+    - Application Crashes
+    - web server lacks the necessary file permissions to run scripts or access databases.
 - 502 Bad Gateway
+  - This error often occurs in architectures with multiple layers, such as:
+    - A web server (like Nginx or Apache) that acts as a reverse proxy receives a bad or incomplete response from the application server (where the code actually runs).
+    - A CDN (Content Delivery Network) receives an error from the origin server.
 - 503 Service Unavailable
-
-### HTTP Request Structure
-
-```
-GET /index.html HTTP/1.1
-Host: www.example.com
-User-Agent: Mozilla/5.0
-Accept: text/html
-Accept-Language: en-US
-```
-
-### HTTP Response Structure
-
-```
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 1234
-Server: Apache/2.4
-
-<html>...</html>
-```
+  - The server is temporarily unable to handle the request due to temporary overloading or scheduled maintenance.
+  - The response often includes a Retry-After header, indicating how long the service will be unavailable (e.g., Retry-After: 3600 for one hour).
 
 ---
 
