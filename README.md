@@ -7,7 +7,8 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [JavaScript and Client-Side Programming](#javaScript-and-client-side-programming)
+2. [1.2 Client-Server Architecture, HTTP, HTTPS, URLs, DNS, web browsers](#12-client-server-architecture-http-https-urls-dns-web-browsers)
+3. [JavaScript and Client-Side Programming](#javaScript-and-client-side-programming)
 
 ## Introduction
 
@@ -162,7 +163,7 @@ The steps are as follows:
 11. The web server returns the page to the requesting client, which displays it.
     <br>
 
-##### **1.2 Client-Server Architecture**
+##### **1.2 Client-Server Architecture, HTTP, HTTPS, URLs, DNS, web browsers**
 
 Client-server architecture is a distributed computing model where tasks are divided between service providers (servers) and service requesters (clients).
 
@@ -182,6 +183,7 @@ Client-server architecture is a distributed computing model where tasks are divi
 - Handles data storage and retrieval
 - Sends responses back to clients
 - Examples: Web servers, database servers
+  <br>
 
 **Client-server architectures can be categorized into different tiers:**
 
@@ -229,7 +231,7 @@ Client-server architecture is a distributed computing model where tasks are divi
 
 ---
 
-##### HTTP (HyperText Transfer Protocol)
+**HTTP (HyperText Transfer Protocol)**
 
 **What is HTTP?**
 
@@ -362,7 +364,7 @@ An HTTP response is what a server sends back to the client after receiving and p
 
 ---
 
-##### HTTPS (HTTP Secure)
+**HTTPS (HTTP Secure)**
 
 **What is HTTPS?**
 
@@ -385,7 +387,7 @@ HTTPS is the secure version of HTTP, using encryption to protect data transmissi
 
 ---
 
-##### URLs (Uniform Resource Locators)
+**URLs (Uniform Resource Locators)**
 
 **Structure of a URL**
 
@@ -450,7 +452,7 @@ Special characters must be encoded:
 
 ---
 
-##### DNS (Domain Name System)
+**DNS (Domain Name System)**
 
 **What is DNS?**
 
@@ -480,12 +482,12 @@ DNS is the internet's phone book, translating human-readable domain names into I
 
 **SPF (Sender Policy Framework)**
 
-- Defines which mail servers are allowed to send email from your domain.
+- Specifies which services (like Resend) or IP addresses are authorized to send emails on behalf of your domain.
 - Prevents spammers from sending fake emails using your domain.
 
 **DKIM (DomainKeys Identified Mail)**
 
-- Publishes public keys used to verify email signatures.
+- Publishes public keys used to verify email signatures. Used by receiver (gmail server) to verify message signed by (resend).
 - Improves email deliverability and prevents tampering.
 
 **Domain verification**
@@ -506,6 +508,8 @@ Root (.)
           └── Subdomain (www.example.com)
 ```
 
+`.com.np` is also at TLD level, Country Code TLD i.e. ccTLD
+
 <br>
 
 **DNS Caching**
@@ -517,8 +521,41 @@ Root (.)
 
 ---
 
-## Web Browsers
+**Search Engines**
 
+**What is a Search Engine?**
+
+A search engine is a software system designed to carry out web searches. They search the World Wide Web in a systematic way for particular information specified in a textual web search query.
+
+**How Search Engines Work**
+
+1. **Crawling:**
+
+- Search engines use bots (spiders/crawlers) to browse the web.
+- They follow links from one page to another to discover new content.
+
+2. **Indexing:**
+
+- The discovered pages are analyzed and stored in a massive database (index).
+- Content is categorized based on keywords, freshness, and relevance.
+
+3. **Ranking:**
+
+- When a user searches, the engine retrieves matching results.
+- Algorithms rank these results based on relevance, authority, and user signals (SEO).
+
+**Popular Search Engines**
+
+- Google (Dominant market share)
+- Bing (Microsoft)
+- Yahoo
+- DuckDuckGo (Privacy-focused)
+- Baidu (China)
+- Yandex (Russia)
+
+---
+
+**Web Browsers**
 <br>
 
 **What is a Web Browser?**
@@ -547,8 +584,8 @@ A web browser is a software application that retrieves, presents, and navigates 
 
 **2. Browser Engine:**
 
-- Marshals actions between UI and rendering engine
-- Queries and manipulates rendering engine
+- Acts as a bridge between the User Interface and the Rendering Engine.
+- It handles inputs from the UI (like clicking "Back" or typing a URL) and commands the Rendering Engine to display the correct content.
 
 **3. Rendering Engine:**
 
@@ -578,13 +615,13 @@ A web browser is a software application that retrieves, presents, and navigates 
 
 **How Browsers Render Pages**
 
-1. **Parse HTML:** Creates DOM (Document Object Model) tree
-2. **Parse CSS:** Creates CSSOM (CSS Object Model) tree
-3. **Construct Render Tree:** Combines DOM and CSSOM
-4. **Layout:** Calculates positions and sizes
-5. **Paint:** Draws pixels on screen
-6. **Composite:** Combines layers for final display
-   <br>
+- When a browser receives a web page, it first parses the HTML to create the DOM (Document Object Model), which represents the structure of the content.
+- Simultaneously, it parses the CSS to build the CSSOM (CSS Object Model), defining the styles for each element.
+- These two trees are then combined into a Render Tree, which contains only the visible elements.
+- The browser then performs the Layout (or Reflow) step, calculating the exact position and size of each element on the screen.
+- Finally, the browser Paints the pixels for each element onto the screen.
+- If the page has complex visual effects (like overlapping elements or 3D transforms), it uses a Composite step to layer these painted parts together correctly for the final display.
+  <br>
 
 **Browser Features**
 
@@ -605,9 +642,9 @@ A web browser is a software application that retrieves, presents, and navigates 
 **Modern Capabilities:**
 
 - Progressive Web App support
-- Service Workers
 - WebRTC for real-time communication
 - WebAssembly for high-performance code
+  - allowing high-performance languages (C++, Rust) to run in the browser for demanding apps like games or video editors.
 - Geolocation API
 - Notifications API
 
