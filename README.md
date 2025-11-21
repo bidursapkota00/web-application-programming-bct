@@ -11,8 +11,7 @@
 
 ## Introduction
 
-**1.1 Overview of Web Applications and Evolution of Web Architecture**
-<br>
+##### **1.1 Overview of Web Applications and Evolution of Web Architecture**
 
 **World Wide Web (WWW)**
 
@@ -161,8 +160,9 @@ The steps are as follows:
 10. The PHP interpreter returns the results of the executed PHP code, along with the
     results from the MySQL database, to the web server.
 11. The web server returns the page to the requesting client, which displays it.
+    <br>
 
-**1.2 Client-Server Architecture**
+##### **1.2 Client-Server Architecture**
 
 Client-server architecture is a distributed computing model where tasks are divided between service providers (servers) and service requesters (clients).
 
@@ -229,21 +229,23 @@ Client-server architecture is a distributed computing model where tasks are divi
 
 ---
 
-## HTTP (HyperText Transfer Protocol)
+##### HTTP (HyperText Transfer Protocol)
 
-### What is HTTP?
+**What is HTTP?**
 
 - The HTTP protocol, or Hypertext Transfer Protocol, is a fundamental protocol used for communication on the World Wide Web.
 - Defines how messages are formatted and transmitted between web browsers and servers.
+  <br>
 
-### Key Features
+**Key Features**
 
 - **Stateless Protocol:** Each request is independent
 - **Request-Response Model:** Client requests, server responds
 - **Text-Based:** Human-readable format
 - **Port:** Default port 80
+  <br>
 
-### HTTP Request
+**HTTP Request**
 
 ![HTTP Request](/images/http-req.jpg)
 ![HTTP Request](/images/http-req2.jpg)
@@ -259,8 +261,9 @@ Client-server architecture is a distributed computing model where tasks are divi
 **3. Blank Line:** A blank line indicates the end of the headers section.
 
 **4. Request Body (Optional):** Not all requests have a body. Bodies are typically included in POST or PUT requests, where you’re sending data to the server (like form inputs or file uploads). The body contains the data being sent.
+<br>
 
-### HTTP Response
+**HTTP Response**
 
 An HTTP response is what a server sends back to the client after receiving and processing an HTTP request. Here’s a breakdown of the components of an HTTP response:
 
@@ -288,8 +291,9 @@ An HTTP response is what a server sends back to the client after receiving and p
 - **Content-Type:** The media type of the resource in the body (e.g., text/html).
 
 ![HTTP Response](/images/http-res2.jpg)
+<br>
 
-### HTTP Methods (Verbs)
+**HTTP Methods (Verbs)**
 
 | Method  | Purpose        | Description                             |
 | ------- | -------------- | --------------------------------------- |
@@ -306,8 +310,9 @@ An HTTP response is what a server sends back to the client after receiving and p
 - A web cache can use a HEAD request with conditional headers (`If-Modified-Since` or `If-None-Match`) to ask the origin server if a cached resource is still fresh without requiring the content to be sent if it hasn't changed.
 - Checking File Size Before Download and confirm download with user
 - Link testing
+  <br>
 
-### HTTP Status Codes
+**HTTP Status Codes**
 
 **1xx - Informational:**
 
@@ -357,34 +362,21 @@ An HTTP response is what a server sends back to the client after receiving and p
 
 ---
 
-## HTTPS (HTTP Secure)
+##### HTTPS (HTTP Secure)
 
-### What is HTTPS?
+**What is HTTPS?**
 
 HTTPS is the secure version of HTTP, using encryption to protect data transmission between client and server.
 
-### How it Works
-
-1. **SSL/TLS Handshake:** Client and server establish secure connection
-2. **Encryption:** Data is encrypted using SSL/TLS protocols
-3. **Transmission:** Encrypted data travels over the network
-4. **Decryption:** Recipient decrypts the data
-
-### Key Features
+**Key Features**
 
 - **Encryption:** Data is encrypted in transit
 - **Authentication:** Verifies server identity using SSL certificates
 - **Data Integrity:** Prevents data tampering
 - **Port:** Default port 443
+  <br>
 
-### SSL/TLS Certificates
-
-- Issued by Certificate Authorities (CAs)
-- Contains public key and website identity
-- Browsers verify certificate validity
-- Types: Domain Validation (DV), Organization Validation (OV), Extended Validation (EV)
-
-### Benefits
+**Benefits**
 
 - Protects sensitive data (passwords, credit cards)
 - Builds user trust
@@ -393,32 +385,33 @@ HTTPS is the secure version of HTTP, using encryption to protect data transmissi
 
 ---
 
-## URLs (Uniform Resource Locators)
+##### URLs (Uniform Resource Locators)
 
-### Structure of a URL
+**Structure of a URL**
 
-```
-https://www.example.com:443/path/to/page?query=value#section
+```text
+https://www.example.com:443/path/to/myfile.html?key1=val1&key2=val2#SomewhereInTheDocument
 
 Protocol: https://
 Subdomain: www
 Domain: example
-TLD: .com
+Top-level domain (TLD): .com
 Port: :443
-Path: /path/to/page
-Query String: ?query=value
-Fragment: #section
+Path: /path/to/myfile.html
+Query String: ?key1=val1&key2=val2
+Fragment: #SomewhereInTheDocument
 ```
 
-### Components Explained
+**Components Explained**
 
 **Protocol (Scheme):**
 
 - Defines how to access the resource
-- Examples: http, https, ftp, mailto, file
+- Examples: http, https, ftp, smtp
 
 **Domain Name:**
 
+- subdomain + domain + TLD
 - Human-readable address
 - Maps to IP address via DNS
 - Can include subdomains (www, blog, api)
@@ -444,8 +437,9 @@ Fragment: #section
 - Starts with "#"
 - Points to specific section within a page
 - Not sent to server
+  <br>
 
-### URL Encoding
+**URL Encoding**
 
 Special characters must be encoded:
 
@@ -456,13 +450,13 @@ Special characters must be encoded:
 
 ---
 
-## DNS (Domain Name System)
+##### DNS (Domain Name System)
 
-### What is DNS?
+**What is DNS?**
 
 DNS is the internet's phone book, translating human-readable domain names into IP addresses that computers use to communicate.
 
-### How DNS Works
+**How DNS Works**
 
 1. **User enters URL:** www.example.com in browser
 2. **Browser checks cache:** Looks for recently resolved IP
@@ -471,28 +465,50 @@ DNS is the internet's phone book, translating human-readable domain names into I
 5. **TLD nameserver:** Directs to authoritative nameserver
 6. **Authoritative nameserver:** Returns IP address
 7. **Browser connects:** Uses IP to reach website
+   <br>
 
-### DNS Record Types
+**DNS Record Types**
 
-| Type  | Purpose                     | Example                    |
-| ----- | --------------------------- | -------------------------- |
-| A     | Maps domain to IPv4 address | example.com → 192.0.2.1    |
-| AAAA  | Maps domain to IPv6 address | example.com → 2001:0db8::1 |
-| CNAME | Alias to another domain     | www → example.com          |
-| MX    | Mail exchange servers       | Mail server for email      |
-| TXT   | Text information            | SPF, DKIM records          |
-| NS    | Nameserver records          | Authoritative DNS servers  |
+| Type  | Purpose                                                                                       | Example                                |
+| ----- | --------------------------------------------------------------------------------------------- | -------------------------------------- |
+| A     | Maps domain to IPv4 address                                                                   | example.com → 192.0.2.1                |
+| AAAA  | Maps domain to IPv6 address                                                                   | example.com → 2001:0db8::1             |
+| CNAME | Alias to another domain                                                                       | www → example.com                      |
+| MX    | Tells the internet which mail server receives email for your domain.                          | Mail server for email                  |
+| TXT   | Store text-based information for verification, email security, ownership, and configurations. | SPF, DKIM, Domain verification records |
+| NS    | Nameserver records                                                                            | Define Authoritative DNS servers       |
 
-### DNS Hierarchy
+**SPF (Sender Policy Framework)**
 
-```
+- Defines which mail servers are allowed to send email from your domain.
+- Prevents spammers from sending fake emails using your domain.
+
+**DKIM (DomainKeys Identified Mail)**
+
+- Publishes public keys used to verify email signatures.
+- Improves email deliverability and prevents tampering.
+
+**Domain verification**
+
+- Google Site Verification is the process of proving to Google that you own a domain or website so you can access Google services related to that domain, such as:
+  - Google Analytics
+  - AdSense, etc
+  - Also used by Facebook, Email providers, etc
+
+<br>
+
+**DNS Hierarchy**
+
+```text
 Root (.)
   └── Top-Level Domain (.com, .org, .net)
       └── Second-Level Domain (example.com)
           └── Subdomain (www.example.com)
 ```
 
-### DNS Caching
+<br>
+
+**DNS Caching**
 
 - **Browser cache:** Short-term local storage
 - **OS cache:** System-level DNS cache
@@ -503,11 +519,14 @@ Root (.)
 
 ## Web Browsers
 
-### What is a Web Browser?
+<br>
+
+**What is a Web Browser?**
 
 A web browser is a software application that retrieves, presents, and navigates information resources on the World Wide Web.
+<br>
 
-### Popular Browsers
+**Popular Browsers**
 
 - Google Chrome
 - Mozilla Firefox
@@ -515,8 +534,9 @@ A web browser is a software application that retrieves, presents, and navigates 
 - Microsoft Edge
 - Opera
 - Brave
+  <br>
 
-### Browser Components
+**Browser Components**
 
 **1. User Interface:**
 
@@ -554,8 +574,9 @@ A web browser is a software application that retrieves, presents, and navigates 
 - SessionStorage
 - IndexedDB
 - Cache API
+  <br>
 
-### How Browsers Render Pages
+**How Browsers Render Pages**
 
 1. **Parse HTML:** Creates DOM (Document Object Model) tree
 2. **Parse CSS:** Creates CSSOM (CSS Object Model) tree
@@ -563,8 +584,9 @@ A web browser is a software application that retrieves, presents, and navigates 
 4. **Layout:** Calculates positions and sizes
 5. **Paint:** Draws pixels on screen
 6. **Composite:** Combines layers for final display
+   <br>
 
-### Browser Features
+**Browser Features**
 
 **Developer Tools:**
 
