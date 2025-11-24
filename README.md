@@ -19,41 +19,43 @@
 11. [Input Types](#input-types)
 12. [Tables](#tables)
 13. [Table Layouts](#table-layouts)
-14. [Videos](#videos)
-15. [Tooltips](#tooltips)
-16. [Adding CSS - Three Methods](#adding-css---three-methods)
-17. [Classes and IDs](#classes-and-ids)
-18. [Colors](#colors)
-19. [Height and Width](#height-and-width)
-20. [Borders](#borders)
-21. [Margin](#margin)
-22. [Padding](#padding)
-23. [Box Sizing](#box-sizing)
-24. [Universal Selector](#universal-selector)
-25. [Block vs Inline Elements](#block-vs-inline-elements)
-26. [Display Property](#display-property)
-27. [Border Radius](#border-radius)
-28. [Text Properties](#text-properties)
-29. [Font Properties](#font-properties)
-30. [Centering Elements](#centering-elements)
-31. [Background Images](#background-images)
-32. [RGBA and Opacity](#rgba-and-opacity)
-33. [Gradients](#gradients)
-34. [Shadows](#shadows)
-35. [Combinators](#combinators)
-36. [Attribute Selectors](#attribute-selectors)
-37. [Pseudo Classes](#pseudo-classes)
-38. [Transitions](#transitions)
-39. [Positioning](#positioning)
-40. [Pseudo Elements](#pseudo-elements)
-41. [Popup/Modal Design](#popupmodal-design)
-42. [Flexbox Layout](#flexbox-layout)
-43. [Grid Layout](#grid-layout)
-44. [Media Query Example Guide](#media-query-example-guide)
-45. [CSS Variables and Theming Guide](#css-variables-and-theming-guide)
-46. [Animation with Keyframes](#animation-with-keyframes)
-47. [Multi Page Website Build Guide](#multi-page-website-build-guide)
-48. [Portfolio Website](#portfolio-website)
+14. [Iframes](#iframes)
+15. [Audio](#audio)
+16. [Videos](#videos)
+17. [Tooltips](#tooltips)
+18. [Metadata](#metadata)
+19. [Adding CSS](#adding-css)
+20. [CSS Selectors](#css-selectors)
+21. [Colors](#colors)
+22. [Height and Width](#height-and-width)
+23. [Borders](#borders)
+24. [Margin](#margin)
+25. [Padding](#padding)
+26. [Box Sizing](#box-sizing)
+27. [Block vs Inline Elements](#block-vs-inline-elements)
+28. [Display Property](#display-property)
+29. [Border Radius](#border-radius)
+30. [Text Properties](#text-properties)
+31. [Font Properties](#font-properties)
+32. [Centering Elements](#centering-elements)
+33. [Background Images](#background-images)
+34. [RGBA and Opacity](#rgba-and-opacity)
+35. [Gradients](#gradients)
+36. [Shadows](#shadows)
+37. [Combinators](#combinators)
+38. [Attribute Selectors](#attribute-selectors)
+39. [Pseudo Classes](#pseudo-classes)
+40. [Transitions](#transitions)
+41. [Positioning](#positioning)
+42. [Pseudo Elements](#pseudo-elements)
+43. [Flexbox Layout](#flexbox-layout)
+44. [Grid Layout](#grid-layout)
+45. [Media Query Example Guide](#media-query-example-guide)
+46. [CSS Variables and Theming Guide](#css-variables-and-theming-guide)
+47. [Animation with Keyframes](#animation-with-keyframes)
+48. [Bootstrap](#bootstrap)
+49. [Multi Page Website Build Guide](#multi-page-website-build-guide)
+50. [Portfolio Website](#portfolio-website)
 
 ## Introduction
 
@@ -699,6 +701,10 @@ A web browser is a software application that retrieves, presents, and navigates 
 
 HTML (HyperText Markup Language) is the standard markup language used to create web pages. It provides the structure and content of websites using a system of elements and tags. HTML tells the browser how to display text, images, links, and other content on a webpage.
 
+**Question:**
+
+**Write an html code to understand its basic structure.**
+
 ### HTML Document Structure
 
 Every HTML document should have a proper structure:
@@ -709,7 +715,13 @@ Every HTML document should have a proper structure:
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>My Webpage</title>
+    <link rel="icon" href="images/favicon.ico" />
+    <style>
+      h1 {
+        font-size: 100px;
+      }
+    </style>
   </head>
   <body>
     <h1>Welcome to my webpage</h1>
@@ -726,6 +738,8 @@ Every HTML document should have a proper structure:
   - `<meta name="viewport"...>` - Responsive design settings
   - `<title>` - Page title shown in browser tab
 - `<body>` - Contains all visible content
+- `<style>` - Contains CSS styles
+- `<link>` - Links to external resources
 
 ## HTML Tags and Attributes
 
@@ -834,6 +848,34 @@ HTML provides various tags for formatting text:
 ### Self-Closing Tags
 
 Some tags don't need closing tags: `<br/>`, `<hr/>`, `<img/>`, `<input/>`
+
+**Question:**
+
+**Create the HTML document with the paragraph using `<p>`,`<h1>`, `<strong>` for the first word for every sentence and `<em>` for all the capital letters.**
+
+```html
+<html>
+  <head>
+    <title>Nepal</title>
+  </head>
+
+  <body>
+    <h1>My Country Nepal</h1>
+
+    <p>
+      <strong><em>M</em>y</strong> country <em>N</em>epal is situated between
+      two large countries <em>C</em>hina and <em>I</em>ndia <br />
+      <strong><em>I</em>t</strong> is well known for it cultural diversity.<br />
+      <strong><em>P</em>eople</strong> around the world visit <em>N</em>epal for
+      tourism.<br />
+      <strong><em>N</em>epal</strong> is agro-based country.<strong
+        ><em>S</em>ixty</strong
+      >
+      five percentage people completely depend on agriculture in <em>N</em>epal.
+    </p>
+  </body>
+</html>
+```
 
 ### Attributes
 
@@ -1034,6 +1076,31 @@ HTML provides two main types of lists: ordered (numbered) and unordered (bullete
 <ol type="a"></ol>
 ```
 
+**Question:**
+
+**What are the attributes of list tag? Explain.**
+
+```html
+<html>
+  <head>
+    <title>HTML List</title>
+  </head>
+  <body>
+    <ul type="square">
+      <li>Ginger</li>
+      <li>Potato</li>
+      <li>Radish</li>
+    </ul>
+
+    <ol type="A">
+      <li>Ginger</li>
+      <li>Potato</li>
+      <li>Radish</li>
+    </ol>
+  </body>
+</html>
+```
+
 ## Input Types
 
 HTML forms support various input types for different data collection needs.
@@ -1094,6 +1161,49 @@ HTML forms support various input types for different data collection needs.
 - **color**: Color picker
 - **file**: File upload
 - **search**: Search input field
+
+**Question:**
+
+**Write an html code to create login form**
+
+```html
+<html>
+  <head>
+    <title>Login Form</title>
+    <style>
+      form {
+        border: 1px solid black;
+        padding: 20px;
+        width: 300px;
+      }
+      div {
+        margin-bottom: 20px;
+      }
+      button {
+        margin-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Login Form</h2>
+    <form id="form" name="loginForm">
+      <div>
+        <label for="username">Username: </label>
+        <input type="text" name="username" id="username" />
+      </div>
+      <div>
+        <label for="email">Email: </label>
+        <input type="email" name="email" id="email" />
+      </div>
+      <div>
+        <label for="password">Password: </label>
+        <input type="password" name="password" id="password" />
+      </div>
+      <button type="submit">Login</button>
+    </form>
+  </body>
+</html>
+```
 
 ## Tables
 
@@ -1193,11 +1303,227 @@ HTML tables organize data in rows and columns.
 </html>
 ```
 
+**Question:**
+
+**Write an HTML code to create table Use Id, Name, Adress & Age as Heading. Make 6 empty rows of data**
+
+```html
+<html>
+  <head>
+    <title>Table</title>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Age</th>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+  </body>
+</html>
+```
+
+**Question:**
+
+**Write HTML script for displaying table with following output.**
+
+![Table](/images/table.png)
+
+```html
+<html>
+  <head>
+    <title>List inside table</title>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 0 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <table>
+      <tr>
+        <th>Drinks</th>
+        <th>Snacks</th>
+      </tr>
+
+      <tr>
+        <td>
+          <ol>
+            <li>Coke</li>
+            <li>Sprite</li>
+          </ol>
+        </td>
+        <td>Momo</td>
+      </tr>
+
+      <tr>
+        <td>
+          <ul>
+            <li>Milk</li>
+            <li>Coffe</li>
+          </ul>
+        </td>
+        <td>Chowmin</td>
+      </tr>
+    </table>
+  </body>
+</html>
+```
+
 ### Layout Attributes:
 
 - **`cellspacing`**: Space between table cells
 - **`cellpadding`**: Space inside table cells
 - **`width/height`**: Dimensions for images and elements
+
+## iframe
+
+The `<iframe>` tag specifies an inline frame, which is used to embed another document within the current HTML document.
+
+```html
+<iframe
+  src="https://www.example.com"
+  title="Example Website"
+  width="600"
+  height="400"
+></iframe>
+```
+
+### Attributes:
+
+- **`src`**: URL of the document to embed
+- **`title`**: Description of the embedded content
+- **`width/height`**: Dimensions of the iframe
+
+**Question:**
+
+**Create a HTML page containing iframe within a paragraph. The iframe have source to http://www.tuiost.edu.np and its height and width are 200px and 400px respectively.**
+
+```html
+<html>
+  <head>
+    <title>TU</title>
+  </head>
+  <body>
+    <p>
+      Institute of Science and Technology (IoST) is one of the oldest and the
+      largest technical institutes in TU with 13 Central Departments,1 School,
+      24 constituent campuses and 89 affiliated campuses. For more details visit
+      our website:
+      <iframe
+        src="http://www.tuiost.edu.np"
+        width="400px"
+        height="200px"
+        title="tuiost website"
+      >
+        Sorry your browser does not support inline frames.
+      </iframe>
+    </p>
+  </body>
+</html>
+```
+
+## Audio
+
+The `<audio>` tag is used to embed sound content in an HTML document.
+
+```html
+<audio controls>
+  <source src="audio.mp3" type="audio/mpeg" />
+  Your browser does not support the audio element.
+</audio>
+```
+
+### Attributes:
+
+- **`controls`**: Adds play, pause, and volume controls
+- **`src`**: URL of the audio file
+- **`type`**: MIME type of the audio file
+
+**Question:**
+
+**Write a HTML script to insert audio file in a HTML page. Use the controls and autoplay properties**
+
+```html
+<html>
+  <head>
+    <title>Audio</title>
+  </head>
+
+  <body>
+    <audio controls autoplay loop>
+      <source src="sarangi.m4a" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+  </body>
+</html>
+
+<!-- type = audio/mpeg  or   audio/ogg   or    audio/wav -->
+```
 
 ## Videos
 
@@ -1261,7 +1587,156 @@ HTML tooltips provide additional information when hovering over elements.
 - **Hover behavior**: Tooltips appear when mouse hovers over element
 - **Accessibility**: Provides additional context for screen readers
 
-## More HTML Resources
+**Question:**
+
+**Write an html code to understand and use sectioning elements**
+
+```html
+<html>
+  <head>
+    <title>Section Elements</title>
+  </head>
+  <body>
+    <header>
+      <h1>Welcome to My Website</h1>
+      <nav>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main style="display: grid; grid-template-columns: repeat(3, 1fr)">
+      <section style="grid-column: 1/3; grid-row: 1/2">
+        <h2>Introduction</h2>
+        <p>This is an introductory section on my website.</p>
+      </section>
+
+      <section style="grid-column: 1/3; grid-row: 2/3">
+        <h2>Content</h2>
+        <article>
+          <h3>Article 1</h3>
+          <p>This is an article within the content section.</p>
+        </article>
+        <article>
+          <h3>Article 2</h3>
+          <p>This is another article within the content section.</p>
+        </article>
+      </section>
+
+      <aside style="grid-column: 3/4">
+        <h2>Additional Information</h2>
+        <p>Here is some additional information relevant to the main content.</p>
+      </aside>
+    </main>
+
+    <footer style="text-align: center">
+      <p>&copy; 2024 My Website. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
+```
+
+## Metadata
+
+Metadata provides information about the HTML document itself, such such as character set, page description, keywords, author, and viewport settings. This information is not displayed on the web page but is used by browsers, search engines, and other web services.
+
+```html
+<html>
+  <head>
+    <title>Metadata Example</title>
+    <meta charset="UTF-8" />
+    <meta name="description" content="This is a metadata example" />
+    <meta name="keywords" content="HTML, metadata, example" />
+    <meta name="author" content="Bidur Sapkota" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      @media screen and (min-width: 700px) {
+        h1 {
+          color: red;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>hello</h1>
+  </body>
+</html>
+<!-- check responsive in mobile mode by adding and removing viewport meta tag -->
+```
+
+### Attributes:
+
+- **`charset`**: Specifies the character encoding for the document
+- **`name`**: Specifies the name of the metadata
+- **`content`**: Specifies the value of the metadata
+
+**Question:**
+
+**Create a HTML page with tags header, article and footer. Insert alink containing mail to info@iost.edu.np in the footer tag. Set the keywords "iost", "csit" using Meta tag in the page.**
+
+```html
+<html>
+  <head>
+    <meta name="keywords" content="iost, csit" />
+    <title>IOST</title>
+  </head>
+  <body>
+    <header style="background-color: darkgray; margin-bottom: 2px">
+      <nav>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </nav>
+    </header>
+
+    <article>
+      <h2>IOST</h2>
+      Institute of Science and Technology (IoST) is one of the oldest and the
+      largest technical institutes in TU.
+    </article>
+
+    <footer
+      style="background-color: darkgray; margin-top: 2px; text-align: center"
+    >
+      <a href="mailto:info@iost.edu.np">Send Email</a>
+    </footer>
+  </body>
+</html>
+```
+
+**Write an html code to understand and use value attribute**
+
+```html
+<html>
+  <head>
+    <title>Html Value Attribute</title>
+  </head>
+  <body>
+    <input type="text" value="Default Text" />
+
+    <br /><br />
+
+    <select>
+      <option value="Nepal">Nepal</option>
+      <option value="India">India</option>
+      <option value="USA">USA</option>
+    </select>
+
+    <ol start="10">
+      <li value="10">Item 10</li>
+      <li value="15">Item 15</li>
+      <li value="20">Item 20</li>
+    </ol>
+
+    <progress value="40" max="100">40%</progress>
+  </body>
+</html>
+```
+
+### More HTML Resources
 
 - [MDN Web Docs - HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)
 - [W3Schools HTML Tutorial](https://www.w3schools.com/html/)
@@ -1326,15 +1801,21 @@ body {
 
 ---
 
-## Classes and IDs
+## CSS Selectors
 
-Classes and IDs are selectors that allow you to target specific HTML elements for styling.
+CSS selectors are used to select and style HTML elements. They allow you to target specific elements for styling.
 
-### Key Differences:
+### Key Selectors:
+
+1. **Element Selector**: Selects elements by their tag name
+2. **Class Selector**: Selects elements by their class attribute
+3. **ID Selector**: Selects elements by their ID attribute
+4. **Universal Selector**: Selects all elements on the page, selected with `*`
+5. **Attribute Selector**: Selects elements by their attribute, selected with `input[type="text"]`
 
 - **IDs**: Unique identifiers (should only be used once per page), selected with `#`
 - **Classes**: Reusable identifiers (can be used multiple times), selected with `.`
-- **Priority**: ID selectors have higher specificity than class selectors
+- **Priority**: ID selectors have higher specificity than class selectors. Class selectors have higher specificity than element selectors. Element selectors have higher specificity than attribute selectors.
 
 ### Example Code:
 
@@ -1344,39 +1825,42 @@ Classes and IDs are selectors that allow you to target specific HTML elements fo
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Classes and Ids</title>
+    <title>CSS Selectors</title>
     <style>
-      p {
-        background-color: aquamarine;
-        color: darkblue;
+      * {
+        box-sizing: border-box;
       }
-      #red-paragraph {
-        color: red;
+      p {
+        color: blue;
       }
       .green-element {
         color: green;
       }
-      .gray-background {
-        background-color: gray;
+      #red-paragraph {
+        color: red;
+      }
+      input[type="text"] {
+        border: 2px solid purple;
+        padding: 5px;
       }
     </style>
   </head>
   <body>
     <p>This is a paragraph</p>
-    <p id="red-paragraph" class="green-element">This is a paragraph</p>
     <p class="green-element">This is a paragraph</p>
-    <p class="green-element gray-background">This is a paragraph</p>
+    <p id="red-paragraph">This is a paragraph</p>
+    <input type="text" value="This is an input field" />
   </body>
 </html>
 ```
 
 ### Explanation:
 
-- All `<p>` elements get aquamarine background and dark blue text by default
-- The element with `id="red-paragraph"` will have red text (ID overrides class)
+- All elements (`*`) will have `box-sizing: border-box` applied
+- All `<p>` elements will have blue text by default
 - Elements with `class="green-element"` will have green text
-- The last paragraph combines two classes for green text and gray background
-- You can apply multiple classes to a single element by separating them with spaces
+- The element with `id="red-paragraph"` will have red text (ID overrides class)
+- An `<input>` element with `type="text"` will have a purple border
 
 ---
 
@@ -1686,77 +2170,6 @@ Box-sizing determines how the total width and height of elements are calculated,
 - **Border-box**: Total width = 200px (padding and border included)
 - Border-box makes sizing more predictable and is often preferred
 - Common practice: Use `* { box-sizing: border-box; }` for all elements
-
----
-
-## Universal Selector
-
-The universal selector (`*`) targets all elements on a page. It's commonly used for CSS resets and applying global styles.
-
-### Universal Selector Uses:
-
-- **CSS Reset**: Remove default browser styles
-- **Global Styles**: Apply consistent styling across all elements
-- **Box-sizing**: Set border-box for all elements
-
-### Example Code:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Universal Selector</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-      }
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6,
-      p,
-      ul,
-      ol {
-        background-color: aquamarine;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>This is a h1 heading</h1>
-    <h2>This is a h2 heading</h2>
-    <h3>This is a h3 heading</h3>
-    <h4>This is a h4 heading</h4>
-    <h5>This is a h5 heading</h5>
-    <h6>This is a h6 heading</h6>
-    <p>This is a paragraph</p>
-    <p>This is a paragraph</p>
-    <p>This is a paragraph</p>
-    <ul>
-      <li>test1</li>
-      <li>test2</li>
-      <li>test3</li>
-    </ul>
-    <ol>
-      <li>test1</li>
-      <li>test2</li>
-      <li>test3</li>
-    </ol>
-  </body>
-</html>
-```
-
-### Explanation:
-
-- `* { margin: 0; padding: 0; }` removes all default margins and padding
-- This creates a clean slate for custom styling
-- Group selectors target multiple elements with the same styles
-- Universal selector has low specificity, so it's easily overridden
-- Common in CSS frameworks and reset stylesheets
 
 ---
 
@@ -2129,6 +2542,15 @@ Font family specifies which fonts to use, while font weight controls the thickne
     </div>
   </body>
 </html>
+
+<!-- Arial (sans-serif)
+Verdana (sans-serif)
+Tahoma (sans-serif)
+Trebuchet MS (sans-serif)
+Times New Roman (serif)
+Georgia (serif)
+Garamond (serif)
+Courier New (monospace) -->
 ```
 
 **Explanation**: REM units create scalable typography, Google Fonts provide custom typefaces, and font-weight values (lighter, normal, bold, or numeric values 100-900) control text thickness.
@@ -3149,96 +3571,6 @@ input::placeholder {
 
 ---
 
-## Popup/Modal Design
-
-Modern web applications often require modal dialogs or popups. This example shows how to create a centered modal with overlay.
-
-### Key Techniques:
-
-- **Fixed positioning** for overlay and modal
-- **Transform translate** for perfect centering
-- **Z-index** for layering
-- **Viewport units** for full-screen overlay
-
-### Example Code:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accept Cookies</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-      }
-      html {
-        font-family: Arial, Helvetica, sans-serif;
-      }
-      body {
-        padding: 50px;
-      }
-      #popup {
-        background: white;
-        width: 300px;
-        border-radius: 6px;
-        text-align: center;
-        padding: 1.5em;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        translate: -50% -50%;
-        z-index: 6;
-      }
-      #popup button {
-        margin-top: 10px;
-        padding: 0.6em 2.5em;
-        font: inherit;
-      }
-      #overlay {
-        background-color: rgba(0, 0, 0, 0.3);
-        height: 100vh;
-        width: 100vw;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 5;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Hello World</h1>
-    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit...</p>
-
-    <div id="popup">
-      <h2>Accept Cookies</h2>
-      <button>Yes</button>
-      <button>No</button>
-    </div>
-    <div id="overlay"></div>
-  </body>
-</html>
-```
-
-### Centering Technique:
-
-```css
-position: fixed;
-top: 50%;
-left: 50%;
-translate: -50% -50%;
-```
-
-### Z-Index Layering:
-
-- Background content: default (0)
-- Overlay: 5
-- Modal: 6 (highest)
-
----
-
 ## Flexbox Layout
 
 Flexbox is a one-dimensional layout method that allows you to arrange items in rows or columns. It's perfect for creating responsive layouts and aligning content efficiently.
@@ -3583,57 +3915,54 @@ A shorthand for setting both `align-self` and `justify-self`.
 </html>
 ```
 
-### Example 2: Grid Areas (Advanced)
-
-**HTML:**
+### Example 2: Grid Areas
 
 ```html
-<!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grid Areas Layout</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Grid CSS</title>
+    <style>
+      * {
+        margin: 0;
+      }
+      .parent {
+        display: grid;
+        background: yellow;
+        height: 100vh;
+        grid-template-areas:
+          "sidebar header header header"
+          "sidebar body body body"
+          "sidebar body body body"
+          "sidebar body body body"
+          "sidebar footer footer footer";
+      }
+      header {
+        grid-area: header;
+        background: #c0c0c0;
+      }
+      nav {
+        grid-area: sidebar;
+        background: red;
+      }
+      div {
+        grid-area: body;
+        background: wheat;
+      }
+      footer {
+        grid-area: footer;
+        background: #c0c0c0;
+      }
+    </style>
   </head>
   <body>
-    <div style="grid-area: box-1" class="box">1</div>
-    <div style="grid-area: box-2" class="box">2</div>
-    <div style="grid-area: box-3" class="box">3</div>
-    <div style="grid-area: box-4" class="box">4</div>
-    <div style="grid-area: box-5" class="box">5</div>
-    <div style="grid-area: box-6" class="box">6</div>
-    <div style="grid-area: box-7" class="box">7</div>
-    <div style="grid-area: box-8" class="box">8</div>
-    <div style="grid-area: box-9" class="box">9</div>
+    <div class="parent">
+      <header>Heading Section</header>
+      <nav>Some Links</nav>
+      <div>Some Contents</div>
+      <footer>Footer Section</footer>
+    </div>
   </body>
 </html>
-```
-
-**CSS (style.css):**
-
-```css
-body {
-  display: grid;
-  grid-template-areas:
-    "box-1 box-2 box-3"
-    "box-4 box-5 box-6"
-    "box-7 box-8 box-9";
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 200px);
-  gap: 10px;
-  padding: 20px;
-}
-
-.box {
-  background-color: #4caf50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: white;
-  border-radius: 8px;
-}
 ```
 
 ### Grid vs Flexbox: When to Use What
@@ -4083,6 +4412,50 @@ Or using percentages:
 ```
 
 This creates a button that continuously pulses by scaling up and down.
+
+---
+
+## Bootstrap
+
+Bootstrap is a free and open-source CSS framework directed at responsive, mobile-first front-end web development. It contains pre-designed responsive, mobile-first front-end components, such as typography, forms, buttons, navigation, and more.
+
+### Key Features:
+
+- Responsive grid system
+- Mobile-first approach
+- Pre-designed components
+- Customizable variables
+- Utility classes
+
+### Example Code:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bootstrap Example</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Bootstrap Example</h1>
+      <button class="btn btn-primary">Primary Button</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
+```
+
+### Explanation:
+
+- `container` class creates a responsive container
+- `btn` and `btn-primary` classes create a styled button
+- Bootstrap CSS and JS are included via CDN
 
 ---
 
@@ -5194,7 +5567,7 @@ Add to `index.html` head:
 
 #### HTML
 
-Add before closing `</body>` tag:
+Add at beginning of `<body>` tag:
 
 ```html
 <nav class="sidebar">
