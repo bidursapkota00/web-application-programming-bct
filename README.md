@@ -4598,7 +4598,7 @@ li {
 
 #### HTML
 
-Add after the sidebar `</nav>`:
+Add inside `<body>`:
 
 ```html
 <section id="hero">
@@ -4669,6 +4669,212 @@ Add to `index.html` head:
 
 ---
 
+### Skills Section
+
+#### HTML
+
+Add after work count section:
+
+```html
+<section id="skills" class="section">
+  <span class="section__title">my speciality</span>
+  <span class="section__subtitle">my skills</span>
+
+  <p>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt maiores
+    ducimus id consequatur? Natus obcaecati.
+  </p>
+
+  <div class="skill__box">
+    <div class="skill">
+      <span>Photoshop</span>
+      <div class="skill__percent__box">
+        <div class="skill__percent">
+          <span>75%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill">
+      <span>React Js</span>
+      <div class="skill__percent__box">
+        <div
+          class="skill__percent"
+          style="width: 60%; background: #ec5453; color: #ec5453"
+        >
+          <span>60%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill">
+      <span>HTML5</span>
+      <div class="skill__percent__box">
+        <div
+          class="skill__percent"
+          style="width: 85%; background: #f9bf3f; color: #f9bf3f"
+        >
+          <span>85%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill">
+      <span>CSS3</span>
+      <div class="skill__percent__box">
+        <div
+          class="skill__percent"
+          style="width: 90%; background: #a84cb8; color: #a84cb8"
+        >
+          <span>90%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill">
+      <span>Wordpress</span>
+      <div class="skill__percent__box">
+        <div
+          class="skill__percent"
+          style="width: 70%; background: #2fa499; color: #2fa499"
+        >
+          <span>70%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="skill">
+      <span>SEO</span>
+      <div class="skill__percent__box">
+        <div
+          class="skill__percent"
+          style="width: 80%; background: #4054b2; color: #4054b2"
+        >
+          <span>80%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+---
+
+#### Skills Section - CSS Styling
+
+#### Reusable Section Styles
+
+#### CSS - common.css
+
+Create `css/common.css`:
+
+Add to `index.html` head:
+
+```html
+<link rel="stylesheet" href="css/common.css" />
+```
+
+```css
+.section {
+  margin-top: 100px;
+  padding: 15px;
+}
+
+.section__title {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #999999;
+  font-weight: 500;
+  letter-spacing: 5px;
+}
+
+.section__subtitle {
+  margin-bottom: 45px;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  line-height: 1.8;
+  color: black;
+  font-family: "Playfair Display", serif;
+}
+```
+
+#### Non-Reusable Section Styles
+
+#### CSS - skills.css
+
+Create `css/skills.css`:
+
+Add to `index.html` head:
+
+```html
+<link rel="stylesheet" href="css/skills.css" />
+```
+
+```css
+#skills > p {
+  font-family: "Quicksand", sans-serif;
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: normal;
+  line-height: 1.8;
+  margin-top: 50px;
+  margin-bottom: 15px;
+}
+
+.skill {
+  margin-bottom: 20px;
+}
+
+.skill > span {
+  font-size: 16px;
+  font-family: "Quicksand", sans-serif;
+  margin-bottom: 10px;
+  color: black;
+  font-weight: normal;
+  display: block;
+}
+
+.skill__percent__box {
+  background: #f2f3f7;
+  border-radius: 8px;
+}
+
+.skill__percent {
+  width: 75%;
+  height: 6px;
+  background: #2c98f0;
+  border-radius: 8px;
+  position: relative;
+  color: #2c98f0;
+}
+
+.skill__percent::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: inherit;
+}
+
+.skill__percent > span {
+  position: absolute;
+  top: -22px;
+  right: 0;
+  color: inherit;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+```
+
+---
+
 ### About Section
 
 #### HTML
@@ -4718,50 +4924,6 @@ Add after hero section:
 ```
 
 ---
-
-#### About Section - CSS Styling
-
-#### Reusable Section Styles
-
-#### CSS - common.css
-
-Create `css/common.css`:
-
-Add to `index.html` head:
-
-```html
-<link rel="stylesheet" href="css/common.css" />
-```
-
-```css
-.section {
-  margin-top: 100px;
-  padding: 15px;
-}
-
-.section__title {
-  display: block;
-  margin-bottom: 15px;
-  font-size: 10px;
-  text-transform: uppercase;
-  color: #999999;
-  font-weight: 500;
-  letter-spacing: 5px;
-}
-
-.section__subtitle {
-  margin-bottom: 45px;
-  font-size: 18px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 5px;
-  line-height: 1.8;
-  color: black;
-  font-family: "Playfair Display", serif;
-}
-```
-
-#### Non-Reusable Section Styles
 
 #### CSS - about.css
 
@@ -4943,168 +5105,6 @@ Add to `index.html` head:
 
 ---
 
-### Skills Section
-
-#### HTML
-
-Add after work count section:
-
-```html
-<section id="skills" class="section">
-  <span class="section__title">my speciality</span>
-  <span class="section__subtitle">my skills</span>
-
-  <p>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt maiores
-    ducimus id consequatur? Natus obcaecati.
-  </p>
-
-  <div class="skill__box">
-    <div class="skill">
-      <span>Photoshop</span>
-      <div class="skill__percent__box">
-        <div class="skill__percent">
-          <span>75%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="skill">
-      <span>React Js</span>
-      <div class="skill__percent__box">
-        <div
-          class="skill__percent"
-          style="width: 60%; background: #ec5453; color: #ec5453"
-        >
-          <span>60%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="skill">
-      <span>HTML5</span>
-      <div class="skill__percent__box">
-        <div
-          class="skill__percent"
-          style="width: 85%; background: #f9bf3f; color: #f9bf3f"
-        >
-          <span>85%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="skill">
-      <span>CSS3</span>
-      <div class="skill__percent__box">
-        <div
-          class="skill__percent"
-          style="width: 90%; background: #a84cb8; color: #a84cb8"
-        >
-          <span>90%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="skill">
-      <span>Wordpress</span>
-      <div class="skill__percent__box">
-        <div
-          class="skill__percent"
-          style="width: 70%; background: #2fa499; color: #2fa499"
-        >
-          <span>70%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="skill">
-      <span>SEO</span>
-      <div class="skill__percent__box">
-        <div
-          class="skill__percent"
-          style="width: 80%; background: #4054b2; color: #4054b2"
-        >
-          <span>80%</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-```
-
----
-
-#### CSS - skills.css
-
-Create `css/skills.css`:
-
-Add to `index.html` head:
-
-```html
-<link rel="stylesheet" href="css/skills.css" />
-```
-
-```css
-#skills > p {
-  font-family: "Quicksand", sans-serif;
-  color: rgba(0, 0, 0, 0.7);
-  font-weight: normal;
-  line-height: 1.8;
-  margin-top: 50px;
-  margin-bottom: 15px;
-}
-
-.skill {
-  margin-bottom: 20px;
-}
-
-.skill > span {
-  font-size: 16px;
-  font-family: "Quicksand", sans-serif;
-  margin-bottom: 10px;
-  color: black;
-  font-weight: normal;
-  display: block;
-}
-
-.skill__percent__box {
-  background: #f2f3f7;
-  border-radius: 8px;
-}
-
-.skill__percent {
-  width: 75%;
-  height: 6px;
-  background: #2c98f0;
-  border-radius: 8px;
-  position: relative;
-  color: #2c98f0;
-}
-
-.skill__percent::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: -2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: inherit;
-}
-
-.skill__percent > span {
-  position: absolute;
-  top: -22px;
-  right: 0;
-  color: inherit;
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 600;
-}
-```
-
----
-
 ### Contact Form Section
 
 #### HTML
@@ -5198,13 +5198,7 @@ Add before closing `</body>` tag:
 
 ```html
 <nav class="sidebar">
-  <div class="sidebar__hamburger" id="hamburger">
-    <div class="sidebar__hamburger__lines">
-      <div class="sidebar__hamburger__line"></div>
-      <div class="sidebar__hamburger__line"></div>
-      <div class="sidebar__hamburger__line"></div>
-    </div>
-  </div>
+  <i id="hamburger" class="fa-solid fa-bars sidebar__hamburger"></i>
 
   <div class="sidebar__content">
     <img class="sidebar__image" src="images/profile.png" alt="Profile Image" />
@@ -5212,14 +5206,23 @@ Add before closing `</body>` tag:
     <h2 class="sidebar__job">Developer <span>in Nepal</span></h2>
 
     <ul class="sidebar__list">
-      <a href="#hero" class="sidebar__list__item">home</a>
-      <a href="#about" class="sidebar__list__item">about</a>
-      <a href="#skills" class="sidebar__list__item">skills</a>
-      <a href="#contact" class="sidebar__list__item">contact</a>
+      <li class="sidebar__list__item">
+        <a href="#hero">home</a>
+      </li>
+      <li class="sidebar__list__item">
+        <a href="#about">about</a>
+      </li>
+      <li class="sidebar__list__item">
+        <a href="#skills">skills</a>
+      </li>
+      <li class="sidebar__list__item">
+        <a href="#contact">contact</a>
+      </li>
     </ul>
 
     <p class="sidebar__copyright">
-      &copy; 2024 All rights reserved | Made with &#128150 by <span>Bidur</span>
+      &copy; 2024 All rights reserved | Made with &#128150; by
+      <span>Bidur</span>
     </p>
   </div>
 </nav>
@@ -5249,24 +5252,11 @@ Add to `index.html` head:
   cursor: pointer;
   transition-duration: 500ms;
   z-index: 50;
+  font-size: 24px;
 }
 
 .sidebar__hamburger__translate {
   transform: translateX(300px);
-}
-
-.sidebar__hamburger__lines {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 30px;
-  height: 15px;
-}
-
-.sidebar__hamburger__line {
-  width: 30px;
-  height: 2px;
-  background: #000;
 }
 
 .sidebar__content {
