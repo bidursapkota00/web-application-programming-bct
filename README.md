@@ -8,7 +8,7 @@
 
 1. [Introduction](#introduction)
 2. [1.2 Client-Server Architecture, HTTP, HTTPS, URLs, DNS, web browsers](#12-client-server-architecture-http-https-urls-dns-web-browsers)
-3. [What is HTML?](#what-is-html)
+3. [1.3 HTML](#13-html)
 4. [HTML Tags & Attributes](#html-tags-and-attributes)
 5. [Adding Images](#adding-images)
 6. [Text Formatting Tags](#text-formatting-tags)
@@ -24,36 +24,36 @@
 16. [Videos](#videos)
 17. [Tooltips](#tooltips)
 18. [Metadata](#metadata)
-19. [Adding CSS](#adding-css)
-20. [CSS Selectors](#css-selectors)
-21. [Colors](#colors)
-22. [Height and Width](#height-and-width)
-23. [Borders](#borders)
-24. [Margin](#margin)
-25. [Padding](#padding)
-26. [Box Sizing](#box-sizing)
-27. [Block vs Inline Elements](#block-vs-inline-elements)
-28. [Display Property](#display-property)
-29. [Border Radius](#border-radius)
-30. [Text Properties](#text-properties)
-31. [Font Properties](#font-properties)
-32. [Centering Elements](#centering-elements)
-33. [Background Images](#background-images)
-34. [RGBA and Opacity](#rgba-and-opacity)
-35. [Gradients](#gradients)
-36. [Shadows](#shadows)
-37. [Combinators](#combinators)
-38. [Attribute Selectors](#attribute-selectors)
-39. [Pseudo Classes](#pseudo-classes)
-40. [Transitions](#transitions)
-41. [Positioning](#positioning)
-42. [Pseudo Elements](#pseudo-elements)
-43. [Flexbox Layout](#flexbox-layout)
-44. [Grid Layout](#grid-layout)
-45. [Media Query Example Guide](#media-query-example-guide)
-46. [CSS Variables and Theming Guide](#css-variables-and-theming-guide)
-47. [Animation with Keyframes](#animation-with-keyframes)
-48. [Bootstrap](#bootstrap)
+19. [1.4 CSS](#14-css)
+20. [Adding CSS](#adding-css)
+21. [CSS Selectors](#css-selectors)
+22. [Colors](#colors)
+23. [Height and Width](#height-and-width)
+24. [Borders](#borders)
+25. [Margin](#margin)
+26. [Padding](#padding)
+27. [Box Sizing](#box-sizing)
+28. [Block vs Inline Elements](#block-vs-inline-elements)
+29. [Display Property](#display-property)
+30. [Border Radius](#border-radius)
+31. [Text Properties](#text-properties)
+32. [Font Properties](#font-properties)
+33. [Centering Elements](#centering-elements)
+34. [Background Images](#background-images)
+35. [RGBA and Opacity](#rgba-and-opacity)
+36. [Gradients](#gradients)
+37. [Shadows](#shadows)
+38. [Combinators](#combinators)
+39. [Attribute Selectors](#attribute-selectors)
+40. [Pseudo Classes](#pseudo-classes)
+41. [Transitions](#transitions)
+42. [Positioning](#positioning)
+43. [Pseudo Elements](#pseudo-elements)
+44. [Flexbox Layout](#flexbox-layout)
+45. [Grid Layout](#grid-layout)
+46. [Media Query Example Guide](#media-query-example-guide)
+47. [CSS Variables](#css-variables)
+48. [1.5 Bootstrap](#15-bootstrap)
 49. [Multi Page Website Build Guide](#multi-page-website-build-guide)
 50. [Portfolio Website](#portfolio-website)
 
@@ -697,7 +697,9 @@ A web browser is a software application that retrieves, presents, and navigates 
 
 ---
 
-## What is HTML?
+## 1.3 HTML
+
+**1.3 HTML basics: Syntax, tags, attributes, forms and inputs, tables, lists, multimedia elements, HTML5 elements**
 
 HTML (HyperText Markup Language) is the standard markup language used to create web pages. It provides the structure and content of websites using a system of elements and tags. HTML tells the browser how to display text, images, links, and other content on a webpage.
 
@@ -1741,9 +1743,32 @@ Metadata provides information about the HTML document itself, such such as chara
 - [MDN Web Docs - HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)
 - [W3Schools HTML Tutorial](https://www.w3schools.com/html/)
 
+---
+
+---
+
+---
+
+## 1.4 CSS
+
+**1.4 CSS basics: Selectors, properties, values, box model**
+
+- CSS (Cascading Style Sheets) is a style sheet language used for describing the look and formatting of a document written in a markup language.
+- CSS is used to style and layout web pages, making it possible to create visually appealing and responsive designs.
+- It is used to separate the presentation of a document from its content, making it easier to manage and update the design of a website.
+- CSS is a key technology of the World Wide Web, alongside HTML and JavaScript.
+
+#### Syntax of CSS
+
+```css
+selector {
+  property: value;
+}
+```
+
 ## Adding CSS
 
-CSS (Cascading Style Sheets) can be added to HTML documents in three different ways. Each method has its own use cases and priority levels.
+CSS can be added to HTML documents in three different ways. Each method has its own use cases and priority levels.
 
 ### The Three Methods:
 
@@ -2126,10 +2151,14 @@ Padding creates space inside an element, between the content and the border. It'
 
 Box-sizing determines how the total width and height of elements are calculated, affecting how padding and borders are included.
 
+**Box Model** - The box model is the structure that defines the size and shape of an element. It is made up of four parts: content, padding, border, and margin.
+
 ### Box Sizing Values:
 
 - **Content-box** (default): Width/height applies only to content
 - **Border-box**: Width/height includes content, padding, and border
+
+![Box Model](/images/box_model.png)
 
 ### Example Code:
 
@@ -4104,11 +4133,11 @@ This guide demonstrates how to use CSS media queries to create responsive design
 
 ---
 
-## CSS Variables and Theming Guide
+## CSS Variables
 
 ### What are CSS Variables?
 
-CSS Variables (also called CSS Custom Properties) are a powerful feature that allows you to store values in reusable variables. They're perfect for creating dynamic themes because you can change multiple properties at once by updating just the variable values.
+CSS Variables (also called CSS Custom Properties) are a powerful feature that allows you to store values in reusable variables.
 
 ### Basic Syntax
 
@@ -4122,300 +4151,25 @@ CSS Variables (also called CSS Custom Properties) are a powerful feature that al
 .element {
   property: var(--variable-name);
 }
-```
 
-### How Theming Works
-
-#### 1. Define Theme Variables
-
-Variables are typically defined in the `:root` pseudo-class, making them globally available:
-
-```css
+/* Example */
 :root {
   --bg-primary: #ffffff;
   --text-primary: #212529;
   --accent-color: #007bff;
 }
-```
 
-#### 2. Create Theme Variants
-
-Use attribute selectors to override variables for different themes:
-
-```css
-[data-theme="dark"] {
-  --bg-primary: #212529;
-  --text-primary: #f8f9fa;
-  --accent-color: #0d6efd;
-}
-```
-
-#### 3. Apply Variables to Elements
-
-Use `var()` function to apply variables to CSS properties:
-
-```css
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
 ```
 
-### Theme Switching
-
-Themes are typically switched by changing the `data-theme` attribute on the body or html element:
-
-```javascript
-// Switch to dark theme
-document.body.setAttribute("data-theme", "dark");
-
-// Switch to light theme
-document.body.setAttribute("data-theme", "light");
-```
-
-### Complete Example
-
-```html
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CSS Variables Theming Demo</title>
-    <style>
-      /* Theme Variables */
-      :root {
-        --bg-primary: #ffffff;
-        --text-primary: #000000;
-      }
-
-      /* Dark theme */
-      [data-theme="dark"] {
-        --bg-primary: #000000;
-        --text-primary: #ffffff;
-      }
-
-      /* Styles */
-      body {
-        background-color: var(--bg-primary);
-      }
-      h1 {
-        color: var(--text-primary);
-      }
-      button {
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Hello</h1>
-    <button onclick="toggleTheme()">Switch Theme</button>
-
-    <script>
-      function toggleTheme() {
-        const html = document.documentElement;
-        const light = html.getAttribute("data-theme") === "light";
-        html.setAttribute("data-theme", light ? "dark" : "light");
-      }
-    </script>
-  </body>
-</html>
-```
-
 ---
 
-## Animation with Keyframes
+## 1.5 Bootstrap
 
-### What are Keyframes?
-
-Keyframes define the start and end points of smooth transitions in animations. They tell the browser what styles to apply at specific moments during an animation.
-
-### Basic Syntax
-
-```css
-@keyframes animation-name {
-  from {
-    /* starting styles */
-  }
-  to {
-    /* ending styles */
-  }
-}
-```
-
-Or using percentages:
-
-```css
-@keyframes animation-name {
-  0% {
-    /* starting styles */
-  }
-  50% {
-    /* middle styles */
-  }
-  100% {
-    /* ending styles */
-  }
-}
-```
-
-### Simple Examples
-
-#### 1. Fade In Animation
-
-```css
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.fade-element {
-  animation: fadeIn 2s ease-in;
-}
-```
-
-#### 2. Slide Right Animation
-
-```css
-@keyframes slideRight {
-  0% {
-    transform: translateX(-100px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-.slide-element {
-  animation: slideRight 1s ease-out;
-}
-```
-
-#### 3. Color Change Animation
-
-```css
-@keyframes colorChange {
-  0% {
-    background-color: red;
-  }
-  50% {
-    background-color: yellow;
-  }
-  100% {
-    background-color: green;
-  }
-}
-
-.color-box {
-  animation: colorChange 3s infinite;
-}
-```
-
-#### 4. Bounce Animation
-
-```css
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-30px);
-  }
-}
-
-.bounce-ball {
-  animation: bounce 1s ease-in-out infinite;
-}
-```
-
-#### 5. Rotate Animation
-
-```css
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.spinner {
-  animation: rotate 2s linear infinite;
-}
-```
-
-### Animation Properties
-
-- `animation-name`: The keyframe name
-- `animation-duration`: How long the animation takes (e.g., 2s, 500ms)
-- `animation-timing-function`: Speed curve (ease, linear, ease-in, ease-out)
-- `animation-delay`: How long the animation waits (e.g., 2s, 500ms)
-- `animation-iteration-count`: How many times to repeat (1, 3, infinite)
-- `animation-direction`: Direction of animation (normal, reverse, alternate)
-
-### Shorthand Example
-
-```css
-.element {
-  animation: slideRight 1s ease-out 0.5s infinite alternate;
-  /*         name duration timing delay iteration direction */
-}
-```
-
-### Key Points
-
-- Use `from` and `to` for simple start/end animations
-- Use percentages (0%, 25%, 50%, 100%) for complex multi-step animations
-- Multiple properties can change simultaneously in one keyframe
-- Animations can be paused, reversed, and repeated
-- Always name your keyframes descriptively
-
-### Quick HTML Example
-
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-
-      .button {
-        animation: pulse 2s infinite;
-        padding: 10px 20px;
-        background: blue;
-        color: white;
-        border: none;
-        border-radius: 5px;
-      }
-    </style>
-  </head>
-  <body>
-    <button class="button">Pulsing Button</button>
-  </body>
-</html>
-```
-
-This creates a button that continuously pulses by scaling up and down.
-
----
-
-## Bootstrap
+**1.5 CSS framework: Bootstrap**
 
 Bootstrap is a free and open-source CSS framework directed at responsive, mobile-first front-end web development. It contains pre-designed responsive, mobile-first front-end components, such as typography, forms, buttons, navigation, and more.
 
