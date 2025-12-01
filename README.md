@@ -1,4 +1,4 @@
-# Web Application Programming
+# Web Application Programming <br> &#9; Unit 1: Introduction
 
 ![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
@@ -125,7 +125,7 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
 - **Monolithic Architecture:**
 
   - The entire application (UI, business logic, data access) is built as a single, unified code base.
-  - Easy to develop initially, simple to deploy (one file), easier debugging.
+  - Easy to develop initially, simple to deploy, easier debugging.
   - Hard to scale (must scale the whole app, not just bottlenecks),
   - A single bug can crash the whole system.
   - Example: Wordpress CMS
@@ -143,7 +143,7 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
   - Services do not call each other directly (coupling). Instead, they emit "events" (e.g., "Order Placed") to a message broker (like Kafka or RabbitMQ), and other services listen and react.
   - Extreme decoupling, real-time responsiveness, high throughput.
   - Hard to trace the flow of logic; requires complex infrastructure.
-  - Example: LinkedIn, Netflix, Amazon
+  - Example: LinkedIn, Netflix
 
 - **Serverless (FaaS):**
   - Developers write individual functions (e.g., AWS Lambda) triggered by events. The cloud provider manages the servers entirely.
@@ -166,9 +166,7 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
 
 **Basic Request/Response Procedure**
 
-At its most basic level, the request/response process consists of a web browser or
-other **client asking the web server to send it a web page** and the server sending back
-the page. The browser then takes care of displaying or rendering the page.
+At its most basic level, the request/response process consists of a web browser or other **client asking the web server to send it a web page** and the server sending back the page. The browser then takes care of displaying or rendering the page.
 
 ![Basic Request/Response Procedure](/images/basic-req-res.png)
 
@@ -189,7 +187,7 @@ For an average web page, this process also takes place once for each object with
 
 Dynamic web pages work by using PHP to request data from a MySQL database based on what you click. MySQL sends back the needed information, and PHP turns it into HTML, which your browser displays.
 
-![Basic Request/Response Procedure](/images/basic-req-res.png)
+![Dynamic Request/Response Procedure](/images/dynamic-req-res.png)
 
 The steps are as follows:
 
