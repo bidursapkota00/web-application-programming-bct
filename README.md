@@ -1,4 +1,6 @@
-# Web Application Programming <br> &#9; Unit 1: Introduction
+# Web Application Programming
+
+## Unit 1: Introduction
 
 ![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
@@ -10,56 +12,56 @@
 2. [1.2 Client-Server Architecture, HTTP, HTTPS, URLs, DNS, web browsers](#12-client-server-architecture-http-https-urls-dns-web-browsers)
 3. [1.3 HTML](#13-html)
 4. [HTML Tags & Attributes](#html-tags-and-attributes)
-5. [Adding Images](#adding-images)
-6. [Text Formatting Tags](#text-formatting-tags)
+5. [Text Formatting Tags](#text-formatting-tags)
+6. [Comments](#comments)
 7. [Links](#links)
 8. [Bookmark Links](#bookmark-links)
-9. [Comments](#comments)
+9. [Semantic Tags](#semantic-tags)
 10. [Lists](#lists)
 11. [Input Types](#input-types)
 12. [Tables](#tables)
 13. [Table Layouts](#table-layouts)
 14. [Iframes](#iframes)
-15. [Audio](#audio)
-16. [Videos](#videos)
-17. [Tooltips](#tooltips)
-18. [Metadata](#metadata)
-19. [1.4 CSS](#14-css)
-20. [Adding CSS](#adding-css)
-21. [CSS Selectors](#css-selectors)
-22. [Colors](#colors)
-23. [Height and Width](#height-and-width)
-24. [Borders](#borders)
-25. [Margin](#margin)
-26. [Padding](#padding)
-27. [Box Sizing](#box-sizing)
-28. [Block vs Inline Elements](#block-vs-inline-elements)
-29. [Display Property](#display-property)
-30. [Border Radius](#border-radius)
-31. [Text Properties](#text-properties)
-32. [Font Properties](#font-properties)
-33. [Centering Elements](#centering-elements)
-34. [Background Images](#background-images)
-35. [RGBA and Opacity](#rgba-and-opacity)
-36. [Gradients](#gradients)
-37. [Shadows](#shadows)
-38. [Combinators](#combinators)
-39. [Attribute Selectors](#attribute-selectors)
-40. [Pseudo Classes](#pseudo-classes)
-41. [Transitions](#transitions)
-42. [Positioning](#positioning)
-43. [Pseudo Elements](#pseudo-elements)
-44. [Flexbox Layout](#flexbox-layout)
-45. [Grid Layout](#grid-layout)
-46. [Media Query Example Guide](#media-query-example-guide)
-47. [CSS Variables](#css-variables)
-48. [1.5 Bootstrap](#15-bootstrap)
-49. [Multi Page Website Build Guide](#multi-page-website-build-guide)
+15. [Adding Images](#adding-images)
+16. [Audio](#audio)
+17. [Videos](#videos)
+18. [Tooltips](#tooltips)
+19. [Metadata](#metadata)
+20. [1.4 CSS](#14-css)
+21. [Adding CSS](#adding-css)
+22. [CSS Selectors](#css-selectors)
+23. [Colors](#colors)
+24. [Height and Width](#height-and-width)
+25. [Borders](#borders)
+26. [Margin](#margin)
+27. [Padding](#padding)
+28. [Box Sizing](#box-sizing)
+29. [Block vs Inline Elements](#block-vs-inline-elements)
+30. [Display Property](#display-property)
+31. [Border Radius](#border-radius)
+32. [Text Properties](#text-properties)
+33. [Font Properties](#font-properties)
+34. [Centering Elements](#centering-elements)
+35. [Background Images](#background-images)
+36. [RGBA and Opacity](#rgba-and-opacity)
+37. [Gradients](#gradients)
+38. [Shadows](#shadows)
+39. [Combinators](#combinators)
+40. [Attribute Selectors](#attribute-selectors)
+41. [Pseudo Classes](#pseudo-classes)
+42. [Transitions](#transitions)
+43. [Positioning](#positioning)
+44. [Pseudo Elements](#pseudo-elements)
+45. [Flexbox Layout](#flexbox-layout)
+46. [Grid Layout](#grid-layout)
+47. [Media Query Example Guide](#media-query-example-guide)
+48. [CSS Variables](#css-variables)
+49. [1.5 Bootstrap](#15-bootstrap)
 50. [Portfolio Website](#portfolio-website)
 
 ## Introduction
 
-##### **1.1 Overview of Web Applications and Evolution of Web Architecture**
+##### 1.1 Overview of Web Applications and Evolution of Web Architecture
 
 **World Wide Web (WWW)**
 
@@ -208,7 +210,7 @@ The steps are as follows:
 11. The web server returns the page to the requesting client, which displays it.
     <br>
 
-##### **1.2 Client-Server Architecture, HTTP, HTTPS, URLs, DNS, web browsers**
+##### 1.2 Client-Server Architecture, HTTP, HTTPS, URLs, DNS, web browsers
 
 Client-server architecture is a distributed computing model where tasks are divided between service providers (servers) and service requesters (clients).
 
@@ -527,7 +529,7 @@ DNS is the internet's phone book, translating human-readable domain names into I
 
 **SPF (Sender Policy Framework)**
 
-- Specifies which services (like Resend) or IP addresses are authorized to send emails on behalf of your domain.
+- Specifies which services (like Resend) or IP addresses are authorized to send emails on behalf of your domain (Domain Email).
 - Prevents spammers from sending fake emails using your domain.
 
 **DKIM (DomainKeys Identified Mail)**
@@ -745,6 +747,10 @@ Every HTML document should have a proper structure:
 
 HTML uses **tags** to define elements and **attributes** to provide additional information about those elements.
 
+**Attributes**
+
+Provide additional information about elements and are written as `attribute="value"`
+
 ### Basic Tags Example:
 
 ```html
@@ -773,30 +779,6 @@ HTML uses **tags** to define elements and **attributes** to provide additional i
 - `<input>` - Form input with attributes:
   - `type="number"` - Specifies input type
   - `placeholder="Enter your age"` - Shows hint text
-
-## Adding Images
-
-### Basic Image:
-
-```html
-<img src="images/building.jpg" />
-```
-
-### Improved Image with Attributes:
-
-```html
-<img
-  src="images/building.jpg"
-  height="300"
-  alt="An image of the Brandenburger Tor in Berlin"
-/>
-```
-
-**Image Attributes:**
-
-- `src` - Path to the image file
-- `height` - Sets image height (width adjusts proportionally)
-- `alt` - Alternative text for accessibility and SEO
 
 ## Text Formatting Tags
 
@@ -877,9 +859,36 @@ Some tags don't need closing tags: `<br/>`, `<hr/>`, `<img/>`, `<input/>`
 </html>
 ```
 
-### Attributes
+## Comments
 
-Provide additional information about elements and are written as `attribute="value"`
+HTML comments allow you to add notes in your code that won't be displayed on the webpage.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comments</title>
+  </head>
+  <body>
+    <h1>HTML Comments</h1>
+
+    <!-- TODO: Add login form-->
+
+    <p>This is an example text</p>
+    <p>This is another example Text</p>
+
+    <button>Learn More</button>
+  </body>
+</html>
+```
+
+**Comment Syntax:**
+
+- `<!-- Comment text here -->`
+- Comments are invisible to users but visible in source code
+- Useful for notes, reminders, and temporarily disabling code
 
 ## Links
 
@@ -965,104 +974,64 @@ Bookmark links allow you to jump to specific sections within the same page.
 - The target element must have a matching `id` attribute
 - Great for navigation within long pages
 
-## Comments
+## Semantic Tags
 
-HTML comments allow you to add notes in your code that won't be displayed on the webpage.
+- These tags are used to organize the layout or structure of the webpage.
+- Also describe the purpose / meaning of the content to both the browser and developers.
+- They improve SEO, accessibility, and code readability.
 
 ```html
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Comments</title>
-  </head>
+<html>
   <body>
-    <h1>HTML Comments</h1>
+    <header>
+      <h1>My Website</h1>
+    </header>
 
-    <!-- TODO: Add login form-->
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">About</a>
+    </nav>
 
-    <p>This is an example text</p>
-    <p>This is another example Text</p>
+    <main>
+      <section>
+        <h2>Welcome Section</h2>
+        <p>This is a section of the page.</p>
+      </section>
 
-    <button>Learn More</button>
+      <article>
+        <h2>Blog Article</h2>
+        <p>This is an independent piece of content.</p>
+      </article>
+
+      <aside>
+        <p>This is a sidebar with extra info.</p>
+      </aside>
+    </main>
+
+    <footer>
+      <p>© 2025 My Website</p>
+    </footer>
   </body>
 </html>
 ```
-
-**Comment Syntax:**
-
-- `<!-- Comment text here -->`
-- Comments are invisible to users but visible in source code
-- Useful for notes, reminders, and temporarily disabling code
 
 ## Lists
 
 HTML provides two main types of lists: ordered (numbered) and unordered (bulleted).
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About Me</title>
-  </head>
-  <body>
-    <h1>Hello there, this is Fabian</h1>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit...</p>
-
-    <hr />
-    <h2>My Top 3 Favourite Foods</h2>
-    <ol>
-      <li>Chicken with Rice and Broccoli</li>
-      <li>English breakfast</li>
-      <li>Chili con carne</li>
-    </ol>
-
-    <hr />
-    <h2>Things I like to do in my free time</h2>
-    <ul>
-      <li>Working out in the gym</li>
-      <li>Practicing the piano</li>
-      <li>Playing table tennis and football</li>
-    </ul>
-
-    <hr />
-    <h2>Learn more about my city</h2>
-    <nav>
-      <ul>
-        <li><a href="https://www.berlin.de">Official Berlin website</a></li>
-        <li>
-          <a href="https://en.wikipedia.org/wiki/Berlin"
-            >Wikipedia article about Berlin</a
-          >
-        </li>
-        <li>
-          <a href="https://pixabay.com/photos/search/berlin/"
-            >Pixabay pictures of Berlin</a
-          >
-        </li>
-      </ul>
-    </nav>
-
-    <img
-      width="500px"
-      src="https://cdn.pixabay.com/photo/2019/09/11/15/08/berlin-4468902_1280.jpg"
-      alt="Brandenburger Tor in Berlin"
-    />
-  </body>
-</html>
-```
-
-### List Types:
+**List Types:**
 
 - **Ordered List (`<ol>`)**: Numbered list (1, 2, 3...)
 - **Unordered List (`<ul>`)**: Bulleted list (•, •, •...)
 - **List Items (`<li>`)**: Individual items in both list types
 - **Navigation (`<nav>`)**: Semantic element often used with lists for navigation
 
-### Attributes of List Types:
+**Question:**
+
+**What are the attributes of list tag? Explain.**
+
+**Attributes of List Types:**
 
 ```html
 <ul type="square"></ul>
@@ -1076,9 +1045,7 @@ HTML provides two main types of lists: ordered (numbered) and unordered (bullete
 <ol type="a"></ol>
 ```
 
-**Question:**
-
-**What are the attributes of list tag? Explain.**
+**Example:**
 
 ```html
 <html>
@@ -1092,6 +1059,8 @@ HTML provides two main types of lists: ordered (numbered) and unordered (bullete
       <li>Radish</li>
     </ul>
 
+    <hr />
+
     <ol type="A">
       <li>Ginger</li>
       <li>Potato</li>
@@ -1099,6 +1068,19 @@ HTML provides two main types of lists: ordered (numbered) and unordered (bullete
     </ol>
   </body>
 </html>
+```
+
+**List with navigation**
+
+```html
+<nav>
+  <ul>
+    <li><a href="https://bidursapkota.com.np">Bidur</a></li>
+    <li>
+      <a href="https://bijaysapkota.com.np">Bijay</a>
+    </li>
+  </ul>
+</nav>
 ```
 
 ## Input Types
@@ -1266,43 +1248,6 @@ HTML tables organize data in rows and columns.
 - **`<th>`**: Table header cell
 - **`<td>`**: Table data cell
 
-## Table Layouts
-
-**Note**: While tables can be used for layout, modern CSS Grid and Flexbox are preferred for webpage layouts.
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tables for Layouting</title>
-  </head>
-  <body>
-    <table cellspacing="20">
-      <tr>
-        <td>
-          <img
-            height="200px"
-            width="300px"
-            src="building.jpg"
-            alt="Brandenburger Tor"
-          />
-        </td>
-        <td>
-          <h1>Brandenburger Tor</h1>
-          <p>Pariser Platz, 10117 Berlin</p>
-          <p>
-            See location on
-            <a href="https://www.google.com/maps/...">Google Maps</a>
-          </p>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>
-```
-
 **Question:**
 
 **Write an HTML code to create table Use Id, Name, Adress & Age as Heading. Make 6 empty rows of data**
@@ -1434,12 +1379,6 @@ HTML tables organize data in rows and columns.
 </html>
 ```
 
-### Layout Attributes:
-
-- **`cellspacing`**: Space between table cells
-- **`cellpadding`**: Space inside table cells
-- **`width/height`**: Dimensions for images and elements
-
 ## iframe
 
 The `<iframe>` tag specifies an inline frame, which is used to embed another document within the current HTML document.
@@ -1486,6 +1425,30 @@ The `<iframe>` tag specifies an inline frame, which is used to embed another doc
   </body>
 </html>
 ```
+
+## Adding Images
+
+### Basic Image:
+
+```html
+<img src="images/building.jpg" />
+```
+
+### Improved Image with Attributes:
+
+```html
+<img
+  src="images/building.jpg"
+  height="300"
+  alt="An image of the Brandenburger Tor in Berlin"
+/>
+```
+
+**Image Attributes:**
+
+- `src` - Path to the image file
+- `height` - Sets image height (width adjusts proportionally)
+- `alt` - Alternative text for accessibility and SEO
 
 ## Audio
 
@@ -4208,414 +4171,6 @@ Bootstrap is a free and open-source CSS framework directed at responsive, mobile
 - `container` class creates a responsive container
 - `btn` and `btn-primary` classes create a styled button
 - Bootstrap CSS and JS are included via CDN
-
----
-
-## Multi Page Website Build Guide
-
-This guide will walk you through creating a complete multi-page website with modern styling and navigation. The project includes a home page, about page, products page, and login page.
-
-**Project Structure:**
-
-```
-project-folder/
-├── index.html
-├── about.html
-├── products.html
-├── login.html
-└── style.css
-```
-
-**Features:**
-
-- Responsive navigation bar
-- Modern gradient design
-- Video embedding
-- Product showcase
-- Login form
-- Consistent styling across all pages
-
----
-
-### Project Setup
-
-### Create Project Folder
-
-```bash
-mkdir my-website
-cd my-website
-```
-
-### Create Base Files
-
-Create these empty files in your project folder:
-
-- `index.html`
-- `about.html`
-- `products.html`
-- `login.html`
-- `style.css`
-
----
-
-### Step 1: Basic HTML Structure + Global CSS
-
-### HTML Structure (for all pages)
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <!-- Content will go here -->
-  </body>
-</html>
-```
-
-### Corresponding CSS (Global Setup)
-
-```css
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-
-* {
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  text-align: center;
-  font-family: Poppins, "Segoe UI", sans-serif;
-}
-```
-
----
-
-### Step 2: Navigation Bar
-
-### HTML Chunk (add to body of each page)
-
-```html
-<nav>
-  <a href="index.html" class="active">Home</a>
-  <a href="about.html">About</a>
-  <a href="products.html">Products</a>
-  <a href="login.html">Login</a>
-</nav>
-```
-
-### Corresponding CSS
-
-```css
-nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  padding: 25px;
-  border-bottom: 2px solid #e3e3e3;
-}
-
-nav a {
-  text-decoration: none;
-  color: #929292;
-  margin: 0 20px;
-}
-
-nav a:hover {
-  color: black;
-}
-
-nav a.active {
-  color: black;
-}
-```
-
-**Test this step:** Open your HTML file and verify the navigation appears at the top with hover effects.
-
----
-
-### Step 3: Basic Header Container
-
-### HTML Chunk (add after nav)
-
-```html
-<header>
-  <!-- Page content will go here -->
-</header>
-```
-
-### Corresponding CSS
-
-```css
-header {
-  padding-top: calc(50px + 1rem + 2px);
-}
-```
-
-**Why this CSS:** The padding-top accounts for the fixed navigation bar height.
-
----
-
-### Step 4: Main Heading (Home Page)
-
-### HTML Chunk (inside header)
-
-```html
-<h1>
-  This will be a great<br />
-  slogan for your product
-</h1>
-```
-
-### Corresponding CSS
-
-```css
-h1 {
-  margin-top: 100px;
-  font-size: 3.75rem;
-  font-weight: bold;
-  line-height: 1.2em;
-}
-```
-
-**Test this step:** Your heading should now appear large and bold with proper spacing.
-
----
-
-### Step 5: Description Paragraph (Home Page)
-
-### HTML Chunk (add after h1)
-
-```html
-<p>
-  Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime quibusdam, eum
-  sunt aliquid laborum dicta perspiciatis recusandae reprehenderit laboriosam
-  accusamus dolorem libero, deleniti, enim voluptatibus pariatur ipsam culpa
-  distinctio porro fuga modi. Voluptas quasi, maiores eveniet ea corrupti esse
-  voluptatem.
-</p>
-```
-
-### Corresponding CSS
-
-```css
-h1 + p {
-  width: 800px;
-  margin: 35px auto;
-}
-```
-
-**Why this CSS:** The `h1 + p` selector targets only paragraphs immediately after h1 elements.
-
----
-
-### Step 6: Call-to-Action Button (Home Page)
-
-### HTML Chunk (add after paragraph)
-
-```html
-<a href="login.html" id="cta-button">Try now for free</a>
-```
-
-### Corresponding CSS
-
-```css
-#cta-button {
-  text-decoration: none;
-  text-transform: uppercase;
-  color: white;
-  background: linear-gradient(to right, #d786ff, #722cff);
-  display: inline-block;
-  padding: 1em 3em;
-  font-weight: 600;
-  border-radius: 1000px;
-  transition: 150ms ease;
-}
-
-#cta-button:hover {
-  scale: 1.1;
-}
-```
-
-**Test this step:** Your button should have a purple gradient and scale up on hover.
-
----
-
-### Step 7: Video Player (About Page)
-
-### HTML Chunk (in about.html header)
-
-```html
-<h1>About</h1>
-<iframe
-  class="video-player"
-  src="https://www.youtube.com/embed/PL3Odw-k8W4?si=LsP-K-EvKn7-q4HD"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerpolicy="strict-origin-when-cross-origin"
-  allowfullscreen
->
-</iframe>
-```
-
-### Corresponding CSS
-
-```css
-.video-player {
-  margin-top: 30px;
-  width: min(1100px, 100%);
-  aspect-ratio: 16 / 9;
-  border-radius: 15px;
-}
-```
-
-**Test this step:** The video should display with rounded corners and proper aspect ratio.
-
----
-
-### Step 8: Products Container (Products Page)
-
-### HTML Chunk (in products.html header)
-
-```html
-<h1>Products</h1>
-<div class="products-container">
-  <!-- Individual items will go here -->
-</div>
-```
-
-### Corresponding CSS
-
-```css
-.products-container {
-  margin-top: 30px;
-}
-```
-
----
-
-### Step 9: Product Items (Products Page)
-
-### HTML Chunk (inside products-container)
-
-```html
-<div class="item">
-  <h2>Item 1</h2>
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, esse.
-    Eveniet consequatur harum rem dolore, fugiat error laudantium impedit
-    repellendus
-  </p>
-</div>
-<div class="item">
-  <h2>Item 2</h2>
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, esse.
-    Eveniet consequatur harum rem dolore, fugiat error laudantium impedit
-    repellendus
-  </p>
-</div>
-<div class="item">
-  <h2>Item 3</h2>
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, esse.
-    Eveniet consequatur harum rem dolore, fugiat error laudantium impedit
-    repellendus
-  </p>
-</div>
-```
-
-### Corresponding CSS
-
-```css
-.item {
-  box-sizing: border-box;
-  width: 300px;
-  height: 300px;
-  display: inline-block;
-  margin: 0 20px;
-  margin-bottom: 20px;
-  align-content: center;
-  padding: 20px;
-  border-radius: 30px;
-}
-
-.item > h2 {
-  margin-bottom: 10px;
-}
-
-.item:first-child {
-  border: 1px solid black;
-}
-
-.item:nth-child(2) {
-  background-color: #7932ff;
-  color: white;
-}
-
-.item:last-child {
-  background-color: black;
-  color: white;
-}
-```
-
-**Test this step:** You should see three product cards with different styling - bordered, purple, and black.
-
----
-
-### Step 10: Login Form (Login Page)
-
-### HTML Chunk (in login.html header)
-
-```html
-<h1>Login</h1>
-<form action="">
-  <input type="text" placeholder="Username" />
-  <input type="password" placeholder="Password" />
-  <input type="submit" value="Login" />
-</form>
-```
-
-### Corresponding CSS
-
-```css
-form {
-  margin-top: 30px;
-}
-
-input {
-  display: block;
-  margin: 0 auto;
-  margin-bottom: 15px;
-  font: inherit;
-  border-radius: 30px;
-}
-
-input[type="text"],
-input[type="password"] {
-  padding: 5px 20px;
-  width: 400px;
-  height: 50px;
-  border: none;
-  background-color: #ebedf5;
-}
-
-input[type="submit"] {
-  width: 200px;
-  padding: 10px;
-  background-color: #0071ff;
-  color: white;
-  font-weight: 600;
-  border: none;
-}
-```
-
-**Test this step:** Your form should have rounded input fields and a blue submit button.
 
 ---
 
