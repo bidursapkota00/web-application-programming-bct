@@ -4,7 +4,7 @@
 
 ![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
-![Web Application Programming by Bidur Sapkota](/images/11-web-application-programming.jpg "Web Application Programming – Blog by Bidur Sapkota")
+![Web Application Programming Part One by Bidur Sapkota](/images/unit-1/11-web-application-programming-1.jpg "Web Application Programming Part One – Blog by Bidur Sapkota")
 
 ## Table of Contents
 
@@ -170,7 +170,7 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
 
 At its most basic level, the request/response process consists of a web browser or other **client asking the web server to send it a web page** and the server sending back the page. The browser then takes care of displaying or rendering the page.
 
-![Basic Request/Response Procedure](/images/basic-req-res.png)
+![Basic Request/Response Procedure](/images/unit-1/basic-req-res.png)
 
 The steps in the request and response sequence are as follows:
 
@@ -189,7 +189,7 @@ For an average web page, this process also takes place once for each object with
 
 Dynamic web pages work by using PHP to request data from a MySQL database based on what you click. MySQL sends back the needed information, and PHP turns it into HTML, which your browser displays.
 
-![Dynamic Request/Response Procedure](/images/dynamic-req-res.png)
+![Dynamic Request/Response Procedure](/images/unit-1/dynamic-req-res.png)
 
 The steps are as follows:
 
@@ -240,7 +240,7 @@ Client-server architecture is a distributed computing model where tasks are divi
 - The user interface, application logic, and data storage are all combined into a single unit.
 - This architecture is typically used for small-scale applications with limited complexity.
 
-![Monolithic Client-Server Architecture](/images/monolithic-client-server.jpg)
+![Monolithic Client-Server Architecture](/images/unit-1/monolithic-client-server.jpg)
 
 **Two-tier Architecture:**
 
@@ -249,7 +249,7 @@ Client-server architecture is a distributed computing model where tasks are divi
 - The server tier handles the application logic, data processing, and storage.
 - Communication between the client and server occurs directly.
 
-![Two-tier Client-Server Architecture](/images/two-tier-client-server.jpg)
+![Two-tier Client-Server Architecture](/images/unit-1/two-tier-client-server.jpg)
 
 **Multi-tier Architecture:**
 
@@ -259,7 +259,7 @@ Client-server architecture is a distributed computing model where tasks are divi
 - Additional tiers can include **caching layers, load balancers**, message queues, microservices, etc.
 - This architecture allows for **better scalability, flexibility, and modularity, but also increases complexity.**
 
-![Three-tier Client-Server Architecture](/images/three-tier-client-server.png)
+![Three-tier Client-Server Architecture](/images/unit-1/three-tier-client-server.png)
 
 **Advantages of Client-Server Architecture**
 
@@ -296,8 +296,8 @@ Client-server architecture is a distributed computing model where tasks are divi
 
 **HTTP Request**
 
-![HTTP Request](/images/http-req.jpg)
-![HTTP Request](/images/http-req2.jpg)
+![HTTP Request](/images/unit-1/http-req.jpg)
+![HTTP Request](/images/unit-1/http-req2.jpg)
 
 **1. Request Line:** An HTTP request starts with a request line, which includes the following:
 
@@ -328,7 +328,7 @@ An HTTP response is what a server sends back to the client after receiving and p
 
 **4. Response Body:** This part of the response contains the actual data or resource that the client requested. For example, it could be an HTML file, JSON data, an image, etc. In some cases, particularly when the response indicates an error (like a 404), the body might contain a message explaining the error.
 
-![HTTP Response](/images/http-res.png)
+![HTTP Response](/images/unit-1/http-res.png)
 
 - **Date:** The date and time the response was generated.
 - **Server:** Information about the web server software (e.g., Apache/1.3.29).
@@ -339,7 +339,7 @@ An HTTP response is what a server sends back to the client after receiving and p
 - **Connection:** How the client should handle the connection after the transaction (e.g., close).
 - **Content-Type:** The media type of the resource in the body (e.g., text/html).
 
-![HTTP Response](/images/http-res2.jpg)
+![HTTP Response](/images/unit-1/http-res2.jpg)
 <br>
 
 **HTTP Methods (Verbs)**
@@ -1328,7 +1328,7 @@ HTML tables organize data in rows and columns.
 
 **Write HTML script for displaying table with following output.**
 
-![Table](/images/table.png)
+![Table](/images/unit-1/table.png)
 
 ```html
 <html>
@@ -2119,7 +2119,7 @@ Box-sizing determines how the total width and height of elements are calculated,
 - **Content-box** (default): Width/height applies only to content
 - **Border-box**: Width/height includes content, padding, and border
 
-![Box Model](/images/box_model.png)
+![Box Model](/images/unit-1/box_model.png)
 
 ### Example Code:
 
@@ -4178,7 +4178,7 @@ Bootstrap is a free and open-source CSS framework directed at responsive, mobile
 
 A comprehensive guide to building a professional responsive mobile first portfolio website from scratch using HTML and CSS.
 
-![Portfolio Project Output by Bidur Sapkota](/images/7-html-css-op.jpg "Portfolio Project Output – Blog by Bidur Sapkota")
+![Portfolio Project Output by Bidur Sapkota](/images/unit-1/7-html-css-op.jpg "Portfolio Project Output – Blog by Bidur Sapkota")
 
 ---
 
