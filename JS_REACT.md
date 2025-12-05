@@ -1757,7 +1757,7 @@ newWindow.document.write("<h1>New Window Content</h1>");
 
 #### Structure of the DOM
 
-![Structure of the DOM](/images/js/dom1.gif "Structure of the DOM")
+![Structure of the DOM](/images/unit-2/dom1.gif "Structure of the DOM")
 
 **Root Node:**
 
@@ -2091,7 +2091,7 @@ It contains useful information about the event, such as:
 
 When you click the button, the **event object** provides details about the click.
 
-![ClientX/Y vs PageX/Y vs ScreenX/Y](/images/js/event_pos_xy.png)
+![ClientX/Y vs PageX/Y vs ScreenX/Y](/images/unit-2/event_pos_xy.png)
 
 - `pageX/Y` coordinates are relative to the top left corner of the whole rendered page (including parts hidden by scrolling),
 
@@ -3212,7 +3212,7 @@ console.log(validatePassword("weakpass")); // false
 
 ### Design following form in HTML and display the value in the result box after calculating basic arithmetic operation based on the user input with the use of JavaScript.
 
-![Calculator](/images/js/calculator1.png "Calculator")
+![Calculator](/images/unit-2/calculator1.png "Calculator")
 
 ```html
 <html>
@@ -3291,7 +3291,7 @@ console.log(validatePassword("weakpass")); // false
 
 ### Write HTML and JavaScript code to create a following calculator for performing basic arithmetic operations.
 
-![Calculator](/images/js/calculator.png "Calculator")
+![Calculator](/images/unit-2/calculator.png "Calculator")
 
 ```html
 <html>
