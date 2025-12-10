@@ -2,6 +2,7 @@
 
 ### Unit 2: JavaScript and Client-Side Programming
 
+<br>
 ![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
 ![Web Application Programming Part Two by Bidur Sapkota](/images/unit-2/11-web-application-programming-2.jpg "Web Application Programming Part Two – Blog by Bidur Sapkota")
@@ -34,7 +35,7 @@
 24. [Old Questions](#old-questions)
 25. [For Lab1 - Javascript](#for-lab1---javascript)
 26. [jQuery Basics](#jquery-basics)
-27. [For Lab2 - jQuery (Old Questions)](#for-lab2---jquery-old-questions)
+27. [For Lab2 - jQuery (Old Questions)](#for-lab2---jquery)
 
 ---
 
@@ -4561,7 +4562,7 @@ $(".element")
 </script>
 ```
 
-## For Lab2 - jQuery (Old Questions)
+## For Lab2 - jQuery
 
 ### Theroy
 

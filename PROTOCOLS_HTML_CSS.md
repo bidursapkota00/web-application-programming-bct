@@ -980,37 +980,53 @@ Bookmark links allow you to jump to specific sections within the same page.
 - Also describe the purpose / meaning of the content to both the browser and developers.
 - They improve SEO, accessibility, and code readability.
 
+**Question:**
+
+**Write an html code to understand and use sectioning elements**
+
 ```html
-<!DOCTYPE html>
 <html>
+  <head>
+    <title>Section Elements</title>
+  </head>
   <body>
     <header>
-      <h1>My Website</h1>
+      <h1>Welcome to My Website</h1>
+      <nav>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
     </header>
 
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">About</a>
-    </nav>
-
-    <main>
-      <section>
-        <h2>Welcome Section</h2>
-        <p>This is a section of the page.</p>
+    <main style="display: grid; grid-template-columns: repeat(3, 1fr)">
+      <section style="grid-column: 1/3; grid-row: 1/2">
+        <h2>Introduction</h2>
+        <p>This is an introductory section on my website.</p>
       </section>
 
-      <article>
-        <h2>Blog Article</h2>
-        <p>This is an independent piece of content.</p>
-      </article>
+      <section style="grid-column: 1/3; grid-row: 2/3">
+        <h2>Content</h2>
+        <article>
+          <h3>Article 1</h3>
+          <p>This is an article within the content section.</p>
+        </article>
+        <article>
+          <h3>Article 2</h3>
+          <p>This is another article within the content section.</p>
+        </article>
+      </section>
 
-      <aside>
-        <p>This is a sidebar with extra info.</p>
+      <aside style="grid-column: 3/4">
+        <h2>Additional Information</h2>
+        <p>Here is some additional information relevant to the main content.</p>
       </aside>
     </main>
 
-    <footer>
-      <p>© 2025 My Website</p>
+    <footer style="text-align: center">
+      <p>&copy; 2024 My Website. All rights reserved.</p>
     </footer>
   </body>
 </html>
@@ -1549,58 +1565,6 @@ HTML tooltips provide additional information when hovering over elements.
 - **`title` attribute**: Built-in HTML tooltip functionality
 - **Hover behavior**: Tooltips appear when mouse hovers over element
 - **Accessibility**: Provides additional context for screen readers
-
-**Question:**
-
-**Write an html code to understand and use sectioning elements**
-
-```html
-<html>
-  <head>
-    <title>Section Elements</title>
-  </head>
-  <body>
-    <header>
-      <h1>Welcome to My Website</h1>
-      <nav>
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-    </header>
-
-    <main style="display: grid; grid-template-columns: repeat(3, 1fr)">
-      <section style="grid-column: 1/3; grid-row: 1/2">
-        <h2>Introduction</h2>
-        <p>This is an introductory section on my website.</p>
-      </section>
-
-      <section style="grid-column: 1/3; grid-row: 2/3">
-        <h2>Content</h2>
-        <article>
-          <h3>Article 1</h3>
-          <p>This is an article within the content section.</p>
-        </article>
-        <article>
-          <h3>Article 2</h3>
-          <p>This is another article within the content section.</p>
-        </article>
-      </section>
-
-      <aside style="grid-column: 3/4">
-        <h2>Additional Information</h2>
-        <p>Here is some additional information relevant to the main content.</p>
-      </aside>
-    </main>
-
-    <footer style="text-align: center">
-      <p>&copy; 2024 My Website. All rights reserved.</p>
-    </footer>
-  </body>
-</html>
-```
 
 ## Metadata
 
