@@ -20,44 +20,43 @@
 10. [Lists](#lists)
 11. [Input Types](#input-types)
 12. [Tables](#tables)
-13. [Table Layouts](#table-layouts)
-14. [Iframes](#iframes)
-15. [Adding Images](#adding-images)
-16. [Audio](#audio)
-17. [Videos](#videos)
-18. [Tooltips](#tooltips)
-19. [Metadata](#metadata)
-20. [1.4 CSS](#14-css)
-21. [Adding CSS](#adding-css)
-22. [CSS Selectors](#css-selectors)
-23. [Colors](#colors)
-24. [Height and Width](#height-and-width)
-25. [Borders](#borders)
-26. [Margin](#margin)
-27. [Padding](#padding)
-28. [Box Sizing](#box-sizing)
-29. [Block vs Inline Elements](#block-vs-inline-elements)
-30. [Display Property](#display-property)
-31. [Border Radius](#border-radius)
-32. [Text Properties](#text-properties)
-33. [Font Properties](#font-properties)
-34. [Centering Elements](#centering-elements)
-35. [Background Images](#background-images)
-36. [RGBA and Opacity](#rgba-and-opacity)
-37. [Gradients](#gradients)
-38. [Shadows](#shadows)
-39. [Combinators](#combinators)
-40. [Attribute Selectors](#attribute-selectors)
-41. [Pseudo Classes](#pseudo-classes)
-42. [Transitions](#transitions)
-43. [Positioning](#positioning)
-44. [Pseudo Elements](#pseudo-elements)
-45. [Flexbox Layout](#flexbox-layout)
-46. [Grid Layout](#grid-layout)
-47. [Media Query Example Guide](#media-query-example-guide)
-48. [CSS Variables](#css-variables)
-49. [1.5 Bootstrap](#15-bootstrap)
-50. [Portfolio Website](#portfolio-website)
+13. [Iframes](#iframes)
+14. [Adding Images](#adding-images)
+15. [Audio](#audio)
+16. [Videos](#videos)
+17. [Tooltips](#tooltips)
+18. [Metadata](#metadata)
+19. [1.4 CSS](#14-css)
+20. [Adding CSS](#adding-css)
+21. [CSS Selectors](#css-selectors)
+22. [Colors](#colors)
+23. [Height and Width](#height-and-width)
+24. [Borders](#borders)
+25. [Margin](#margin)
+26. [Padding](#padding)
+27. [Box Sizing](#box-sizing)
+28. [Block vs Inline Elements](#block-vs-inline-elements)
+29. [Display Property](#display-property)
+30. [Border Radius](#border-radius)
+31. [Text Properties](#text-properties)
+32. [Font Properties](#font-properties)
+33. [Centering Elements](#centering-elements)
+34. [Background Images](#background-images)
+35. [RGBA and Opacity](#rgba-and-opacity)
+36. [Gradients](#gradients)
+37. [Shadows](#shadows)
+38. [Combinators](#combinators)
+39. [Attribute Selectors](#attribute-selectors)
+40. [Pseudo Classes](#pseudo-classes)
+41. [Transitions](#transitions)
+42. [Positioning](#positioning)
+43. [Pseudo Elements](#pseudo-elements)
+44. [Flexbox Layout](#flexbox-layout)
+45. [Grid Layout](#grid-layout)
+46. [Media Query Example Guide](#media-query-example-guide)
+47. [CSS Variables](#css-variables)
+48. [1.5 Bootstrap](#15-bootstrap)
+49. [Lab: Portfolio Website](#lab-portfolio-website)
 
 ## Introduction
 
@@ -4136,9 +4135,116 @@ Bootstrap is a free and open-source CSS framework directed at responsive, mobile
 - `btn` and `btn-primary` classes create a styled button
 - Bootstrap CSS and JS are included via CDN
 
+### Responsive Breakpoints and Container Widths
+
+| Breakpoint  | Class Prefix | Viewport Width | Container Width |
+| :---------- | :----------- | :------------- | :-------------- |
+| Extra small | `xs` - None  | <576px         | 100%            |
+| Small       | `sm`         | ≥576px         | 540px           |
+| Medium      | `md`         | ≥768px         | 720px           |
+| Large       | `lg`         | ≥992px         | 960px           |
+| X-Large     | `xl`         | ≥1200px        | 1140px          |
+| XX-Large    | `xxl`        | ≥1400px        | 1320px          |
+
+### Grid System
+
+### Basic Concept of Bootstrap Grid (Simple Explanation)
+
+-Bootstrap uses a **12-column grid system** to create responsive layouts.
+
+- This is not css display grid. Plain CSS grid is given by css utility class `d-grid`
+- This is 12 column grid system provided by bootstrap.
+
+  - A **row** is a horizontal group of columns.
+  - Inside a row, you place **columns**.
+  - The screen width is divided into **12 equal columns**.
+  - You decide how many columns an element should span (e.g., 6 = half width).
+  - Grid automatically adjusts for different screen sizes.
+
+Bootstrap supports responsive breakpoints:
+
+- `col-` → extra small (mobile)
+- `col-sm-` → small (tablets)
+- `col-md-` → medium (laptops)
+- `col-lg-` → large (desktops)
+- `col-xl-` → extra large
+
 ---
 
-## Portfolio Website
+#### Basic Grid Example (Two Columns)
+
+```html
+<div class="container">
+  <div class="row">
+    <div class="col-6 bg-primary text-white">Column 1 (6/12)</div>
+    <div class="col-6 bg-success text-white">Column 2 (6/12)</div>
+  </div>
+</div>
+```
+
+- Each column takes **6 out of 12**, so they split the row evenly.
+
+---
+
+#### Three Equal Columns
+
+```html
+<div class="container">
+  <div class="row">
+    <div class="col bg-warning">Column 1</div>
+    <div class="col bg-info">Column 2</div>
+    <div class="col bg-secondary text-white">Column 3</div>
+  </div>
+</div>
+```
+
+- Bootstrap automatically divides space equally.
+
+---
+
+#### Responsive Grid Example
+
+```html
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-4 bg-dark text-white">Sidebar</div>
+    <div class="col-12 col-md-8 bg-danger text-white">Main Content</div>
+  </div>
+</div>
+```
+
+- **Mobile**: Both take full width (`col-12`)
+- **Medium+ screens**: 8/12 + 4/12 layout
+
+---
+
+#### Multiple Rows
+
+```html
+<div class="container">
+  <!-- Row 1 -->
+  <div class="row">
+    <div class="col-6 bg-primary text-white">Row 1 - Col 1</div>
+    <div class="col-6 bg-success text-white">Row 1 - Col 2</div>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="row mt-3">
+    <div class="col-4 bg-warning">Row 2 - Col 1</div>
+    <div class="col-4 bg-info">Row 2 - Col 2</div>
+    <div class="col-4 bg-secondary text-white">Row 2 - Col 3</div>
+  </div>
+
+  <!-- Row 3 -->
+  <div class="row mt-3">
+    <div class="col-12 bg-dark text-white text-center">Row 3 - Full Width</div>
+  </div>
+</div>
+```
+
+---
+
+## Lab: Portfolio Website
 
 A comprehensive guide to building a professional responsive mobile first portfolio website from scratch using HTML and CSS.
 
