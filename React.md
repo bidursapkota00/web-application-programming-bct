@@ -15,8 +15,9 @@
 7. [State with useState](#state-with-usestate)
 8. [Forms and Controlled Components](#forms-and-controlled-components)
 9. [useEffect Hook](#useeffect-hook)
-10. [React Router](#react-router)
-11. [Basic Project: Grocery Bud](#basic-project-grocery-bud)
+10. [useRef Hook](#useref-hook)
+11. [React Router](#react-router)
+12. [Basic Project: Grocery Bud](#basic-project-grocery-bud)
 
 ---
 
@@ -1056,6 +1057,57 @@ export default FetchUsers;
 
 ---
 
+## useRef Hook
+
+### Accessing DOM Elements and Persisting Values
+
+- lets you store a mutable value
+- preserves the value between renders
+- DOES NOT TRIGGER RE-RENDER
+- target DOM nodes/elements
+
+**Example:**
+
+```tsx
+import { useRef, useState } from "react";
+
+function FocusInput() {
+  const inputRef = useRef(null);
+  const renderCount = useRef(0);
+  const [name, setName] = useState("");
+
+  // Increment on every render (doesn't cause re-render)
+  renderCount.current = renderCount.current + 1;
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+  };
+
+  const handleChange = (e) => {
+    setName(e.target.value);
+  };
+
+  return (
+    <div>
+      <h3>Render count: {renderCount.current}</h3>
+      <input
+        ref={inputRef}
+        type="text"
+        value={name}
+        onChange={handleChange}
+        placeholder="Enter your name"
+      />
+      <button onClick={focusInput}>Focus Input</button>
+      <p>Name: {name}</p>
+    </div>
+  );
+}
+
+export default FocusInput;
+```
+
+---
+
 ## React Router
 
 ### Client-Side Routing
@@ -1121,7 +1173,7 @@ export default App;
 
 ---
 
-## Basic Project3: Grocery Bud
+## Basic Project: Grocery Bud
 
 Build a Grocery list app.
 
@@ -1564,7 +1616,7 @@ const Form = ({ addItem }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h4>grocery bud</h4>
+      <h2>grocery bud</h2>
       <div className="form-control">
         <input
           type="text"
@@ -1831,7 +1883,7 @@ const Form = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <h4>grocery bud</h4>
+      <h2>grocery bud</h2>
       <div className="form-control">
         <input
           type="text"
