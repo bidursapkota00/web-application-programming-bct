@@ -8,35 +8,39 @@
 
 ## Table of Contents
 
-1. [Introduction to JavaScript](#introduction-to-javascript)
+1. [Introduction](#introduction)
 2. [Need of Client Side Scripting Language](#need-of-client-side-scripting-language)
 3. [Formatting and Coding Conventions](#formatting-and-coding-conventions)
 4. [Embedding JavaScript in HTML](#embedding-javascript-in-html)
-5. [NoScript Tag](#noscript-tag)
-6. [Comments](#comments)
-7. [Some Important Basics](#some-important-basics)
-8. [Operators](#operators)
-9. [Control Structures](#control-structures)
-10. [Arrays and For Each Loop](#arrays-and-for-each-loop)
-11. [Defining and Invoking Functions](#defining-and-invoking-functions)
-12. [Objects](#objects)
-13. [Built-in Objects](#built-in-objects)
-14. [Date Objects](#date-objects)
-15. [Interacting With The Browser](#interacting-with-the-browser)
-16. [Windows & Frames](#windows--frames)
-17. [Document Object Model (DOM)](#document-object-model-dom)
-18. [Event Handling](#event-handling)
-19. [Forms and Client Side Validation](#forms-and-client-side-validation)
-20. [Promise, then, async / await](#promise-then-async--await)
-21. [Cookies](#cookies)
-22. [Regular Expressions](#regular-expressions)
-23. [Client Side Form Validation with Regular Expression](#client-side-form-validation-with-regular-expression)
-24. [Questions](#questions)
-25. [For Lab4 - Javascript Fundamentals](#for-lab4---javascript-fundamentals)
-26. [For Lab5 - CRUD with JavaScript](#lab-crud-with-javascript)
-27. [jQuery Basics](#jquery-basics)
-28. [For Lab6 - jQuery Fundamentals](#for-lab6---jquery-fundamentals)
-29. [For Lab7 CRUD with jQuery](#lab-crud-with-jquery)
+5. [JavaScript Modules](#javascript-modules)
+6. [NoScript Tag](#noscript-tag)
+7. [Comments](#comments)
+8. [Some Important Basics](#some-important-basics)
+9. [Operators](#operators)
+10. [Control Structures](#control-structures)
+11. [Arrays and For Each Loop](#arrays-and-for-each-loop)
+12. [Defining and Invoking Functions](#defining-and-invoking-functions)
+13. [Objects](#objects)
+14. [Built-in Objects](#built-in-objects)
+15. [Date Objects](#date-objects)
+16. [Interacting With The Browser](#interacting-with-the-browser)
+17. [Windows & Frames](#windows--frames)
+18. [Document Object Model (DOM)](#document-object-model-dom)
+19. [Event Handling](#event-handling)
+20. [Forms and Client Side Validation](#forms-and-client-side-validation)
+21. [Callback](#callbacks)
+22. [Promise, then, async / await](#promise-then-async--await)
+23. [Cookies](#cookies)
+24. [Session Storage](#session-storage)
+25. [Local Storage](#local-storage)
+26. [Regular Expressions](#regular-expressions)
+27. [Client Side Form Validation with Regular Expression](#client-side-form-validation-with-regular-expression)
+28. [Questions](#questions)
+29. [For Lab4 - Javascript Fundamentals](#for-lab4---javascript-fundamentals)
+30. [For Lab5 - CRUD with JavaScript](#lab-crud-with-javascript)
+31. [jQuery Basics](#jquery-basics)
+32. [For Lab6 - jQuery Fundamentals](#for-lab6---jquery-fundamentals)
+33. [For Lab7 CRUD with jQuery](#lab-crud-with-jquery)
 
 ---
 
@@ -44,7 +48,23 @@
 
 ---
 
-## Introduction to JavaScript
+## Introduction
+
+**What is Scripting?**
+
+Scripting refers to writing programs (scripts) that automate tasks, manipulate data, or add interactivity to applications. Unlike compiled languages, scripting languages are typically interpreted at runtime, making them flexible and quick to develop with.
+
+**Common scripting languages:**
+
+- JavaScript (web browsers, Node.js)
+- Python (general-purpose automation)
+- Bash/Shell (system administration)
+- PHP (server-side web development)
+
+**Key characteristics of scripting:**
+
+- Interpreted execution - code runs line-by-line without pre-compilation
+- Dynamic typing - variable types determined at runtime
 
 **Question**
 
@@ -246,6 +266,100 @@ function calc(p, t) {
 - It makes the code more modular and easier to manage.
 - It allows the browser to cache the JavaScript file, which can improve website performance.
 - It reduces the size of the HTML file, which can improve website loading times.
+
+---
+
+---
+
+---
+
+## JavaScript Modules
+
+JavaScript modules let you split code into separate files, making it reusable, maintainable, and easier to manage.
+
+A module is a JavaScript file that:
+
+- Has its own scope
+- Can export variables, functions, or classes
+- Can import from other modules
+- By default, variables in a module are not global
+
+**Exporting from a module**
+
+**Named export**
+
+```js
+// math.js
+export const add = (a, b) => a + b;
+export const sub = (a, b) => a - b;
+```
+
+Importing:
+
+```js
+import { add, sub } from "./math.js";
+
+console.log(add(2, 3));
+```
+
+---
+
+**Default export**
+
+Only one default export per file
+
+```js
+// greet.js
+export default function greet(name) {
+  return `Hello ${name}`;
+}
+```
+
+Importing:
+
+```js
+import greet from "./greet.js";
+
+console.log(greet("Bidur"));
+```
+
+---
+
+**Mixed exports**
+
+```js
+// user.js
+export const role = "admin";
+
+export default function getUser() {
+  return { name: "Bidur", role };
+}
+```
+
+```js
+import getUser, { role } from "./user.js";
+```
+
+**Rename imports**
+
+```js
+import { add as sum } from "./math.js";
+```
+
+**Import everything**
+
+```js
+import * as math from "./math.js";
+
+math.add(2, 3);
+```
+
+## Why use modules?
+
+- Code reusability
+- Avoid global pollution
+- Better project structure
+- Easier testing & maintenance
 
 ---
 
@@ -2412,6 +2526,161 @@ When you click the button, the **event object** provides details about the click
 
 ---
 
+## Callbacks
+
+Callbacks in JavaScript are functions that are passed as arguments to another function and are executed later, usually after some operation finishes.
+
+**Why callbacks are needed**
+
+- JavaScript is single-threaded, but many tasks are asynchronous:
+  - API calls
+  - File reading
+  - Timers
+  - Event handling
+- Callbacks let JS continue running and execute code after the task completes.
+
+```js
+console.log("Start");
+
+function slowTask() {
+  // imagine this takes 5 seconds
+}
+
+slowTask();
+
+console.log("End");
+
+// This would block execution — bad for UI & performance.
+```
+
+**Callback Examples**
+
+```js
+console.log("Start");
+
+setTimeout(function callback() {
+  console.log("Executed later");
+}, 2000);
+
+console.log("End");
+```
+
+**Event listeners**
+
+```js
+button.addEventListener("click", () => {
+  console.log("Button clicked");
+});
+```
+
+**Real like Example**
+
+```js
+function fetchData(callback) {
+  setTimeout(() => {
+    callback("Data received");
+  }, 1000);
+}
+
+fetchData((result) => {
+  console.log(result);
+});
+
+console.log("Fetching...");
+```
+
+```js
+function fetchUser(callback) {
+  setTimeout(() => {
+    const error = false;
+    if (error) {
+      callback("Error occurred", null);
+    } else {
+      const user = { id: 1, name: "Bidur" };
+      callback(null, user);
+    }
+  }, 1000);
+}
+
+fetchUser((err, user) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log(user.name);
+  }
+});
+```
+
+**Callback Hell (problem)**
+
+When callbacks are nested deeply:
+
+```js
+fetchUser((user) => {
+  fetchPosts(user.id, (posts) => {
+    fetchComments(posts[0].id, (comments) => {
+      console.log(comments);
+    });
+  });
+});
+```
+
+This becomes:
+
+- Hard to read
+- Hard to debug
+- Hard to maintain
+
+**Solutions to callback hell**
+
+- Promises
+- async / await
+
+**Callback Hell: Complete Example**
+
+```js
+function fetchUser(callback) {
+  setTimeout(() => {
+    const user = { id: 1, name: "Bidur" };
+    callback(user);
+  }, 1000);
+}
+
+function fetchPosts(userId, callback) {
+  setTimeout(() => {
+    const postsByUserId = [
+      { id: 1, post: "JavaScript" },
+      { id: 2, post: "React" },
+    ];
+    callback(postsByUserId);
+  }, 1000);
+}
+
+function fetchComments(postId, callback) {
+  setTimeout(() => {
+    const commentsOnPostId = [
+      { id: 1, comment: "Nice" },
+      { id: 2, comment: "Good" },
+    ];
+    callback(commentsOnPostId);
+  }, 1000);
+}
+
+fetchUser((user) => {
+  fetchPosts(user.id, (posts) => {
+    fetchComments(posts[0].id, (comments) => {
+      console.log(comments);
+    });
+  });
+});
+```
+
+---
+
+---
+
+---
+
 ## Promise, then, async / await
 
 - A Promise represents the eventual completion (or failure) of an asynchronous operation.
@@ -2625,6 +2894,134 @@ setCookie("username", "john_doe", 7); // Set for 7 days
 console.log(getCookie("username")); // john_doe
 deleteCookie("username");
 ```
+
+---
+
+---
+
+---
+
+## Session Storage
+
+`sessionStorage` is a Web Storage API that lets you store data temporarily in the browser for a single tab/session.
+
+- Stores key–value pairs (strings only)
+- Data persists until the tab or browser is closed
+- Different tabs = different sessionStorage
+- Capacity ≈ 5 MB
+- Synchronous API
+
+**Syntax**
+
+```js
+sessionStorage.setItem("key", "value");
+sessionStorage.getItem("key");
+sessionStorage.removeItem("key");
+sessionStorage.clear();
+```
+
+**Store a string**
+
+```js
+sessionStorage.setItem("username", "Bidur");
+```
+
+**Read data**
+
+```js
+const name = sessionStorage.getItem("username");
+console.log(name);
+```
+
+**Remove one item**
+
+```js
+sessionStorage.removeItem("username");
+```
+
+**Clear all data**
+
+```js
+sessionStorage.clear();
+```
+
+**Storing objects / arrays**
+
+`sessionStorage` only stores strings, so use JSON.
+
+```js
+const user = {
+  id: 1,
+  role: "admin",
+};
+
+sessionStorage.setItem("user", JSON.stringify(user));
+```
+
+Read it back:
+
+```js
+const userData = JSON.parse(sessionStorage.getItem("user"));
+console.log(userData.role);
+```
+
+---
+
+---
+
+---
+
+## Local Storage
+
+localStorage is a Web Storage API that lets you store data permanently in the browser (until explicitly cleared).
+
+- Stores key–value pairs (strings only)
+- Data persists even after browser or system restart
+- Shared across all tabs/windows of the same origin
+- Capacity ≈ 5–10 MB
+- Synchronous API
+
+**Syntax**
+
+```js
+localStorage.setItem("key", "value");
+localStorage.getItem("key");
+localStorage.removeItem("key");
+localStorage.clear();
+```
+
+**Examples**
+
+```js
+// Storing a string
+localStorage.setItem("username", "John Doe");
+
+//   window.localStorage.removeItem("username");
+// Storing an object
+const user = {
+  name: "John Doe",
+  age: 30,
+  email: "johndoe@example.com",
+};
+localStorage.setItem("user", JSON.stringify(user));
+
+// Retrieving a string
+const username = localStorage.getItem("username");
+console.log(username); // Output: John Doe
+
+// Retrieving an object
+const userRetrived = JSON.parse(localStorage.getItem("user"));
+console.log(user); // Output: { name: 'John Doe', age: 30, email: 'johndoe@example.com' }
+```
+
+**`sessionStorage` vs `localStorage`**
+
+| Feature       | sessionStorage           | localStorage       |
+| ------------- | ------------------------ | ------------------ |
+| Lifetime      | Until tab closes         | Permanent          |
+| Tab-specific  | Yes                      | No                 |
+| Use case      | Login session, temp data | Preferences, theme |
+| Storage limit | ~5MB                     | ~5–10MB            |
 
 ---
 
@@ -3756,10 +4153,6 @@ grocery-bud/
       <div id="app"></div>
     </section>
 
-    <script type="module" src="js/data.js"></script>
-    <script type="module" src="js/single-item.js"></script>
-    <script type="module" src="js/items.js"></script>
-    <script type="module" src="js/form.js"></script>
     <script type="module" src="js/app.js"></script>
   </body>
 </html>
@@ -4842,6 +5235,8 @@ $("#input").change(function () {
 ```
 
 ### Event Example
+
+**Hover Effects**
 
 ```html
 <html>
