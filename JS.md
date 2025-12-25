@@ -33,7 +33,7 @@
 23. [Client Side Form Validation with Regular Expression](#client-side-form-validation-with-regular-expression)
 24. [Questions](#questions)
 25. [For Lab4 - Javascript Fundamentals](#for-lab4---javascript-fundamentals)
-26. [For Lab5 - CRUD with JavaScript](#crud-with-javascript)
+26. [For Lab5 - CRUD with JavaScript](#lab-crud-with-javascript)
 27. [jQuery Basics](#jquery-basics)
 28. [For Lab6 - jQuery Fundamentals](#for-lab6---jquery-fundamentals)
 29. [For Lab7 CRUD with jQuery](#lab-crud-with-jquery)
@@ -5691,6 +5691,16 @@ function createSingleItem(item) {
 
   return $div;
 }
+```
+
+**Optional way**
+
+**Update `js/single-item.js`**
+
+```javascript
+`<button class="btn icon-btn remove-btn" type="button" onclick="removeItem('${item.id}');">
+      <i class="fa-regular fa-trash-can"></i>
+</button>`;
 ```
 
 **Output**
