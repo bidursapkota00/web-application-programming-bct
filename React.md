@@ -2,7 +2,7 @@
 
 ![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
-![React.js Complete Guide by Bidur Sapkota](/4-react-post.jpg "React.js Complete Guide – Blog by Bidur Sapkota")
+![React.js Complete Guide by Bidur Sapkota](/images/unit-2/11-web-application-programming-3.jpg "React.js Complete Guide – Blog by Bidur Sapkota")
 
 ## Table of Contents
 
@@ -208,14 +208,6 @@ function Greeting() {
   return <div className="someValue">hello</div>;
 }
 ```
-
-#### React Developer Tools
-
-- top right corner
-- more tools/extensions
-- open chrome web store
-
-![Debugger Meme](/debug.png)
 
 #### Extensions and settings.json
 
@@ -625,7 +617,7 @@ export default ProductCard;
 
 **Output:**
 
-![Laptop Product Output](/laptop-product.png)
+![Laptop Product Output](/images/unit-2/laptop-product.png)
 
 #### Local Images (src folder)
 
