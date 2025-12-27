@@ -1,8 +1,8 @@
 # React Basics
 
-![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
+![Bidur Sapkota](https://www.bidursapkota.com.np/images/gravatar.webp "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
-![React.js Complete Guide by Bidur Sapkota](/images/unit-2/11-web-application-programming-3.jpg "React.js Complete Guide – Blog by Bidur Sapkota")
+![React.js Complete Guide by Bidur Sapkota](/images/unit-2/11-web-application-programming-3.webp "React.js Complete Guide – Blog by Bidur Sapkota")
 
 ## Table of Contents
 

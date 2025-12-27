@@ -2,7 +2,7 @@
 
 ## Unit 1: Introduction
 
-![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
+![Bidur Sapkota](https://www.bidursapkota.com.np/images/gravatar.webp "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
 ![Web Application Programming Part One by Bidur Sapkota](/images/unit-1/11-web-application-programming-1.jpg "Web Application Programming Part One – Blog by Bidur Sapkota")
 
@@ -239,7 +239,7 @@ Client-server architecture is a distributed computing model where tasks are divi
 - The user interface, application logic, and data storage are all combined into a single unit.
 - This architecture is typically used for small-scale applications with limited complexity.
 
-![Monolithic Client-Server Architecture](/images/unit-1/monolithic-client-server.jpg)
+![Monolithic Client-Server Architecture](/images/unit-1/monolithic-client-server.webp)
 
 **Two-tier Architecture:**
 
@@ -248,7 +248,7 @@ Client-server architecture is a distributed computing model where tasks are divi
 - The server tier handles the application logic, data processing, and storage.
 - Communication between the client and server occurs directly.
 
-![Two-tier Client-Server Architecture](/images/unit-1/two-tier-client-server.jpg)
+![Two-tier Client-Server Architecture](/images/unit-1/two-tier-client-server.webp)
 
 **Multi-tier Architecture:**
 
@@ -295,8 +295,8 @@ Client-server architecture is a distributed computing model where tasks are divi
 
 **HTTP Request**
 
-![HTTP Request](/images/unit-1/http-req.jpg)
-![HTTP Request](/images/unit-1/http-req2.jpg)
+![HTTP Request](/images/unit-1/http-req.webp)
+![HTTP Request](/images/unit-1/http-req2.webp)
 
 **1. Request Line:** An HTTP request starts with a request line, which includes the following:
 
@@ -338,7 +338,7 @@ An HTTP response is what a server sends back to the client after receiving and p
 - **Connection:** How the client should handle the connection after the transaction (e.g., close).
 - **Content-Type:** The media type of the resource in the body (e.g., text/html).
 
-![HTTP Response](/images/unit-1/http-res2.jpg)
+![HTTP Response](/images/unit-1/http-res2.webp)
 <br>
 
 **HTTP Methods (Verbs)**
@@ -1446,14 +1446,14 @@ The `<iframe>` tag specifies an inline frame, which is used to embed another doc
 ### Basic Image:
 
 ```html
-<img src="images/building.jpg" />
+<img src="images/building.webp" />
 ```
 
 ### Improved Image with Attributes:
 
 ```html
 <img
-  src="images/building.jpg"
+  src="images/building.webp"
   height="300"
   alt="An image of the Brandenburger Tor in Berlin"
 />
@@ -2597,7 +2597,7 @@ Background images allow you to set images as backgrounds for elements. You can c
     <title>Background Image</title>
     <style>
       body {
-        background-image: url("building.jpg");
+        background-image: url("building.webp");
         background-repeat: no-repeat;
         background-size: cover;
         background-attachment: fixed;
@@ -2648,7 +2648,7 @@ Transparency in CSS can be achieved through RGBA colors or the opacity property.
       body {
         height: 100vh;
         padding: 50px;
-        background-image: url("building.jpg");
+        background-image: url("building.webp");
         background-repeat: no-repeat;
         background-size: cover;
       }
@@ -4248,7 +4248,7 @@ Bootstrap supports responsive breakpoints:
 
 A comprehensive guide to building a professional responsive mobile first portfolio website from scratch using HTML and CSS.
 
-![Portfolio Project Output by Bidur Sapkota](/images/unit-1/7-html-css-op.jpg "Portfolio Project Output – Blog by Bidur Sapkota")
+![Portfolio Project Output by Bidur Sapkota](/images/unit-1/7-html-css-op.webp "Portfolio Project Output – Blog by Bidur Sapkota")
 
 ---
 

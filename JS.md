@@ -2,9 +2,9 @@
 
 ### Unit 2: JavaScript and Client-Side Programming
 
-![Bidur Sapkota](https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=48&q=75 "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
+![Bidur Sapkota](https://www.bidursapkota.com.np/images/gravatar.webp "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
-![Web Application Programming Part Two by Bidur Sapkota](/images/unit-2/11-web-application-programming-2.jpg "Web Application Programming Part Two – Blog by Bidur Sapkota")
+![Web Application Programming Part Two by Bidur Sapkota](/images/unit-2/11-web-application-programming-2.webp "Web Application Programming Part Two – Blog by Bidur Sapkota")
 
 ## Table of Contents
 
