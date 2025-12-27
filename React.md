@@ -617,7 +617,7 @@ export default ProductCard;
 
 **Output:**
 
-![Laptop Product Output](/images/unit-2/laptop-product.png)
+![Laptop Product Output](/images/unit-2/laptop-product.webp)
 
 #### Local Images (src folder)
 

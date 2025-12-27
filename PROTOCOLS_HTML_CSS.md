@@ -4,7 +4,7 @@
 
 ![Bidur Sapkota](https://www.bidursapkota.com.np/images/gravatar.webp "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
-![Web Application Programming Part One by Bidur Sapkota](/images/unit-1/11-web-application-programming-1.jpg "Web Application Programming Part One – Blog by Bidur Sapkota")
+![Web Application Programming Part One by Bidur Sapkota](/images/unit-1/11-web-application-programming-1.webp "Web Application Programming Part One – Blog by Bidur Sapkota")
 
 ## Table of Contents
 
@@ -169,7 +169,7 @@ World Wide Web (WWW), commonly known as the Web, is an **information system enab
 
 At its most basic level, the request/response process consists of a web browser or other **client asking the web server to send it a web page** and the server sending back the page. The browser then takes care of displaying or rendering the page.
 
-![Basic Request/Response Procedure](/images/unit-1/basic-req-res.png)
+![Basic Request/Response Procedure](/images/unit-1/basic-req-res.webp)
 
 The steps in the request and response sequence are as follows:
 
@@ -188,7 +188,7 @@ For an average web page, this process also takes place once for each object with
 
 Dynamic web pages work by using PHP to request data from a MySQL database based on what you click. MySQL sends back the needed information, and PHP turns it into HTML, which your browser displays.
 
-![Dynamic Request/Response Procedure](/images/unit-1/dynamic-req-res.png)
+![Dynamic Request/Response Procedure](/images/unit-1/dynamic-req-res.webp)
 
 The steps are as follows:
 
@@ -258,7 +258,7 @@ Client-server architecture is a distributed computing model where tasks are divi
 - Additional tiers can include **caching layers, load balancers**, message queues, microservices, etc.
 - This architecture allows for **better scalability, flexibility, and modularity, but also increases complexity.**
 
-![Three-tier Client-Server Architecture](/images/unit-1/three-tier-client-server.png)
+![Three-tier Client-Server Architecture](/images/unit-1/three-tier-client-server.webp)
 
 **Advantages of Client-Server Architecture**
 
@@ -327,7 +327,7 @@ An HTTP response is what a server sends back to the client after receiving and p
 
 **4. Response Body:** This part of the response contains the actual data or resource that the client requested. For example, it could be an HTML file, JSON data, an image, etc. In some cases, particularly when the response indicates an error (like a 404), the body might contain a message explaining the error.
 
-![HTTP Response](/images/unit-1/http-res.png)
+![HTTP Response](/images/unit-1/http-res.webp)
 
 - **Date:** The date and time the response was generated.
 - **Server:** Information about the web server software (e.g., Apache/1.3.29).
@@ -1343,7 +1343,7 @@ HTML tables organize data in rows and columns.
 
 **Write HTML script for displaying table with following output.**
 
-![Table](/images/unit-1/table.png)
+![Table](/images/unit-1/table.webp)
 
 ```html
 <html>
@@ -2082,7 +2082,7 @@ Box-sizing determines how the total width and height of elements are calculated,
 - **Content-box** (default): Width/height applies only to content
 - **Border-box**: Width/height includes content, padding, and border
 
-![Box Model](/images/unit-1/box_model.png)
+![Box Model](/images/unit-1/box_model.webp)
 
 ### Example Code:
 

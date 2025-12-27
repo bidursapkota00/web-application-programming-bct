@@ -2207,7 +2207,7 @@ It contains useful information about the event, such as:
 
 When you click the button, the **event object** provides details about the click.
 
-![ClientX/Y vs PageX/Y vs ScreenX/Y](/images/unit-2/event_pos_xy.png)
+![ClientX/Y vs PageX/Y vs ScreenX/Y](/images/unit-2/event_pos_xy.webp)
 
 - `pageX/Y` coordinates are relative to the top left corner of the whole rendered page (including parts hidden by scrolling),
 
@@ -3611,7 +3611,7 @@ console.log(validatePassword("weakpass")); // false
 
 ### Design following form in HTML and display the value in the result box after calculating basic arithmetic operation based on the user input with the use of JavaScript.
 
-![Calculator](/images/unit-2/calculator1.png "Calculator")
+![Calculator](/images/unit-2/calculator1.webp "Calculator")
 
 ```html
 <html>
@@ -3690,7 +3690,7 @@ console.log(validatePassword("weakpass")); // false
 
 ### Write HTML and JavaScript code to create a following calculator for performing basic arithmetic operations.
 
-![Calculator](/images/unit-2/calculator.png "Calculator")
+![Calculator](/images/unit-2/calculator.webp "Calculator")
 
 ```html
 <html>
@@ -3873,7 +3873,7 @@ console.log(validatePassword("weakpass")); // false
   </head>
   <body>
     <img
-      src="https://www.bidursapkota.com.np/_next/image?url=%2Fimages%2Fprofile3.png&w=1080&q=75"
+      src="https://www.bidursapkota.com.np/images/profile3.webp"
       alt="Sample Image"
       onmouseover="changeDescription()"
       onmouseout="resetDescription()"
