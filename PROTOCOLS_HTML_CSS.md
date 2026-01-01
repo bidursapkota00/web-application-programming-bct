@@ -1140,6 +1140,15 @@ HTML forms support various input types for different data collection needs.
       <input type="file" />
       <br /><br />
       <input type="search" placeholder="search input field" />
+      <br /><br />
+      <select>
+        <option value="">-- Select --</option>
+        <option value="Nepal">Nepal</option>
+        <option value="India">India</option>
+        <option value="USA">USA</option>
+      </select>
+      <br /><br />
+      <textarea id="message" name="message" rows="4" cols="40"></textarea>
     </form>
   </body>
 </html>
@@ -1161,42 +1170,42 @@ HTML forms support various input types for different data collection needs.
 
 **Question:**
 
-**Write an html code to create login form**
+**Write an HTML code snippet to create a simple form that collects student information, including their name [text field], age [number field], email [email field], and course of study [select field with options: science, math and english]. The form should have proper labels and a submit button.**
 
 ```html
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>Login Form</title>
-    <style>
-      form {
-        border: 1px solid black;
-        padding: 20px;
-        width: 300px;
-      }
-      div {
-        margin-bottom: 20px;
-      }
-      button {
-        margin-left: 20px;
-      }
-    </style>
+    <meta charset="UTF-8" />
+    <title>Student Information Form</title>
   </head>
   <body>
-    <h2>Login Form</h2>
-    <form id="form" name="loginForm">
-      <div>
-        <label for="username">Username: </label>
-        <input type="text" name="username" id="username" />
-      </div>
-      <div>
-        <label for="email">Email: </label>
-        <input type="email" name="email" id="email" />
-      </div>
-      <div>
-        <label for="password">Password: </label>
-        <input type="password" name="password" id="password" />
-      </div>
-      <button type="submit">Login</button>
+    <h2>Student Information Form</h2>
+
+    <form action="#" method="post">
+      <!-- Name -->
+      <label for="name">Name:</label><br />
+      <input type="text" id="name" name="name" required /><br /><br />
+
+      <!-- Age -->
+      <label for="age">Age:</label><br />
+      <input type="number" id="age" name="age" required /><br /><br />
+
+      <!-- Email -->
+      <label for="email">Email:</label><br />
+      <input type="email" id="email" name="email" required /><br /><br />
+
+      <!-- Course of Study -->
+      <label for="course">Course of Study:</label><br />
+      <select id="course" name="course" required>
+        <option value="">Select a course</option>
+        <option value="science">Science</option>
+        <option value="math">Math</option>
+        <option value="english">English</option></select
+      ><br /><br />
+
+      <!-- Submit Button -->
+      <button type="submit">Submit</button>
     </form>
   </body>
 </html>
@@ -1629,35 +1638,6 @@ Metadata provides information about the HTML document itself, such such as chara
     >
       <a href="mailto:info@iost.edu.np">Send Email</a>
     </footer>
-  </body>
-</html>
-```
-
-**Write an html code to understand and use value attribute**
-
-```html
-<html>
-  <head>
-    <title>Html Value Attribute</title>
-  </head>
-  <body>
-    <input type="text" value="Default Text" />
-
-    <br /><br />
-
-    <select>
-      <option value="Nepal">Nepal</option>
-      <option value="India">India</option>
-      <option value="USA">USA</option>
-    </select>
-
-    <ol start="10">
-      <li value="10">Item 10</li>
-      <li value="15">Item 15</li>
-      <li value="20">Item 20</li>
-    </ol>
-
-    <progress value="40" max="100">40%</progress>
   </body>
 </html>
 ```
