@@ -2610,6 +2610,8 @@ This becomes:
 - Hard to debug
 - Hard to maintain
 
+[Also see example of sending http request using ajax that use callback](#ajax-with-jquery)
+
 **Solutions to callback hell**
 
 - Promises
@@ -2925,13 +2927,15 @@ console.log("End");
 **Callbacks:**
 
 ```javascript
-function fetchData(callback) {
+function fetchData(dataIdentifier, callback) {
+  console.log(`Fetching ${dataIdentifier}...`);
+
   setTimeout(() => {
-    callback("Data loaded");
-  }, 1000);
+    callback(`Data of ${dataIdentifier}`);
+  }, 2000);
 }
 
-fetchData((data) => {
+fetchData("user", (data) => {
   console.log(data);
 });
 ```
@@ -2939,26 +2943,26 @@ fetchData((data) => {
 **Promises:**
 
 ```javascript
-function fetchData() {
+function fetchData(dataIdentifier) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      resolve("Data loaded");
-    }, 1000);
+      resolve(`data of ${dataIdentifier}`);
+    }, 4000);
   });
 }
 
-fetchData().then((data) => console.log(data));
+fetchData("user").then((res) => {
+  console.log(res);
+});
 ```
 
 **Async/Await:**
 
 ```javascript
-async function loadData() {
-  const data = await fetchData();
-  console.log(data);
-}
-
-loadData();
+(async function () {
+  const user = await fetchData("user");
+  console.log(user);
+})();
 ```
 
 **5. Microtasks vs Macrotasks**
@@ -3002,7 +3006,7 @@ Every time code runs, JavaScript creates an execution context containing:
 
 This execution model is what enables JavaScript to power interactive web applications despite running on a single thread.
 
-### Complex Complete Example
+##### Complex complete example to understand JavaScript execution model with microtask and macrotask priority
 
 ```js
 console.log("Script start");
@@ -4226,6 +4230,8 @@ console.log(validatePassword("weakpass")); // false
 
 ### Create a HTML page containing a division with image and its description in paragraph. Write a JavaScript function to change the value of description in the paragraph during onmouseover and onmouseout on the image.
 
+**Hover Effect**
+
 ```html
 <html>
   <head>
@@ -4254,6 +4260,141 @@ console.log(validatePassword("weakpass")); // false
       function resetDescription() {
         document.getElementById("description").textContent =
           "This is a sample image description.";
+      }
+    </script>
+  </body>
+</html>
+```
+
+### How can you create a dynamic dropdown menu in HTML using JavaScript that toggles a submenu when a menu item is clicked?
+
+**Dynamic Menu**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JS Dynamic Menu</title>
+
+    <style>
+      nav {
+        background: #333;
+      }
+      nav ul {
+        list-style: none;
+        padding: 10px;
+        gap: 20px;
+      }
+      nav > ul {
+        display: flex;
+        gap: 20px;
+      }
+      nav li {
+        position: relative;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+        padding: 6px 8px;
+        display: inline-block;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .dropdown {
+        position: absolute;
+        top: 32px;
+        left: 0;
+        background: white;
+        min-width: 200px;
+        border: 1px solid #ccc;
+      }
+      .dropdown.hide {
+        display: none;
+      }
+      .dropdown a {
+        color: black;
+        padding: 8px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/home">Home</a></li>
+
+        <li id="services">
+          <a href="#">Services</a>
+          <ul class="dropdown hide" id="servicesSubMenu">
+            <li><a href="/services/web">Web Development</a></li>
+            <li><a href="/services/mobile">Mobile Apps</a></li>
+            <li><a href="/services/seo">SEO</a></li>
+          </ul>
+        </li>
+
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <script>
+      const servicesMenu = document.getElementById("services");
+      const servicesSubMenu = document.getElementById("servicesSubMenu");
+
+      servicesMenu.addEventListener("click", (event) => {
+        event.preventDefault();
+        servicesSubMenu.classList.toggle("hide");
+      });
+    </script>
+  </body>
+</html>
+```
+
+### How can you create a simple modal popup using HTML, CSS, and JavaScript that opens and closes on button clicks?
+
+**Modals**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JS Dynamic Menu</title>
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-content {
+        background: white;
+        padding: 20px;
+        width: 200px;
+        margin: 100px auto;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <button onclick="openModal()">Open Modal</button>
+
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <p>This is a modal</p>
+        <button onclick="closeModal()">Close</button>
+      </div>
+    </div>
+
+    <script>
+      function openModal() {
+        document.getElementById("modal").style.display = "block";
+      }
+
+      function closeModal() {
+        document.getElementById("modal").style.display = "none";
       }
     </script>
   </body>
