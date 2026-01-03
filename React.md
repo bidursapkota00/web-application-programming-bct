@@ -8,16 +8,18 @@
 
 1. [Getting Started](#getting-started)
 2. [JSX Basics](#jsx-basics)
-3. [CSS Styling](#css-styling)
-4. [Components](#components)
-5. [Props](#props)
-6. [Images](#images)
-7. [State with useState](#state-with-usestate)
-8. [Forms and Controlled Components](#forms-and-controlled-components)
-9. [useEffect Hook](#useeffect-hook)
-10. [useRef Hook](#useref-hook)
-11. [React Router](#react-router)
-12. [Basic Project: Grocery Bud](#basic-project-grocery-bud)
+3. [React Architecture](#react-architecture)
+4. [CSS Styling](#css-styling)
+5. [Components](#components)
+6. [Props](#props)
+7. [Images](#images)
+8. [State with useState](#state-with-usestate)
+9. [Forms and Controlled Components](#forms-and-controlled-components)
+10. [useEffect Hook](#useeffect-hook)
+11. [useRef Hook](#useref-hook)
+12. [React Router](#react-router)
+13. [React vs Angular vs Vue](#react-vs-angular-vs-vue)
+14. [Basic Project: Grocery Bud](#basic-project-grocery-bud)
 
 ---
 
@@ -240,6 +242,30 @@ function Greeting() {
     - React Snippets › Settings: Import React On Top
 
 ---
+
+## React Architecture
+
+**React App Architecture/Structure**
+
+![React App Architecture](/images/unit-2/React-App-Architecture.webp)
+
+This image depicts the Component-Based Architecture of React. It illustrates how an application is organized into a hierarchical tree structure.
+
+- **Root Component:** At the top of the diagram is the "Root Component" (usually named `App`). This is the entry point of the application that holds everything together.
+- **Component Tree:** The diagram shows branches stemming from the root to various child components (e.g., `Header`, `MainContent`, `Footer`).
+- **Composition:** It highlights that a React UI is not a single large file but a collection of small, independent, and reusable pieces. Each component can contain its own sub-components, allowing for a deeply nested and modular structure.
+
+![React Workflow](/images/unit-2/workflow_jsx.jpg)
+
+**React Workflow**
+
+This image explains the rendering process and how React translates your code into what the user sees on the screen. The workflow typically follows these steps:
+
+1. **React Component (JSX):** The flow begins with the developer writing components using JSX (a syntax extension that looks like HTML but lives in JavaScript).
+2. **Babel/Compilation:** Although sometimes implicit, the workflow involves a compiler (like Babel) that transforms JSX into regular `React.createElement()` calls that the browser can understand.
+3. **ReactDOM.render / createRoot:** This is the execution step where the React library takes your components and the target HTML element (the container, usually a `<div id="root"></div>`).
+4. **Virtual DOM:** Instead of updating the browser's DOM immediately, React creates a Virtual DOM (a lightweight representation of the real DOM). It compares the new version of the UI with the previous version (a process called "Diffing").
+5. **Browser DOM:** Finally, React identifies the exact changes needed and performs a "reconciliation" to update only those specific parts in the real HTML DOM. This makes the application highly efficient and fast.
 
 ## CSS Styling
 
@@ -1163,7 +1189,197 @@ function App() {
 export default App;
 ```
 
+### What is a SPA?
+
+A **Single Page Application (SPA)** is a web application that loads a single HTML page and dynamically updates content as the user interacts with it, without requiring full page reloads. The page never refreshes - instead, JavaScript fetches data and updates the DOM in place.
+
+**How it works:**
+
+- Initial load downloads HTML, CSS, and JavaScript bundles
+- Navigation and interactions happen client-side via JavaScript
+- Data is fetched from APIs (usually JSON) in the background
+- The URL can change (via browser History API) without page reloads
+
+**Popular frameworks:** React, Vue, Angular, Svelte
+
+**When SPAs are Better**
+
+- Highly interactive applications with complex user interfaces
+- Real-time updates like chat apps or collaborative tools
+- App-like experiences that feel native (Gmail, Figma, Notion)
+- Dashboards with lots of filtering, sorting, and data manipulation
+- Applications requiring offline capabilities or PWA features
+- Smooth animations and transitions between views
+
+**When SPAs are NOT Better**
+
+- Content-heavy websites like blogs, news sites, or documentation
+- Marketing or landing pages with mostly static content
+- When SEO is critical
+- Performance on slow devices or networks is a concern
+
+**Hybrid Approaches**
+
+Modern frameworks offer middle-ground solutions like Next.js, Nuxt.js, Astro, and Remix that combine server-side rendering with SPA features for the best of both worlds.
+
 ---
+
+## React vs Angular vs Vue
+
+### React
+
+JavaScript library for building user interfaces, maintained by Meta (Facebook), first released in 2013
+
+**Key Characteristics:**
+
+- Uses JSX (JavaScript XML) syntax
+- Component-based architecture
+- Virtual DOM for efficient rendering
+- One-way data binding
+- Requires additional libraries for routing and state management
+- Flexible and unopinionated
+- Large ecosystem and community
+- Used by Facebook, Instagram, Netflix, Airbnb
+
+**Strengths:**
+
+- Highly flexible and customizable
+- Massive ecosystem with numerous third-party libraries
+- Excellent performance with virtual DOM
+- Strong community support and resources
+- Reusable components across projects
+- Great for mobile apps with React Native
+- Large job market and developer availability
+
+**Weaknesses:**
+
+- Requires decisions on architecture and tooling choices
+- JSX syntax can be confusing for beginners
+- Frequent updates can sometimes break compatibility
+- Lacks official conventions and best practices
+- Need to combine multiple libraries for full functionality
+- Can lead to inconsistent code across different projects
+
+**Use Cases:**
+
+- Single-page applications (SPAs)
+- Progressive web apps
+- Mobile applications (with React Native)
+- Social media platforms
+- Dynamic dashboards and data visualization
+- Real-time applications
+- Projects requiring maximum flexibility
+- Startups and MVPs needing rapid development
+
+### Angular
+
+Full-fledged framework for web applications, maintained by Google, originally released in 2010 (AngularJS), completely rewritten as Angular in 2016
+
+**Key Characteristics:**
+
+- Uses TypeScript with HTML templates
+- Component-based architecture with MVC pattern
+- Real DOM with incremental compilation
+- Two-way data binding
+- Includes built-in routing, forms, HTTP client, and more
+- Opinionated with strict structure
+- Comprehensive documentation and tooling
+- Used by Google, Microsoft, IBM
+
+**Strengths:**
+
+- Complete solution out of the box
+- Excellent TypeScript support and integration
+- Powerful CLI for project scaffolding and code generation
+- Comprehensive built-in testing utilities
+- Dependency injection system for better code organization
+- Great for large enterprise applications
+- Consistent structure across projects and teams
+- Strong architectural patterns and best practices
+
+**Weaknesses:**
+
+- Steepest learning curve among the three
+- Verbose and complex for smaller projects
+- Large bundle size affecting initial load time
+- Frequent major version updates requiring migration effort
+- Over-engineered for simple applications
+- Requires learning TypeScript, RxJS, and Angular-specific concepts
+- Can feel restrictive due to opinionated nature
+
+**Best Use Cases:**
+
+- Large enterprise applications
+- Complex business logic applications
+- Projects requiring strict structure and consistency
+- Long-term maintainable applications with multiple teams
+- When TypeScript is mandatory or preferred
+- Applications with many developers needing standardization
+- Progressive web apps with complex requirements
+- Heavy data-driven applications with forms
+
+### Vue
+
+Progressive framework for building user interfaces, maintained by Evan You and community, first released in 2014
+
+**Key Characteristics:**
+
+- Uses HTML templates with optional JSX
+- Component-based architecture
+- Virtual DOM similar to React
+- Both one-way and two-way data binding
+- Includes core library with official routing and state management
+- Flexible with gentle learning curve
+- Growing ecosystem with excellent documentation
+- Used by Alibaba, GitLab, Nintendo
+
+**Strengths:**
+
+- Easiest to learn among the three frameworks
+- Excellent and comprehensive documentation
+- Lightweight and fast performance
+- Flexible architecture allowing gradual adoption
+- Good balance between React's flexibility and Angular's structure
+- Great developer experience with intuitive API
+- Easy migration and integration with existing projects
+- Less boilerplate code required
+
+**Weaknesses:**
+
+- Smaller community compared to React and Angular
+- Fewer job opportunities in the market
+- Less corporate backing and enterprise adoption
+- Fewer resources, tutorials, and third-party plugins
+- Risk perception in large enterprises
+- Smaller ecosystem of third-party components
+- Language barrier in some Chinese-language resources
+
+**Use Cases:**
+
+- Small to medium-sized applications
+- Rapid prototyping and quick development
+- Integrating into existing projects progressively
+- Projects with mixed skill levels on the team
+- Single-page applications without complex requirements
+- When quick development time is prioritized
+- Progressive enhancement of server-rendered applications
+- Lightweight dashboards and admin panels
+- Projects where easy onboarding is important
+
+| React                                                       | Angular                                                          | Vue                                                                        |
+| ----------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| JavaScript library for building user interfaces             | Full-fledged framework for web applications                      | Progressive framework for building user interfaces                         |
+| Maintained by Meta (Facebook)                               | Maintained by Google                                             | Maintained by Evan You and community                                       |
+| First released in 2013                                      | First released in 2010 (AngularJS), rewritten as Angular in 2016 | First released in 2014                                                     |
+| Uses JSX (JavaScript XML) syntax                            | Uses TypeScript with HTML templates                              | Uses HTML templates with optional JSX                                      |
+| Component-based architecture                                | Component-based architecture with MVC pattern                    | Component-based architecture                                               |
+| Virtual DOM for efficient rendering                         | Real DOM with incremental compilation                            | Virtual DOM similar to React                                               |
+| One-way data binding                                        | Two-way data binding                                             | Both one-way and two-way data binding                                      |
+| Requires additional libraries for routing, state management | Includes built-in routing, forms, HTTP client, and more          | Includes core library with official routing and state management libraries |
+| Flexible, unopinionated                                     | Opinionated with strict structure                                | Moderately opinionated but flexible                                        |
+| Large ecosystem and community                               | Comprehensive documentation and tooling                          | Growing ecosystem with good documentation                                  |
+| Steep learning curve initially                              | Steepest learning curve                                          | Easiest learning curve                                                     |
+| Used by Facebook, Instagram, Netflix, Airbnb                | Used by Google, Microsoft, IBM                                   | Used by Alibaba, GitLab, Nintendo                                          |
 
 ## Basic Project: Grocery Bud
 
