@@ -5840,6 +5840,72 @@ $(".element")
   .fadeOut(500);
 ```
 
+### AJAX with jQuery
+
+**What is AJAX**
+
+AJAX (Asynchronous JavaScript and XML) allows web pages to update asynchronously by exchanging data with the server behind the scenes without reloading the entire page.
+
+**Benefits of Using AJAX**
+
+1. **Asynchronous Communication**
+
+- Updates parts of a webpage without refreshing the whole page.
+- Improves user experience (e.g., live search, chat apps, auto-saving).
+
+2. **Reduced Server Load & Bandwidth Usage**
+
+- Only necessary data is sent/received—no need to reload the full HTML page.
+
+3. **Better User Experience**
+
+- Eliminates flicker or full reload → makes applications feel like desktop apps.
+
+4. **Faster Page Interaction**
+
+- Data exchange is smaller and handled in the background → quick responses.
+
+5. **Supports Multiple Data Formats**
+
+- JSON (most common), XML, HTML, plain text.
+
+```html
+<html>
+  <head>
+    <title>AJAX Example (jQuery)</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  </head>
+
+  <script>
+    function loadContent() {
+      $.ajax({
+        url: "https://jsonplaceholder.typicode.com/posts",
+        method: "GET",
+        success: function (data) {
+          $("#content").empty(); // clear previous content
+
+          data.forEach(function (post) {
+            $("#content").append(
+              `<p><strong>${post.id}:</strong> ${post.title}</p>`
+            );
+          });
+        },
+        error: function (error) {
+          console.error("Error fetching posts:", error);
+          $("#content").text("Error fetching posts");
+        },
+      });
+    }
+  </script>
+
+  <body>
+    <h1>AJAX Demo (jQuery)</h1>
+    <button onclick="loadContent()">Load Content</button>
+    <div id="content"></div>
+  </body>
+</html>
+```
+
 ### Form Handling
 
 ##### Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf or image. File size should be less than 2MB. Email should be valid. Phone number should be valid. Password must be at least 8 character long with at least one lowercase, uppercase, number and symbol. Password and confirm password should match.
