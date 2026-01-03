@@ -27,6 +27,32 @@
 
 ## Getting Started
 
+React is JavaScript library for building user interfaces, maintained by Meta (Facebook), first released in 2013
+
+**Key Characteristics:**
+
+- Uses JSX (JavaScript XML) syntax
+- Component-based architecture
+- Virtual DOM for efficient rendering
+- One-way data binding
+- Requires additional libraries for routing and state management
+- Flexible and unopinionated
+- Large ecosystem and community
+- Used by Facebook, Instagram, Netflix, Airbnb
+
+### Principles of React.js
+
+![React Principles](/images/unit-2/react-principles.webp)
+
+**Declarative Design**
+you describe what the UI should look like based on the current state, rather than imperatively specifying how to change it step-by-step. You declare the desired outcome, and React figures out how to update the DOM efficiently.
+
+**Unidirectional Data Flow**
+It refers to React's one-way data binding pattern. Data flows down from parent components to child components through props, creating a predictable and easier-to-debug application structure. When state changes, it triggers a cascade of updates flowing in one direction through the component tree.
+
+**Component-Based Architecture**
+This means the UI is built from reusable, self-contained components. Each component manages its own state and logic, then composes together to create complex interfaces. This promotes modularity, reusability, and easier maintenance.
+
 ### Setting Up Vite + React
 
 Vite is a modern build tool that provides fast development experience. It's faster than Create React App and has better performance.
