@@ -16,10 +16,12 @@
 8. [State with useState](#state-with-usestate)
 9. [Forms and Controlled Components](#forms-and-controlled-components)
 10. [useEffect Hook](#useeffect-hook)
-11. [useRef Hook](#useref-hook)
-12. [React Router](#react-router)
-13. [React vs Angular vs Vue](#react-vs-angular-vs-vue)
-14. [Basic Project: Grocery Bud](#basic-project-grocery-bud)
+11. [React component lifecycle](#react-component-lifecycle)
+12. [useRef Hook](#useref-hook)
+13. [React Router](#react-router)
+14. [React vs Angular vs Vue](#react-vs-angular-vs-vue)
+15. [Questions](#questions)
+16. [Basic Project: Grocery Bud](#basic-project-grocery-bud)
 
 ---
 
@@ -1075,6 +1077,70 @@ export default FetchUsers;
 
 ---
 
+## React component lifecycle
+
+React components have a lifecycle that can be divided into three primary phases: Mounting, Updating, and Unmounting.
+
+![React Component Life Cycle](/images/unit-2/comp-life-cycle.webp)
+
+**Phases of a Component Lifecycle**
+
+**Mounting**
+The Mounting phase signifies the time when a component is first created and inserted into the Document Object Model (DOM). It involves setting up the initial state, rendering the component, and performing any side-effects related to the component’s mounting.
+
+**Updating**
+The Updating phase occurs when a component receives new props or its state changes. This phase is responsible for rendering updates, re-evaluating the component’s UI, and handling any side-effects associated with these updates.
+
+**Unmounting**
+The Unmounting phase happens when a component is removed from the DOM. This is where you can clean up any resources or subscriptions to prevent memory leaks.
+
+Traditionally class components used specific lifecycle methods (like componentDidMount, componentDidUpdate, and componentWillUnmount). But with functional components, these are replaced by React Hooks – primarily useEffect
+
+```jsx
+import React, { useState, useEffect } from "react";
+
+export default function Home() {
+  const [count, setCount] = useState(0);
+
+  // 1. MOUNTING & UPDATING: Runs after every render
+  useEffect(() => {
+    console.log("Component rendered or updated");
+  });
+
+  // 2. MOUNTING ONLY: Runs once (empty dependency array)
+  useEffect(() => {
+    console.log("Component mounted - like componentDidMount");
+  }, []); // Empty array = run once
+
+  // 3. CONDITIONAL UPDATES: Runs when specific values change
+  useEffect(() => {
+    console.log("Count changed- like componentDidUpdate");
+  }, [count]); // Runs when count changes
+
+  // 4. UNMOUNTING: Cleanup function
+  useEffect(() => {
+    const timer = setInterval(() => {
+      console.log("Timer running...");
+    }, 1000);
+
+    // Cleanup function - like componentWillUnmount
+    return () => {
+      console.log("Cleaning up timer before unmount");
+      clearInterval(timer);
+    };
+  }, []);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+```
+
+---
+
 ## useRef Hook
 
 ### Accessing DOM Elements and Persisting Values
@@ -1380,6 +1446,72 @@ Progressive framework for building user interfaces, maintained by Evan You and c
 | Large ecosystem and community                               | Comprehensive documentation and tooling                          | Growing ecosystem with good documentation                                  |
 | Steep learning curve initially                              | Steepest learning curve                                          | Easiest learning curve                                                     |
 | Used by Facebook, Instagram, Netflix, Airbnb                | Used by Google, Microsoft, IBM                                   | Used by Alibaba, GitLab, Nintendo                                          |
+
+---
+
+## Questions
+
+1. What is React? Explain the key features of React that make it popular for building user interfaces. (4 marks)
+2. Differentiate between a library and a framework. Explain why React is considered a library rather than a framework. (4 marks)
+3. Explain the concept of Virtual DOM in React. How does it improve performance compared to traditional DOM manipulation? (5 marks)
+4. What is JSX? Explain its syntax with examples. How is JSX different from HTML? (5 marks)
+5. Write a React component that demonstrates the following JSX features: (6 marks)
+
+- Embedding JavaScript expressions
+- Using className instead of class
+- Self-closing tags
+- Conditional rendering
+
+6. Explain the rules and limitations of JSX. Why can't we return multiple elements without a parent wrapper? (4 marks)
+7. What are JSX fragments? Why are they useful? Write code examples showing two ways to use fragments. (5 marks)
+8. Explain the component-based architecture of React. What are the advantages of breaking an application into components? (5 marks)
+9. Describe the concept of unidirectional data flow in React. How does it differ from two-way data binding? (6 marks)
+10. Draw and explain the React component lifecycle. Describe the three main phases with examples. (7 marks)
+11. What is the difference between declarative and imperative programming? How does React follow the declarative approach? (5 marks)
+12. Explain different methods of styling React components: (6 marks)
+
+- Inline styles
+- External CSS files
+- CSS Modules
+
+12. Write a React component that demonstrates inline styling with dynamic styles based on props. (5 marks)
+13. What are CSS Modules? How do they help in avoiding CSS naming conflicts? Provide an example. (5 marks)
+14. Explain the concept of component composition in React. Write code showing how to compose multiple components together. (7 marks)
+15. Write a functional component that displays a user profile card with the following information: name, email, and profile picture. (5 marks)
+16. What is the difference between stateful and stateless components? When should you use each type? (5 marks)
+17. What are props in React? Explain how data flows from parent to child components using props. (5 marks)
+18. What is prop drilling? Explain its disadvantages and suggest solutions to avoid it. (6 marks)
+19. Explain the concept of `children` prop in React. Write an example showing how to create a reusable Card component using children. (6 marks)
+20. Differentiate between props and state in React with examples. (7 marks)
+21. Write a React component that displays an image from: (5 marks)
+
+- The public folder
+- The src folder (imported)
+- An external URL
+
+22. What is state in React? Explain the useState hook with its syntax and usage examples. (6 marks)
+23. Write a component that manages form state using useState for multiple input fields (name, email, age). (7 marks)
+24. What is the useEffect hook? Explain the dependency array in useEffect. What happens when: (7 marks)
+
+- No dependency array is provided
+- An empty dependency array is provided
+- Dependencies are specified
+
+25. Write a component that fetches data from an API using useEffect and displays it. Handle loading and error states. (8 marks)
+26. What is the cleanup function in useEffect? When and why is it used? Provide examples. (7 marks)
+27. What is React Router? Explain its importance in building single-page applications. (6 marks)
+28. Write code to implement a multi-page application with navigation between Home, About, and Contact pages using React Router. (7 marks)
+29. Compare React, Angular, and Vue on the following parameters: (8 marks)
+
+- Type (library vs framework)
+- Learning curve
+- Performance
+- Community support
+- Use cases
+
+30. Discuss the advantages and disadvantages of React compared to Angular and Vue. (8 marks)
+
+---
 
 ## Basic Project: Grocery Bud
 
