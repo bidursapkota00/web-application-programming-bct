@@ -30,17 +30,17 @@
 20. [Forms and Client Side Validation](#forms-and-client-side-validation)
 21. [Callback](#callbacks)
 22. [Promise, then, async / await](#promise-then-async--await)
-23. [Cookies](#cookies)
-24. [Session Storage](#session-storage)
-25. [Local Storage](#local-storage)
-26. [Regular Expressions](#regular-expressions)
-27. [Client Side Form Validation with Regular Expression](#client-side-form-validation-with-regular-expression)
-28. [Questions](#questions)
-29. [For Lab4 - Javascript Fundamentals](#for-lab4---javascript-fundamentals)
-30. [For Lab5 - CRUD with JavaScript](#lab-crud-with-javascript)
+23. [JavaScript Execution Model](#javascript-execution-model)
+24. [Cookies](#cookies)
+25. [Session Storage](#session-storage)
+26. [Local Storage](#local-storage)
+27. [Regular Expressions](#regular-expressions)
+28. [Client Side Form Validation with Regular Expression](#client-side-form-validation-with-regular-expression)
+29. [Questions - JavaScript](#questions---javascript)
+30. [Lab: CRUD with JavaScript](#lab-crud-with-javascript)
 31. [jQuery Basics](#jquery-basics)
-32. [For Lab6 - jQuery Fundamentals](#for-lab6---jquery-fundamentals)
-33. [For Lab7 CRUD with jQuery](#lab-crud-with-jquery)
+32. [Questions - jQuery](#questions---jquery)
+33. [Lab: CRUD with jQuery](#lab-crud-with-jquery)
 
 ---
 
@@ -2576,38 +2576,19 @@ button.addEventListener("click", () => {
 **Real like Example**
 
 ```js
-function fetchData(callback) {
+function fetchData(dataIdentifier, getNextData) {
   setTimeout(() => {
-    callback("Data received");
-  }, 1000);
-}
-
-fetchData((result) => {
-  console.log(result);
-});
-
-console.log("Fetching...");
-```
-
-```js
-function fetchUser(callback) {
-  setTimeout(() => {
-    const error = false;
-    if (error) {
-      callback("Error occurred", null);
-    } else {
-      const user = { id: 1, name: "Bidur" };
-      callback(null, user);
+    console.log("data of ", dataIdentifier);
+    if (getNextData) {
+      getNextData();
     }
-  }, 1000);
+  }, 2000);
 }
 
-fetchUser((err, user) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(user.name);
-  }
+fetchData("user", () => {
+  fetchData("post", () => {
+    fetchData("comment");
+  });
 });
 ```
 
@@ -2616,11 +2597,9 @@ fetchUser((err, user) => {
 When callbacks are nested deeply:
 
 ```js
-fetchUser((user) => {
-  fetchPosts(user.id, (posts) => {
-    fetchComments(posts[0].id, (comments) => {
-      console.log(comments);
-    });
+fetchData("user", () => {
+  fetchData("post", () => {
+    fetchData("comment");
   });
 });
 ```
@@ -2636,40 +2615,35 @@ This becomes:
 - Promises
 - async / await
 
-**Callback Hell: Complete Example**
+**Complex Callback Example**
 
 ```js
-function fetchUser(callback) {
+function fetchData(dataIdentifier, callback) {
+  console.log(`Fetching ${dataIdentifier}...`);
+
   setTimeout(() => {
-    const user = { id: 1, name: "Bidur" };
-    callback(user);
-  }, 1000);
+    const error = Math.random() < 0.3;
+
+    if (error) {
+      callback(`Error fetching ${dataIdentifier}`, null);
+      return;
+    }
+
+    callback(null, `Data of ${dataIdentifier}`);
+  }, 2000);
 }
 
-function fetchPosts(userId, callback) {
-  setTimeout(() => {
-    const postsByUserId = [
-      { id: 1, post: "JavaScript" },
-      { id: 2, post: "React" },
-    ];
-    callback(postsByUserId);
-  }, 1000);
-}
+fetchData("user", (err, data) => {
+  if (err) return console.error(err);
+  console.log(data);
 
-function fetchComments(postId, callback) {
-  setTimeout(() => {
-    const commentsOnPostId = [
-      { id: 1, comment: "Nice" },
-      { id: 2, comment: "Good" },
-    ];
-    callback(commentsOnPostId);
-  }, 1000);
-}
+  fetchData("post", (err, data) => {
+    if (err) return console.error(err);
+    console.log(data);
 
-fetchUser((user) => {
-  fetchPosts(user.id, (posts) => {
-    fetchComments(posts[0].id, (comments) => {
-      console.log(comments);
+    fetchData("comment", (err, data) => {
+      if (err) return console.error(err);
+      console.log(data);
     });
   });
 });
@@ -2684,101 +2658,176 @@ fetchUser((user) => {
 ## Promise, then, async / await
 
 - A Promise represents the eventual completion (or failure) of an asynchronous operation.
-- Async/await is syntactic sugar that makes working with Promises more readable and synchronous-looking.
 
 ```js
-// Creating a Promise
-const myPromise = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    const success = Math.random() > 0.5;
-    if (success) {
-      resolve("Operation successful!");
-    } else {
-      reject("Operation failed!");
-    }
-  }, 1000);
-});
-
-// Using the Promise
-myPromise
-  .then((result) => console.log(result))
-  .catch((error) => console.log(error));
-
-// Using async await
-async function run() {
-  try {
-    const result = await myPromise;
-    console.log(result);
-  } catch (error) {
-    console.log(error);
-  }
-}
-run();
-
-// Example
-function fetchData() {
+function fetchData(dataIdentifier) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const success = Math.random() > 0.5;
-      if (success) {
-        resolve("Data");
-      } else {
-        reject("Server Error");
-      }
-    }, 1000);
+      resolve(`data of ${dataIdentifier}`);
+    }, 4000);
   });
 }
 
-fetchData()
-  .then((result) => console.log(result))
-  .catch((error) => console.log(error));
+console.log("fetching user....");
+let p1 = fetchData("user");
+console.log(p1);
+p1.then((res) => {
+  console.log(p1);
+  console.log(res);
 
-// OR script type=module
+  // stop to teach
+  console.log("fetching posts created by user....");
+  let p2 = fetchData("post");
+  p2.then((res) => {
+    console.log(res);
+  });
+});
+```
 
-try {
-  const result = await fetchData();
-  console.log(result);
-} catch (error) {
-  console.log(error);
+**You dont have to create p1 and p2 variables**
+
+```js
+console.log("fetching user....");
+fetchData("user").then((res) => {
+  console.log(res);
+  console.log("fetching posts by user....");
+  fetchData("post").then((res) => {
+    console.log(res);
+    console.log("fetching comments of post....");
+    fetchData("comment").then((res) => {
+      console.log(res);
+    });
+  });
+});
+```
+
+**Promise Chaining: Solution to callback hell**
+
+```js
+fetchData("user")
+  .then((res) => {
+    console.log(res);
+    return fetchData("post");
+  })
+  .then((res) => {
+    console.log(res);
+    return fetchData("comment");
+  })
+  .then((res) => {
+    console.log(res);
+    console.log("success");
+  });
+```
+
+**Complete Example**
+
+```js
+function fetchData(dataIdentifier) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const error = Math.random() < 0.3;
+      if (error) {
+        reject(`Error fetching ${dataIdentifier}`);
+      } else {
+        resolve(`data of ${dataIdentifier}`);
+      }
+    }, 4000);
+  });
 }
 
-// OR
+fetchData("user")
+  .then((res) => {
+    console.log(res);
+    return fetchData("post");
+  })
+  .then((res) => {
+    console.log(res);
+    return fetchData("comment");
+  })
+  .then((res) => {
+    console.log(res);
+    console.log("All data fetched successfully");
+  })
+  .catch((err) => {
+    console.error("Something went wrong");
+    console.error(err);
+  })
+  .finally(() => {
+    console.log("Request completed (success or failure)");
+  });
+```
+
+---
+
+**Async / Await**
+
+- Async/await is syntactic sugar that makes working with Promises more readable and synchronous-looking.
+
+```js
+async function fetchAllData() {
+  const user = await fetchData("user");
+  console.log(user);
+  const posts = await fetchData("post");
+  console.log(posts);
+  const comments = await fetchData("comment");
+  console.log(comments);
+}
+
+fetchAllData();
+```
+
+**With IIFE (Immediately Invoked Function Expression) for executing asynchronous code immediately**
+
+```js
 (async function () {
-  console.log("Fetching data...");
+  const user = await fetchData("user");
+  console.log(user);
+  const posts = await fetchData("post");
+  console.log(posts);
+  const comments = await fetchData("comment");
+  console.log(comments);
+})();
+```
+
+**With try catch**
+
+```js
+(async function () {
   try {
-    const result = await fetchData();
-    console.log(result);
+    const user = await fetchData("user");
+    console.log(user);
+    const posts = await fetchData("post");
+    console.log(posts);
+    const comments = await fetchData("comment");
+    console.log(comments);
+  } catch (err) {
+    console.error("Something went wrong!");
+    console.error(err);
+  }
+})();
+```
+
+**Multiple async await requests in parallel**
+
+```js
+(async function () {
+  try {
+    const [result1, result2, result3] = await Promise.all([
+      fetchData("user"),
+      fetchData("post"),
+      fetchData("comment"),
+    ]);
+    console.log(result1, result2, result3);
   } catch (error) {
     console.log(error);
   }
 })();
 ```
 
-### Multiple async await
+**Real example with fetch**
 
 ```js
-// Wrong way
-try {
-  const result1 = await fetchData();
-  const result2 = await fetchData();
-  console.log(result1, result2);
-} catch (error) {
-  console.log(error);
-}
-
-// Right way in parallel
-try {
-  const [result1, result2] = await Promise.all([fetchData(), fetchData()]);
-  console.log(result1, result2);
-} catch (error) {
-  console.log(error);
-}
-```
-
-### Real example with fetch
-
-```js
-async function fetchPosts() {
+(async function () {
   try {
     const res = await fetch("https://jsonplaceholder.typicode.com/posts/1");
     const data = await res.json();
@@ -2786,9 +2835,297 @@ async function fetchPosts() {
   } catch (error) {
     console.error("Error fetching posts:", error);
   }
-}
-fetchPosts();
+})();
 ```
+
+---
+
+---
+
+---
+
+## JavaScript Execution Model
+
+JavaScript has a unique execution model that's essential to understand for writing effective code, especially for web applications.
+
+**1. Single-Threaded Execution**
+
+JavaScript runs on a **single thread**, meaning it can only execute one piece of code at a time. Despite this, it handles asynchronous operations efficiently through its event-driven architecture.
+
+```javascript
+console.log("First");
+console.log("Second");
+console.log("Third");
+// Output: First, Second, Third (sequential)
+```
+
+**2. The Call Stack**
+
+The **call stack** is where JavaScript keeps track of function execution. It works on a Last-In-First-Out (LIFO) principle.
+
+```javascript
+function multiply(a, b) {
+  return a * b;
+}
+
+function square(n) {
+  return multiply(n, n);
+}
+
+function printSquare(n) {
+  const result = square(n);
+  console.log(result);
+}
+
+printSquare(4);
+```
+
+**Call stack progression:**
+
+1. `printSquare(4)` pushed onto stack
+2. `square(4)` pushed onto stack
+3. `multiply(4, 4)` pushed onto stack
+4. `multiply` completes, popped off
+5. `square` completes, popped off
+6. `printSquare` completes, popped off
+
+**3. Event Loop**
+
+The event loop is JavaScript's mechanism for handling asynchronous operations without blocking the main thread.
+
+**Components:**
+
+- **Call Stack** - executes synchronous code
+- **Web APIs** - browser-provided APIs (setTimeout, fetch, DOM events)
+- **Callback Queue** - holds callbacks ready to execute
+- **Event Loop** - monitors stack and queue, moving callbacks to stack when empty
+
+```javascript
+console.log("Start");
+
+setTimeout(() => {
+  console.log("Timeout");
+}, 0);
+
+console.log("End");
+
+// Output: Start, End, Timeout
+```
+
+**Why this order?**
+
+1. `console.log('Start')` executes immediately
+2. `setTimeout` sent to Web API, callback queued
+3. `console.log('End')` executes immediately
+4. Call stack empty, event loop moves callback to stack
+5. `console.log('Timeout')` executes
+
+**4. Asynchronous Patterns**
+
+**Callbacks:**
+
+```javascript
+function fetchData(callback) {
+  setTimeout(() => {
+    callback("Data loaded");
+  }, 1000);
+}
+
+fetchData((data) => {
+  console.log(data);
+});
+```
+
+**Promises:**
+
+```javascript
+function fetchData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("Data loaded");
+    }, 1000);
+  });
+}
+
+fetchData().then((data) => console.log(data));
+```
+
+**Async/Await:**
+
+```javascript
+async function loadData() {
+  const data = await fetchData();
+  console.log(data);
+}
+
+loadData();
+```
+
+**5. Microtasks vs Macrotasks**
+
+JavaScript has two types of task queues:
+
+**Microtasks** (higher priority):
+
+- Promise callbacks
+- MutationObserver
+
+**Macrotasks** (lower priority):
+
+- setTimeout, setInterval
+- I/O operations
+
+```javascript
+console.log("1");
+
+setTimeout(() => console.log("2"), 0);
+
+Promise.resolve().then(() => console.log("3"));
+
+console.log("4");
+
+// Output: 1, 4, 3, 2
+```
+
+**6. Execution Context**
+
+Every time code runs, JavaScript creates an execution context containing:
+
+- **Variable environment** - variables and function declarations
+- **Scope chain** - access to outer variables
+- **`this` binding** - reference to current object
+
+**Types:**
+
+- **Global Execution Context** - created when script loads
+- **Function Execution Context** - created for each function call
+
+This execution model is what enables JavaScript to power interactive web applications despite running on a single thread.
+
+### Complex Complete Example
+
+```js
+console.log("Script start");
+
+setTimeout(() => {
+  console.log("Timeout 1");
+  Promise.resolve().then(() => {
+    console.log("Promise in Timeout 1");
+  });
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log("Promise 1.1");
+  Promise.resolve().then(() => {
+    console.log("Promise 1.2");
+  });
+});
+
+Promise.resolve().then(() => {
+  console.log("Promise 2.1");
+  Promise.resolve().then(() => {
+    console.log("Promise 2.2");
+  });
+});
+
+setTimeout(() => {
+  console.log("Timeout 2");
+}, 0);
+
+console.log("Script end");
+```
+
+**Output:**
+
+```text
+Script start
+Script end
+Promise 1.1
+Promise 2.1
+Promise 1.2
+Promise 2.2
+Timeout 1
+Promise in Timeout 1
+Timeout 2
+```
+
+**Execution Breakdown:**
+
+**1. Synchronous code executes:**
+
+```text
+Call Stack: [Global Execution Context (GEC) with active code]
+Output: "Script start", "Script end"
+Microtask Queue: [Promise 1.1 callback, Promise 2.1 callback]
+Macrotask Queue: [Timeout 1, Timeout 2]
+```
+
+**2. Synchronous code done, check microtasks:**
+
+```text
+Call Stack: [GEC - idle]
+Execute: Promise 1.1 callback
+Output: "Promise 1.1"
+Microtask Queue: [Promise 2.1 callback, Promise 1.2 callback] ← Promise 1.2 added
+```
+
+**3. More microtasks? Yes! Continue:**
+
+```text
+Call Stack: [GEC - idle]
+Execute: Promise 2.1 callback
+Output: "Promise 2.1"
+Microtask Queue: [Promise 1.2 callback, Promise 2.2 callback] ← Promise 2.2 added
+```
+
+**4. Continue processing microtasks:**
+
+```text
+Call Stack: [GEC - idle]
+Execute: Promise 1.2 callback
+Output: "Promise 1.2"
+Microtask Queue: [Promise 2.2 callback]
+```
+
+**5. Last microtask:**
+
+```text
+Call Stack: [GEC - idle]
+Execute: Promise 2.2 callback
+Output: "Promise 2.2"
+Microtask Queue: [empty]
+```
+
+**6. All microtasks done, get next macrotask:**
+
+```text
+Call Stack: [GEC with Timeout 1]
+Output: "Timeout 1"
+Microtask Queue: [Promise in Timeout 1] ← Added
+Macrotask Queue: [Timeout 2]
+```
+
+**7. Timeout 1 done, check microtasks again:**
+
+```text
+Call Stack: [GEC - idle]
+Execute: Promise in Timeout 1
+Output: "Promise in Timeout 1"
+Microtask Queue: [empty]
+```
+
+**8. Finally, next macrotask:**
+
+```text
+Call Stack: [GEC with Timeout 2]
+Execute: Timeout 2
+Output: "Timeout 2"
+Macrotask Queue: [empty]
+```
+
+**The Rule:** All microtasks must complete before any macrotask executes. Nested promises are added to the end of the microtask queue.
+
+So when "call stack is empty," that means "the current synchronous execution is complete and control can return to the event loop".
 
 ---
 
@@ -3607,7 +3944,35 @@ console.log(validatePassword("weakpass")); // false
 
 ---
 
-## Questions
+## Questions - JavaScript
+
+1. What is JavaScript? What are the potential platforms where JavaScript can be used?
+2. Explain features of JavaScript?
+3. Explain types of JavaScript?
+4. What is need for client side scripting?
+5. What are different way to include JavaScript in HTML document?
+6. What is NoScript? Explain with example.
+7. What is NaN in JavaScript? When does it occur? Give examples.
+8. Explain the concept structure and importance of DOM.
+9. Explain different method that are available to access DOM element using id, class, name and selector with suitable example.
+10. Write JavaScript code to print smallest and largest numbers among 10 elements of an array.
+11. Write a program which includes a function sum(). This function sum() should be designed to add an arbitrary list of parameters. (For e.g., if you call the function sum() as sum(1, 2) it should return the result 3 and if again you call the function sum() as sum(1, 3, 4) it should return the result 8).
+12. What is arrow function? Write JavaScript code to calculate factorial of given number using arrow function.
+13. Write a program that displays the continuous time in the web page. The time should be in the format of HH:MM:SS.
+14. What is dialog box? Explain different dialog boxes with suitable example in JavaScript.
+15. What is JavaScript Event? Explain with Example.
+16. What is Event Object? Explain with Example.
+17. Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf or image. File size should be less than 2MB. Email field must include @. Password must be at least 6 character long. Password and confirm password should match.
+18. Create a form to input Name, Email, password.
+
+    - All fields are required.
+    - Email should be valid.
+    - Phone number should be valid. (`9*********` or `01*******`)
+    - Password must be at least 8 character long and it should contain at least one uppercase letter, one lowercase letter, one number and one symbol
+
+19. Create an HTML signup form with fields Name, Email, Password, and Age. Validate the form using JavaScript. Write functions for validating each of the elements. All of the fields should not be empty. The Email address should be a valid email, the password should be of length at least 6 and should start with the alphabet and end with a digit. The age should be between 8 and 60.
+
+    - **Hint:** passwordRegex = `/^[a-zA-Z][a-zA-Z\d]{4,}\d$/`
 
 ### Design following form in HTML and display the value in the result box after calculating basic arithmetic operation based on the user input with the use of JavaScript.
 
@@ -4054,38 +4419,6 @@ console.log(validatePassword("weakpass")); // false
   </body>
 </html>
 ```
-
-## For Lab4 - Javascript Fundamentals
-
-1. What is JavaScript? What are the potential platforms where JavaScript can be used?
-2. Explain features of JavaScript?
-3. Explain types of JavaScript?
-4. What is need for client side scripting?
-5. What are different way to include JavaScript in HTML document?
-6. What is NoScript? Explain with example.
-7. What is NaN in JavaScript? When does it occur? Give examples.
-8. Explain the concept structure and importance of DOM.
-9. Explain different method that are available to access DOM element using id, class, name and selector with suitable example.
-10. Write JavaScript code to print smallest and largest numbers among 10 elements of an array.
-11. Write a program which includes a function sum(). This function sum() should be designed to add an arbitrary list of parameters. (For e.g., if you call the function sum() as sum(1, 2) it should return the result 3 and if again you call the function sum() as sum(1, 3, 4) it should return the result 8).
-12. What is arrow function? Write JavaScript code to calculate factorial of given number using arrow function.
-13. Write a program that displays the continuous time in the web page. The time should be in the format of HH:MM:SS.
-14. What is dialog box? Explain different dialog boxes with suitable example in JavaScript.
-15. What is JavaScript Event? Explain with Example.
-16. What is Event Object? Explain with Example.
-17. Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf or image. File size should be less than 2MB. Email field must include @. Password must be at least 6 character long. Password and confirm password should match.
-18. Create a form to input Name, Email, password.
-
-    - All fields are required.
-    - Email should be valid.
-    - Phone number should be valid. (`9*********` or `01*******`)
-    - Password must be at least 8 character long and it should contain at least one uppercase letter, one lowercase letter, one number and one symbol
-
-19. Create an HTML signup form with fields Name, Email, Password, and Age. Validate the form using JavaScript. Write functions for validating each of the elements. All of the fields should not be empty. The Email address should be a valid email, the password should be of length at least 6 and should start with the alphabet and end with a digit. The age should be between 8 and 60.
-
-    - **Hint:** passwordRegex = `/^[a-zA-Z][a-zA-Z\d]{4,}\d$/`
-
-20. And all(8) questions from lesson 24 - Questions
 
 ---
 
@@ -5694,20 +6027,15 @@ $(".element")
 </script>
 ```
 
-## For Lab6 - jQuery Fundamentals
-
-### Theroy
+## Questions - jQuery
 
 1. What is jQuery?
 2. What is the use of jQuery?
 3. How jQuery is differing from JavaScript?
 4. Discuss different types of jQuery selectors.
-
-### Practical
-
-1. Illustrate different types of selectors in jQuery with appropriate example?
-2. Write the sample program to show and hide the certain div with the use of jQuery.
-3. Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf or image. File size should be less than 2MB. Email should be valid. Phone number should be valid. Password must be at least 8 character long with at least one lowercase, uppercase, number and symbol. Password and confirm password should match.
+5. Illustrate different types of selectors in jQuery with appropriate example?
+6. Write the sample program to show and hide the certain div with the use of jQuery.
+7. Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf or image. File size should be less than 2MB. Email should be valid. Phone number should be valid. Password must be at least 8 character long with at least one lowercase, uppercase, number and symbol. Password and confirm password should match.
 
 ## Lab: CRUD with jQuery
 
