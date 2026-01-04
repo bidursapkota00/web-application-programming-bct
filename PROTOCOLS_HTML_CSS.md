@@ -56,7 +56,8 @@
 46. [Media Query Example Guide](#media-query-example-guide)
 47. [CSS Variables](#css-variables)
 48. [1.5 Bootstrap](#15-bootstrap)
-49. [Lab: Portfolio Website](#lab-portfolio-website)
+49. [Questions](#questions)
+50. [Lab: Portfolio Website](#lab-portfolio-website)
 
 ## Introduction
 
@@ -4221,6 +4222,56 @@ Bootstrap supports responsive breakpoints:
   </div>
 </div>
 ```
+
+---
+
+## Questions
+
+- What is the Internet and the Web?
+- Explain the importance of Web technology.
+- Explain the concept of multi-tier architecture in web development.
+- Illustrate with a diagram a three-tier architecture consisting of: Presentation layer, Business logic layer, Data layer.
+- Describe the concept of the client/server computing paradigm and its role in modern computing. Illustrate with real-world examples of applications that utilize this architecture.
+- Explain the concept of Web 2.0 with its key features.
+- Explain the Semantic Web with a practical example.
+- What is REST? Mention the HTTP methods supported by REST.
+- What is the Semantic Web? Explain the importance of the Semantic Web.
+- Highlight the differences between Web 1.0 and Web 2.0.
+- What is the Semantic Web? Explain Semantic Web components: RDF and OWL.
+- Explain the working of web crawlers.
+- Define web documents and web browsers. Explain the major steps of information retrieval.
+- Explain Crawling.
+- Write an html code to understand its basic structure.
+- Create the HTML document with the paragraph using `<p>`,`<h1>`, `<strong>` for the first word for every sentence and `<em>` for all the capital letters.
+- Write an html code to understand and use sectioning elements.
+- Explain the rowspan and colspan attributes in HTML tables with examples.
+- What are the attributes of list tag? Explain.
+- Describe the structure of an HTML document and explain different types of CSS.
+- Write an HTML code snippet to create a simple form that collects student information, including their name [text field], age [number field], email [email field], and course of study [select field with options: science, math and english]. The form should have proper labels and a submit button.
+- Write HTML code to generate a form with the following fields: First Name (text field), Last Name (text field), Country (select field with options: Nepal, China, India). Use appropriate attributes such as method, action, placeholder, etc.
+- Write an HTML code to create table Use Id, Name, Adress & Age as Heading. Make 6 empty rows of data.
+- Write HTML script for displaying list inside table.
+- Create a HTML page containing iframe within a paragraph. The iframe have source to http://www.tuiost.edu.np and its height and width are 200px and 400px respectively.
+- Write a HTML script to insert audio file in a HTML page. Use the controls and autoplay properties.
+- Create a HTML page with tags header, article and footer. Insert alink containing mail to info@iost.edu.np in the footer tag. Set the keywords "iost", "csit" using Meta tag in the page.
+- Explain CSS (Cascading Style Sheets). How can external style sheets be inserted into an HTML document? Illustrate with an example.
+- What is CSS?. Explain the different ways of adding CSS to an HTML document.
+- Define CSS selectors. Explain different types of CSS selectors with examples.
+- What is the CSS box model?. Explain margin, padding, border, and content with a neat diagram.
+  Define block and inline elements.. Differentiate between block and inline elements with examples.
+- What is the `display` property in CSS?. Explain various values of the display property with examples.
+- What are CSS combinators?. Explain different types of combinators with suitable examples.
+- Define pseudo-classes. Explain commonly used pseudo-classes with examples.
+- What are pseudo-elements?. Explain different pseudo-elements with practical examples.
+- What is Flexbox?. Explain Flexbox layout and its important properties.
+- What is CSS Grid?. Explain Grid layout and its advantages over traditional layouts.
+- Define media queries. Explain responsive web design using media queries with examples.
+- What are CSS variables?. Explain how CSS variables improve maintainability with examples.
+- What is RGBA color model?. Differentiate between RGBA and opacity with examples.
+- What is CSS positioning?. Explain different positioning techniques with examples.
+- What is a background image in CSS?. Explain background properties including gradients.
+- Define text and font properties in CSS. Explain commonly used text and font properties with examples.
+- What is Bootstrap?. Explain the role of Bootstrap in responsive web design.
 
 ---
 
