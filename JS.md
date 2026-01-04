@@ -3978,6 +3978,8 @@ console.log(validatePassword("weakpass")); // false
 
     - **Hint:** passwordRegex = `/^[a-zA-Z][a-zA-Z\d]{4,}\d$/`
 
+20. What are the major differences between Sessions and Cookies?
+
 ### Design following form in HTML and display the value in the result box after calculating basic arithmetic operation based on the user input with the use of JavaScript.
 
 ![Calculator](/images/unit-2/calculator1.webp "Calculator")
