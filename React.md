@@ -283,7 +283,7 @@ This image depicts the Component-Based Architecture of React. It illustrates how
 - **Component Tree:** The diagram shows branches stemming from the root to various child components (e.g., `Header`, `MainContent`, `Footer`).
 - **Composition:** It highlights that a React UI is not a single large file but a collection of small, independent, and reusable pieces. Each component can contain its own sub-components, allowing for a deeply nested and modular structure.
 
-![React Workflow](/images/unit-2/workflow_jsx.jpg)
+![React Workflow](/images/unit-2/workflow_jsx.webp)
 
 **React Workflow**
 
