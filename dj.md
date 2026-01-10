@@ -2,9 +2,9 @@
 
 ---
 
-## Module 1: Getting Started
+## Getting Started
 
-### 1.2 What is Django?
+### What is Django?
 
 - Django is a high-level Python web framework
 - Follows the MTV (Model-Template-View) architecture pattern
@@ -20,7 +20,7 @@
 
 ---
 
-### 1.3 The Course Prerequisites
+### The Course Prerequisites
 
 - Basic Python knowledge (variables, functions, classes, loops)
 - Understanding of HTML/CSS basics
@@ -35,11 +35,11 @@
 
 ---
 
-## Module 2: Course Setup
+## Django Setup
 
-### 2.2 Installing Python & Django
+### Installing Python & Django
 
-**Step 1: Install Python**
+**Install Python**
 
 ```bash
 # Download Python from python.org
@@ -49,7 +49,7 @@ python --version
 python3 --version
 ```
 
-**Step 2: Create Virtual Environment**
+**Create Virtual Environment**
 
 ```bash
 # Create project folder
@@ -66,7 +66,7 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-**Step 3: Install Django**
+**Install Django**
 
 ```bash
 pip install django
@@ -76,7 +76,7 @@ django-admin --version
 
 ---
 
-### 2.3 Creating a Django Project
+### Creating a Django Project
 
 ```bash
 # Create new Django project
@@ -95,20 +95,20 @@ django-admin startproject myproject
 
 ---
 
-### 2.4 Installing an IDE
+### Installing an IDE
 
 **Recommended: Visual Studio Code**
 
 1. Download from code.visualstudio.com
 2. Install Python extension
-3. Install Django extension
-4. Configure Python interpreter to use virtual environment
+3. Install Pylance extension
+4. Install autopep8 extension
+5. Install Django extension
+6. Configure Python interpreter to use virtual environment
 
 ---
 
-### 2.5 Analyzing the Created Project
-
-**Key Files Explained:**
+### Analyzing the Created Project
 
 | File          | Purpose                                            |
 | ------------- | -------------------------------------------------- |
@@ -120,7 +120,7 @@ django-admin startproject myproject
 
 ---
 
-### 2.6 Starting a Development Server
+### Starting a Development Server
 
 ```bash
 # Navigate to project folder
@@ -141,9 +141,9 @@ python manage.py runserver 8080
 
 ---
 
-### 2.7 Django Apps
+### Django Apps
 
-**Concept:** Apps are modular components of a Django project.
+Apps are modular components of a Django project.
 
 **Creating an App:**
 
@@ -177,32 +177,9 @@ INSTALLED_APPS = [
 
 ---
 
-### 2.8 More Advanced Setup Steps
+## URLs & Views
 
-**Database Setup (SQLite is default):**
-
-```bash
-python manage.py migrate
-```
-
-**Create Superuser:**
-
-```bash
-python manage.py createsuperuser
-```
-
-**Project Settings to Configure:**
-
-- `DEBUG = True` (development) / `False` (production)
-- `ALLOWED_HOSTS = []`
-- `TIME_ZONE = 'UTC'`
-- `LANGUAGE_CODE = 'en-us'`
-
----
-
-## Module 3: URLs & Views
-
-### 3.2 Creating a New Project
+### Creating a New Project
 
 ```bash
 # Create fresh project for this module
@@ -213,22 +190,22 @@ python manage.py startapp challenges
 
 ---
 
-### 3.3 What are URLs & Views?
+### What are URLs & Views?
 
 **URLs:** Map web addresses to Python functions
 **Views:** Python functions that handle requests and return responses
 
 **Flow:**
 
-```
+```text
 User Request → URL Pattern → View Function → Response
 ```
 
 ---
 
-### 3.4 Creating a First View & URL
+### Creating a First View & URL
 
-**Step 1: Create View (challenges/views.py)**
+**Create View (challenges/views.py)**
 
 ```python
 from django.http import HttpResponse
@@ -237,7 +214,7 @@ def index(request):
     return HttpResponse("Welcome to the Challenges App!")
 ```
 
-**Step 2: Create App URLs (challenges/urls.py)**
+**Create App URLs (challenges/urls.py)**
 
 ```python
 from django.urls import path
@@ -248,7 +225,7 @@ urlpatterns = [
 ]
 ```
 
-**Step 3: Include in Project URLs (urlsviews_project/urls.py)**
+**Include in Project URLs (urlsviews_project/urls.py)**
 
 ```python
 from django.contrib import admin
@@ -262,7 +239,7 @@ urlpatterns = [
 
 ---
 
-### 3.5 Adding More Views & URLs
+### Adding More Views & URLs
 
 ```python
 # challenges/views.py
@@ -282,7 +259,7 @@ urlpatterns = [
 
 ---
 
-### 3.6 Dynamic Path Segments & Captured Values
+### Dynamic Path Segments & Captured Values
 
 ```python
 # challenges/urls.py
@@ -297,7 +274,7 @@ def monthly_challenge(request, month):
 
 ---
 
-### 3.7 Path Converters
+### Path Converters
 
 **Available Converters:**
 
@@ -309,13 +286,14 @@ def monthly_challenge(request, month):
 
 ```python
 # Examples
+path('<str:month>/', views.monthly_challenge),
 path('<int:month>/', views.monthly_challenge_by_number),
 path('<slug:title>/', views.post_detail),
 ```
 
 ---
 
-### 3.8 Adding More Dynamic View Logic
+### Adding More Dynamic View Logic
 
 ```python
 # challenges/views.py
@@ -335,7 +313,7 @@ def monthly_challenge(request, month):
 
 ---
 
-### 3.9 Redirects
+### Redirects
 
 ```python
 from django.http import HttpResponseRedirect
@@ -355,7 +333,7 @@ def monthly_challenge_by_number(request, month):
 
 ---
 
-### 3.10 The Reverse Function & Named URLs
+### The Reverse Function & Named URLs
 
 ```python
 from django.urls import reverse
@@ -370,7 +348,7 @@ def monthly_challenge_by_number(request, month):
 
 ---
 
-### 3.11 Returning HTML
+### Returning HTML
 
 ```python
 def index(request):
@@ -395,7 +373,7 @@ def index(request):
 
 ### 4.2 Adding & Registering Templates
 
-**Step 1: Create templates folder**
+**Create templates folder**
 
 ```
 challenges/
@@ -404,7 +382,7 @@ challenges/
         └── index.html
 ```
 
-**Step 2: Register app in settings.py**
+**Register app in settings.py**
 
 ```python
 INSTALLED_APPS = [
