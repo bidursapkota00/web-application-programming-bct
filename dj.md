@@ -1,4 +1,4 @@
-# Django Complete Course - Step by Step Guide
+# Django Complete Course
 
 ---
 
@@ -105,6 +105,15 @@ django-admin startproject myproject
 4. Install autopep8 extension
 5. Install Django extension
 6. Configure Python interpreter to use virtual environment
+
+```json
+// .vscode/settings.json
+{
+  "python.pythonPath": "/usr/local/bin/python3",
+  "window.zoomLevel": 6,
+  "python.languageServer": "Pylance"
+}
+```
 
 ---
 
@@ -296,11 +305,22 @@ path('<slug:title>/', views.post_detail),
 ### Adding More Dynamic View Logic
 
 ```python
+from django.http import HttpResponse, HttpResponseNotFound
+
 # challenges/views.py
 monthly_challenges = {
     'january': 'Exercise daily for 30 minutes',
     'february': 'Read one book',
     'march': 'Learn something new each day',
+    'april': 'Drink at least 2 liters of water daily',
+    'may': 'Wake up early every day',
+    'june': 'Practice a new skill for 20 minutes daily',
+    'july': 'Avoid junk food for the entire month',
+    'august': 'Write a daily journal entry',
+    'september': 'Learn and revise one topic each day',
+    'october': 'Limit social media usage to 30 minutes per day',
+    'november': 'Express gratitude by writing one thankful note daily',
+    'december': 'Reflect on the year and plan goals for next year',
 }
 
 def monthly_challenge(request, month):
@@ -308,7 +328,7 @@ def monthly_challenge(request, month):
         challenge_text = monthly_challenges[month.lower()]
         return HttpResponse(challenge_text)
     except KeyError:
-        return HttpResponse("Invalid month!", status=404)
+        return HttpResponseNotFound("This month is not supported!")
 ```
 
 ---
@@ -325,9 +345,9 @@ def old_url(request):
 
 # Method 2: redirect shortcut (preferred)
 def monthly_challenge_by_number(request, month):
-    months = ['january', 'february', 'march', ...]
+    months = list(monthly_challenges.keys())
     if month > len(months):
-        return HttpResponse("Invalid month")
+        return HttpResponse("Invalid month", status=404)
     return redirect(f'/challenges/{months[month-1]}/')
 ```
 
@@ -339,7 +359,7 @@ def monthly_challenge_by_number(request, month):
 from django.urls import reverse
 
 def monthly_challenge_by_number(request, month):
-    months = ['january', 'february', 'march', ...]
+    months = list(monthly_challenges.keys())
     redirect_month = months[month - 1]
     # Using reverse with named URL
     redirect_url = reverse('monthly-challenge', args=[redirect_month])
@@ -365,6 +385,34 @@ def index(request):
     </html>
     """
     return HttpResponse(html_content)
+```
+
+```py
+def monthly_challenge(request, month):
+    try:
+        challenge_text = monthly_challenges[month.lower()]
+        response_data = f"<h1>{challenge_text}</h1>"
+        return HttpResponse(response_data)
+    except KeyError:
+        return HttpResponseNotFound("<h1>This month is not supported!</h1>")
+```
+
+**Dynamic generation of html with list of links**
+
+```py
+def index(request):
+    list_items = ""
+    months = list(monthly_challenges.keys())
+
+    for month in months:
+        capitalized_month = month.capitalize()
+        month_path = reverse("month-challenge", args=[month])
+        list_items += f"<li><a href=\"{month_path}\">{capitalized_month}</a></li>"
+
+    # "<li><a href="...">January</a></li><li><a href="...">February</a></li>..."
+
+    response_data = f"<ul>{list_items}</ul>"
+    return HttpResponse(response_data)
 ```
 
 ---
