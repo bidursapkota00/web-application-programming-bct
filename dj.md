@@ -6,6 +6,8 @@
 
 ## Table of Content
 
+- [MVC Architecture](#mvc-architecture)
+- [Role of Backend](#role-of-backend)
 - [Getting Started](#getting-started)
 - [Django Setup](#django-setup)
 - [URLs & Views](#urls--views)
@@ -13,32 +15,308 @@
 
 ---
 
-## Getting Started
+## MVC Architecture
 
-### What is Django?
+### What is MVC?
 
-- Django is a high-level Python web framework
-- Follows the MTV (Model-Template-View) architecture pattern
-- Built-in features: admin panel, ORM, authentication, security
-- "Batteries included" philosophy - comes with everything you need
+MVC (Model-View-Controller) is a software architectural pattern that separates an application into three interconnected components. This separation helps organize code, making it easier to develop, test, and maintain applications.
 
-**Why Django?**
+MVC was originally developed for desktop applications but has become the foundation for most modern web frameworks. It promotes the principle of **"separation of concerns"** — each component has a specific job and should not interfere with the responsibilities of others.
 
-1. Rapid development
-2. Secure by default
-3. Scalable architecture
-4. Large community and excellent documentation
+#### Model (The Data Layer)
+
+The Model represents the data and the business logic of the application. It is responsible for:
+
+- **Data Storage**: Managing how data is stored, retrieved, and updated
+- **Business Rules**: Enforcing the rules and logic of the application
+- **Data Validation**: Ensuring data integrity before saving
+- **Database Communication**: Interacting with databases to persist data
+
+The Model is completely independent of the user interface. It doesn't know or care how data will be displayed — it only focuses on data management.
+
+**Responsibilities of Model:**
+
+- Define data structures (tables, fields, relationships)
+- Validate data before saving
+- Perform database queries
+- Implement business logic (calculations, rules)
+- Notify controllers/views when data changes
 
 ---
 
-### The Course Prerequisites
+#### View (The Presentation Layer)
 
-- Basic Python knowledge (variables, functions, classes, loops)
-- Understanding of HTML/CSS basics
-- Familiarity with command line/terminal
-- A computer with internet access
-- Basic understanding of databases
-- Experience with any text editor/IDE
+The View is responsible for displaying data to the user. It is the visual representation of the Model's data and handles:
+
+- **Data Display**: Presenting information in a user-friendly format
+- **User Interface**: Rendering HTML, CSS, and visual elements
+- **Templates**: Using template engines to generate dynamic content
+- **No Business Logic**: Views should only display, never process data
+
+The View receives data from the Controller and renders it. It should be passive and not directly access the Model.
+
+**Responsibilities of View:**
+
+- Render HTML templates
+- Display data from the Model
+- Format data for presentation
+- Handle visual layout and styling
+- Generate responses (HTML, JSON, XML)
+
+---
+
+#### Controller (The Logic Layer)
+
+The Controller acts as an intermediary between the Model and View. It:
+
+- **Handles User Input**: Receives requests from users
+- **Processes Requests**: Interprets what the user wants to do
+- **Coordinates Flow**: Decides which Model to use and which View to render
+- **Updates Model**: Instructs the Model to update data
+- **Selects View**: Chooses the appropriate View for the response
+
+The Controller is the "traffic cop" of the application, directing the flow of data between components.
+
+**Responsibilities of Controller:**
+
+- Receive HTTP requests
+- Parse and validate user input
+- Call appropriate Model methods
+- Pass data to Views
+- Return HTTP responses
+
+![MVC Diagram](/images/unit-3/mvc.webp)
+
+#### Detailed Request-Response Cycle
+
+1. **User Action**: User clicks a link or submits a form
+2. **Request Sent**: Browser sends HTTP request to server
+3. **Routing**: Server routes request to appropriate Controller
+4. **Controller Processing**: Controller receives request, validates input
+5. **Model Interaction**: Controller calls Model methods to get/modify data
+6. **Data Processing**: Model performs database operations, applies business rules
+7. **Data Return**: Model returns data to Controller
+8. **View Selection**: Controller selects appropriate View
+9. **View Rendering**: View receives data and generates HTML
+10. **Response Sent**: HTML sent back to user's browser
+11. **Display**: Browser renders the page for user
+
+#### Benefits of MVC Architecture
+
+| Benefit                    | Description                                                              |
+| -------------------------- | ------------------------------------------------------------------------ |
+| **Separation of Concerns** | Each component has a single responsibility, making code cleaner          |
+| **Maintainability**        | Changes in one component don't affect others                             |
+| **Testability**            | Each component can be tested independently                               |
+| **Parallel Development**   | Frontend and backend developers can work simultaneously                  |
+| **Reusability**            | Models and Views can be reused across different parts of the application |
+| **Scalability**            | Easier to scale individual components                                    |
+| **Code Organization**      | Clear structure makes codebase easier to navigate                        |
+
+#### MVC in Different Frameworks
+
+| Framework     | Language   | MVC Implementation           |
+| ------------- | ---------- | ---------------------------- |
+| Django        | Python     | MTV (Model-Template-View)    |
+| Ruby on Rails | Ruby       | Traditional MVC              |
+| ASP.NET MVC   | C#         | Traditional MVC              |
+| Spring MVC    | Java       | Traditional MVC              |
+| Laravel       | PHP        | Traditional MVC              |
+| Express.js    | JavaScript | Flexible (can implement MVC) |
+
+#### Simple MVC Example
+
+```python
+# eg
+```
+
+---
+
+---
+
+---
+
+## Role of Backend
+
+#### What is Backend?
+
+The backend (also called server-side) is the part of a web application that users don't see. It runs on the server and handles:
+
+- Processing user requests
+- Managing databases
+- Running business logic
+- Authenticating users
+- Sending responses to the frontend
+
+While the frontend is what users interact with (buttons, forms, colors), the backend is what makes everything actually work behind the scenes.
+
+#### Frontend vs Backend
+
+| Frontend                                            | Backend                                                      |
+| --------------------------------------------------- | ------------------------------------------------------------ |
+| Runs in the user’s browser.                         | Runs on the web server.                                      |
+| Uses languages such as HTML, CSS, and JavaScript.   | Uses languages such as Python, Java, PHP, Ruby, and Node.js. |
+| Is visible to the user and allows interaction.      | Is hidden from the user.                                     |
+| Focuses on building the user interface.             | Handles data processing and application logic.               |
+| Includes elements like buttons, forms, and layouts. | Includes databases, APIs, and authentication systems.        |
+
+---
+
+#### Core Responsibilities of Backend
+
+#### 1. Server Logic
+
+The server is a computer that:
+
+- **Listens** for incoming requests from clients
+- **Processes** those requests
+- **Sends** appropriate responses back
+
+**How servers work:**
+
+1. Server runs continuously, listening on a port (e.g., port 80 or 443)
+2. When a request arrives, server creates a new thread/process to handle it
+3. Request is processed and response is generated
+4. Response is sent back to the client
+5. Connection may be kept open or closed
+
+![HTTP](/images/unit-3/http.webp)
+
+#### 2. Routing
+
+Routing is the process of determining what code should run based on the URL requested. It maps URLs to specific functions or handlers.
+
+**Why routing matters:**
+
+- `/home` → Show homepage
+- `/products` → Show product list
+- `/products/123` → Show product with ID 123
+- `/login` → Show login form
+- `/api/users` → Return user data as JSON
+
+**Types of routes:**
+
+- **Static routes**: Exact URL match (`/about`, `/contact`)
+- **Dynamic routes**: URLs with variables (`/users/<id>`, `/products/<category>`)
+- **Wildcard routes**: Catch-all patterns (`/blog/*`)
+
+**Route parameters:**
+
+- **Path parameters**: `/users/123` (123 is the user ID)
+- **Query parameters**: `/search?q=python&page=2`
+
+#### 3. Business Logic
+
+Business logic is the code that implements the rules and operations specific to your application. It's the "brain" of your application.
+
+**Examples of business logic:**
+
+- Calculating total price with discounts
+- Checking if user has permission to perform an action
+- Validating that email addresses are unique
+- Processing payment transactions
+- Generating reports from data
+
+**Business logic should:**
+
+- Be separate from presentation (Views)
+- Be testable in isolation
+- Be reusable across different interfaces
+- Handle edge cases and errors
+
+**Example business rules:**
+
+```text
+- Users must be 18+ to register
+- Orders over $100 get free shipping
+- Passwords must be at least 8 characters
+- Users can only edit their own posts
+- Maximum 5 items per cart
+```
+
+#### 4. Security Layers
+
+Security is critical for backend applications. Multiple layers protect the application:
+
+**a) Authentication (Who are you?)**
+
+- Verifying user identity
+- Login systems (username/password)
+- Multi-factor authentication
+- OAuth/Social login
+
+**b) Authorization (What can you do?)**
+
+- Checking user permissions
+- Role-based access control (Admin, User, Guest)
+- Resource ownership verification
+
+**c) Input Validation**
+
+- Sanitizing user input
+- Preventing SQL injection
+- Preventing XSS (Cross-Site Scripting)
+- Validating data types and formats
+
+**d) Data Protection**
+
+- Encrypting sensitive data
+- Hashing passwords (never store plain text!)
+- HTTPS for data in transit
+- Secure session management
+
+**e) CSRF Protection**
+
+- Preventing cross-site request forgery
+- Using CSRF tokens in forms
+
+**f) Rate Limiting**
+
+- Preventing brute force attacks
+- Limiting API requests per user
+
+---
+
+---
+
+---
+
+## Django
+
+Django is a high-level Python web framework that enables rapid development of secure and maintainable websites.
+
+**Django's Philosophy:**
+
+- **"Batteries included"**: Comes with everything you need out of the box
+- **DRY (Don't Repeat Yourself)**: Encourages code reuse
+- **Rapid Development**: Build applications quickly
+- **Security First**: Protects against common vulnerabilities
+
+#### Why Choose Django?
+
+| Feature                             | Benefit                                      |
+| ----------------------------------- | -------------------------------------------- |
+| **Built-in Admin Panel**            | Automatic admin interface for managing data  |
+| **ORM (Object-Relational Mapping)** | Work with databases using Python, not SQL    |
+| **Security**                        | Protection against SQL injection, XSS, CSRF  |
+| **Scalability**                     | Powers large sites like Instagram, Pinterest |
+| **Large Community**                 | Extensive documentation and packages         |
+| **Authentication System**           | Built-in user management                     |
+
+### MTV Pattern (Django's Version of MVC)
+
+Django uses **MTV (Model-Template-View)** pattern, which is similar to MVC but with different naming:
+
+| MVC        | Django MTV   | Role                                |
+| ---------- | ------------ | ----------------------------------- |
+| Model      | **Model**    | Data structure and database         |
+| View       | **Template** | HTML presentation                   |
+| Controller | **View**     | Business logic and request handling |
+
+- In Django, a "View" is a Python function/class that handles requests (like a Controller)
+- A "Template" is the HTML file that displays data (like a View in MVC)
+
+![alt text](/images/unit-3/mtv.webp)
 
 ---
 
