@@ -26,7 +26,7 @@ export function createForm(editId, itemToEdit) {
     const value = input.value.trim();
 
     if (!value) {
-      showToast("please provide value", "error");
+      alert("please provide value", "error");
       return;
     }
 

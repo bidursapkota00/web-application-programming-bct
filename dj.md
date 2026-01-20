@@ -8,7 +8,7 @@
 
 - [MVC Architecture](#mvc-architecture)
 - [Role of Backend](#role-of-backend)
-- [Getting Started](#getting-started)
+- [Django](#django)
 - [Django Setup](#django-setup)
 - [URLs & Views](#urls--views)
 - [Templates & Static Files](#templates--static-files)
