@@ -119,13 +119,12 @@ JavaScript has evolved far beyond its web browser origins and can now run on num
 
 - **Dynamic typing:** Variables don't need explicit type declarations
 - **Interpreted:** Code is executed directly without compilation
-- **Event-driven:** Responds to user interactions like clicks, form submissions
+- **Event-driven:** Excellent support for handling user interactions and asynchronous events through event listeners and callbacks.
 - **Cross-platform:** Code can run on any device with a JavaScript engine. Runs in browsers, servers (Node.js), mobile apps, and desktop applications
 - **Regular Expression Support:** Built-in support for pattern matching and text manipulation through regular expressions.
 - **Extensive Ecosystem:** Massive library and framework ecosystem through npm, providing solutions for virtually any development need.
 - **Asynchronous Programming:** Native support for handling asynchronous operations through callbacks, promises, and async/await syntax.
 - **Automatic Memory Management:** Built-in garbage collection handles memory allocation and deallocation automatically.
-- **Event-Driven Programming:** Excellent support for handling user interactions and asynchronous events through event listeners and callbacks.
 
 ### Structure of JavaScript Program
 
@@ -283,6 +282,10 @@ A module is a JavaScript file that:
 - Can export variables, functions, or classes
 - Can import from other modules
 - By default, variables in a module are not global
+
+```js
+<script type="module" src="math.js"></script>
+```
 
 **Exporting from a module**
 
@@ -1498,7 +1501,6 @@ console.log(num.toPrecision(4)); // 123.5
 - It is a special value in JavaScript that indicates a value that is not a valid number — even though it is technically of the type number.
 
 - When does NaN occur?
-
   - When you try to perform a numerical operation on a non-numeric value.
 
   - When parsing a string that doesn't contain a valid number using parseInt, parseFloat, etc.
@@ -1662,7 +1664,7 @@ let userInput = window.prompt("Enter your name:");
     <div style="height: 200vh"></div>
     <script>
       console.log(
-        "Window inner size: " + window.innerWidth + "x" + window.innerHeight
+        "Window inner size: " + window.innerWidth + "x" + window.innerHeight,
       );
 
       // Handling button clicks
@@ -1679,7 +1681,7 @@ let userInput = window.prompt("Enter your name:");
       // Handling window events
       window.addEventListener("resize", () => {
         console.log(
-          "Window resized to: " + window.innerWidth + "x" + window.innerHeight
+          "Window resized to: " + window.innerWidth + "x" + window.innerHeight,
         );
       });
 
@@ -2508,7 +2510,7 @@ When you click the button, the **event object** provides details about the click
 
     const name = document.querySelector("#name").value;
     const gender = document.querySelector(
-      "input[name='gender']:checked"
+      "input[name='gender']:checked",
     )?.value;
     const hobbies = [
       ...document.querySelectorAll("input[name='hobbies']:checked"),
@@ -3921,7 +3923,7 @@ console.log(validatePassword("weakpass")); // false
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$/;
         if (!passwordRegex.test(password)) {
           alert(
-            "Password must be at least 8 characters long and should contain at least one uppercase letter, one lowercase letter, one number and one symbol"
+            "Password must be at least 8 characters long and should contain at least one uppercase letter, one lowercase letter, one number and one symbol",
           );
           return;
         }
@@ -3968,14 +3970,12 @@ console.log(validatePassword("weakpass")); // false
 16. What is Event Object? Explain with Example.
 17. Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf or image. File size should be less than 2MB. Email field must include @. Password must be at least 6 character long. Password and confirm password should match.
 18. Create a form to input Name, Email, password.
-
     - All fields are required.
     - Email should be valid.
     - Phone number should be valid. (`9*********` or `01*******`)
     - Password must be at least 8 character long and it should contain at least one uppercase letter, one lowercase letter, one number and one symbol
 
 19. Create an HTML signup form with fields Name, Email, Password, and Age. Validate the form using JavaScript. Write functions for validating each of the elements. All of the fields should not be empty. The Email address should be a valid email, the password should be of length at least 6 and should start with the alphabet and end with a digit. The age should be between 8 and 60.
-
     - **Hint:** passwordRegex = `/^[a-zA-Z][a-zA-Z\d]{4,}\d$/`
 
 20. What are the major differences between Sessions and Cookies?
@@ -5118,7 +5118,7 @@ function render() {
 
   const formElement = createForm(
     editId,
-    editId ? items.find((item) => item.id === editId) : null
+    editId ? items.find((item) => item.id === editId) : null,
   ); // edited line
   const itemsElement = createItems(items);
 
@@ -5521,7 +5521,7 @@ $("input[name='gender']:checked");
         // Attribute Selectors
         $("[data-toggle]").addClass("highlight");
         $('[data-toggle="modal"]').text(
-          "Changed button text by Attribute selector"
+          "Changed button text by Attribute selector",
         );
         $("input[name='gender']:checked").parent().addClass("highlight");
 
@@ -5875,7 +5875,7 @@ $(".element").animate(
     height: "150px",
     width: "150px",
   },
-  1000
+  1000,
 );
 
 // Queue multiple animations
@@ -5915,7 +5915,7 @@ $(".element")
             top: "150px",
             opacity: 0.25,
           },
-          2000
+          2000,
         )
         .delay(2000)
         // .animate({ top: 0, opacity: 1 }, 2000, () => console.log("complete"));
@@ -6029,7 +6029,7 @@ AJAX (Asynchronous JavaScript and XML) allows web pages to update asynchronously
 
           data.forEach(function (post) {
             $("#content").append(
-              `<p><strong>${post.id}:</strong> ${post.title}</p>`
+              `<p><strong>${post.id}:</strong> ${post.title}</p>`,
             );
           });
         },
@@ -6212,7 +6212,7 @@ AJAX (Asynchronous JavaScript and XML) allows web pages to update asynchronously
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$/;
       if (!passwordRegex.test(password))
         return alert(
-          "Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, one number, and one symbol"
+          "Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, one number, and one symbol",
         );
 
       if (password !== confirmPassword)

@@ -458,7 +458,7 @@ INSTALLED_APPS = [
 
 ### Challenge Template
 
-**Add content in challenges/templates/challenges/challenge.html**
+**Add content in `challenges/templates/challenges/challenge.html`**
 
 ```html
 <!DOCTYPE html>
@@ -593,7 +593,7 @@ def monthly_challenge(request, month):
 
 **First, update index view with template**
 
-**Create challenges/templates/challenges/index.html template**
+**Create `challenges/templates/challenges/index.html` template**
 
 ```html
 <!DOCTYPE html>
@@ -706,7 +706,7 @@ TEMPLATES = [
 ]
 ```
 
-**Create templates/base.html (Parent Template):**
+**Create `templates/base.html` (Parent Template):**
 
 ```html
 <!DOCTYPE html>
@@ -768,7 +768,7 @@ TEMPLATES = [
 
 ### Including Partial Template Snippets
 
-**Create challenges\templates\challenges\includes\header.html**
+**Create `challenges\templates\challenges\includes\header.html`**
 
 ```html
 <header>
@@ -793,7 +793,7 @@ TEMPLATES = [
 
 ### 404 Templates
 
-**Create templates/404.html:**
+**Create `templates/404.html`:**
 
 ```html
 <pre>
@@ -824,7 +824,7 @@ def monthly_challenge(request, month):
         raise Http404()
 ```
 
-**Note:** Set `DEBUG = False` in settings.py to see custom 404 pages.
+**Note:** Set `DEBUG = False` and `ALLOWED_HOSTS = ['*']` in settings.py to see custom 404 pages.
 
 ---
 
@@ -883,7 +883,7 @@ STATICFILES_DIRS = [
 ]
 ```
 
-**Create static\styles.css**
+**Create `static\styles.css`**
 
 ```css
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap");
@@ -912,7 +912,7 @@ body {
 
 ### More CSS
 
-**Create challenges\static\challenges\includes\header.css**
+**Create `challenges\static\challenges\includes\header.css`**
 
 ```css
 header {
@@ -942,7 +942,7 @@ header nav a:active {
 }
 ```
 
-**Create challenges\static\challenges\challenge.css**
+**Create `challenges\static\challenges\css\challenge.css`**
 
 ```css
 h1,
@@ -969,7 +969,7 @@ h2 {
 }
 ```
 
-**Update challenges\static\challenges\challenges.css**
+**Update `challenges\static\challenges\css\challenges.css`**
 
 ```css
 ul {
@@ -1011,7 +1011,7 @@ li a:active {
 }
 ```
 
-**Update challenges\templates\challenges\challenge.html**
+**Update `challenges\templates\challenges\challenge.html`**
 
 ```html
 <pre>
@@ -1025,7 +1025,7 @@ li a:active {
 </pre>
 ```
 
-**Update challenges\templates\challenges\index.html**
+**Update `challenges\templates\challenges\index.html`**
 
 ```html
 <pre>
