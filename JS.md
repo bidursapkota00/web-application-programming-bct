@@ -284,7 +284,7 @@ A module is a JavaScript file that:
 - By default, variables in a module are not global
 
 ```js
-<script type="module" src="math.js"></script>
+<script type="module" src="script.js"></script>
 ```
 
 **Exporting from a module**
@@ -297,7 +297,7 @@ export const add = (a, b) => a + b;
 export const sub = (a, b) => a - b;
 ```
 
-Importing:
+Importing in `script.js`
 
 ```js
 import { add, sub } from "./math.js";
@@ -1518,7 +1518,7 @@ console.log(typeof NaN); // "number" (Yes, it's strange!)
 ### Checking NaN
 
 ```js
-console.log(isNaN("hello")); // true
+console.log(Number.isNaN("hello")); // true
 console.log(Number.isNaN(NaN)); // true
 ```
 

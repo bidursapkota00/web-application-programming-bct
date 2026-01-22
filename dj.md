@@ -318,14 +318,6 @@ Django uses **MTV (Model-Template-View)** pattern, which is similar to MVC but w
 
 ![alt text](/images/unit-3/mtv.webp)
 
----
-
----
-
----
-
-## Django Setup
-
 ### Installing Python & Django
 
 **Install Python**
@@ -370,17 +362,92 @@ django-admin --version
 ```bash
 # Create new Django project
 django-admin startproject myproject
-
-# Project structure created:
-# myproject/
-#   ├── manage.py
-#   └── myproject/
-#       ├── __init__.py
-#       ├── settings.py
-#       ├── urls.py
-#       ├── asgi.py
-#       └── wsgi.py
 ```
+
+When you create a Django project, the following structure is generated:
+
+```text
+myproject/                 # Root directory (any name)
+│
+├── manage.py             # Command-line utility for Django
+│
+├── myproject/            # Project package (same name as root)
+│   ├── __init__.py       # Makes this a Python package
+│   ├── settings.py       # Project configuration
+│   ├── urls.py           # Main URL routing
+│   ├── asgi.py           # Asynchronous Server Gateway Interface (ASGI) configuration
+│   └── wsgi.py           # Web Server Gateway Interface (WSGI) configuration
+│
+```
+
+#### Key Files
+
+#### 1. manage.py
+
+The command-line tool for interacting with Django:
+
+```bash
+python manage.py runserver     # Start development server
+python manage.py makemigrations # Create migration files
+python manage.py migrate       # Apply migrations to database
+python manage.py createsuperuser # Create admin user
+```
+
+#### 2. settings.py
+
+Contains all project configuration:
+
+- Database settings
+- Installed apps
+- Middleware
+- Templates configuration
+- Static files settings
+- Security settings
+
+#### 3. urls.py
+
+Maps URLs to views:
+
+```python
+# eg
+from django.urls import path
+from myapp import views
+
+urlpatterns = [
+    path('', views.home),
+    path('about/', views.about),
+]
+```
+
+#### 4. models.py
+
+Defines database structure:
+
+```python
+# eg
+from django.db import models
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+```
+
+#### 5. views.py
+
+Handles request processing:
+
+```python
+# eg
+from django.shortcuts import render
+from .models import Article
+
+def article_list(request):
+    articles = Article.objects.all()
+    return render(request, 'articles.html', {'articles': articles})
+```
+
+<!-- more -->
 
 ---
 
@@ -399,22 +466,9 @@ django-admin startproject myproject
 // .vscode/settings.json
 {
   "python.pythonPath": "/usr/local/bin/python3",
-  "window.zoomLevel": 6,
   "python.languageServer": "Pylance"
 }
 ```
-
----
-
-### Analyzing the Created Project
-
-| File          | Purpose                                            |
-| ------------- | -------------------------------------------------- |
-| `manage.py`   | Command-line utility for project management        |
-| `settings.py` | Project configuration (database, apps, middleware) |
-| `urls.py`     | URL routing configuration                          |
-| `wsgi.py`     | Web Server Gateway Interface for deployment        |
-| `asgi.py`     | Asynchronous Server Gateway Interface              |
 
 ---
 
@@ -441,7 +495,24 @@ python manage.py runserver 8080
 
 ### Django Apps
 
-Apps are modular components of a Django project.
+A Django project can contain multiple apps. An app is a web application that does something specific.
+
+**Project vs App:**
+
+- **Project**: The entire website (configuration, settings)
+- **App**: A specific feature/module (blog, users, products)
+
+**Example structure with multiple apps:**
+
+```
+myproject/
+├── manage.py
+├── myproject/          # Project settings
+├── blog/               # Blog app
+├── users/              # User management app
+├── products/           # E-commerce app
+└── api/                # REST API app
+```
 
 **Creating an App:**
 
@@ -470,7 +541,55 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     # ... other apps
     'myapp',  # Add your app here
+    'blog',    # Another custom app
+    'users',   # Another custom app
 ]
+```
+
+**Complete Project and App Structure**
+
+```text
+myproject/                 # Root directory (any name)
+│
+├── manage.py             # Command-line utility for Django
+│
+├── myproject/            # Project package (same name as root)
+│   ├── __init__.py       # Makes this a Python package
+│   ├── settings.py       # Project configuration
+│   ├── urls.py           # Main URL routing
+│   ├── asgi.py           # ASGI configuration (async)
+│   └── wsgi.py           # WSGI configuration (deployment)
+│
+└── myapp/                # Your application (created separately)
+    ├── __init__.py       # Makes this a Python package
+    ├── admin.py          # Admin panel configuration
+    ├── apps.py           # App configuration
+    ├── models.py         # Database models
+    ├── views.py          # View functions/classes
+    ├── urls.py           # App-specific URL routing
+    ├── tests.py          # Unit tests
+    └── migrations/       # Database migration files
+        └── __init__.py
+```
+
+**Simple Complete Django Setup Steps**
+
+```python
+# 1. Install Django
+# pip install django
+
+# 2. Create project
+# django-admin startproject mysite
+
+# 3. Create app
+# cd mysite
+# python manage.py startapp blog
+
+# 4. Register app in settings.py
+# Add 'blog' to INSTALLED_APPS
+
+# 5. Run server
+# python manage.py runserver
 ```
 
 ---
@@ -490,13 +609,85 @@ python manage.py startapp challenges
 
 ### What are URLs & Views?
 
-**URLs:** Map web addresses to Python functions
-**Views:** Python functions that handle requests and return responses
+**URLs:** Maps web addresses (URLs) to views
+**Views:** Python function or class that receives a web request and returns a web response. Views contain the logic that processes requests.
 
-**Flow:**
+```python
+# eg
+from django.http import HttpResponse
 
-```text
-User Request → URL Pattern → View Function → Response
+def hello(request):
+    return HttpResponse("Hello, World!")
+```
+
+**The request object contains:**
+
+- `request.method` - HTTP method (GET, POST, etc.)
+- `request.GET` - Query parameters dictionary
+- `request.POST` - POST data dictionary
+- `request.body` - Raw request body
+- `request.headers` - HTTP headers
+- `request.user` - Currently logged-in user
+- `request.session` - Session data
+
+---
+
+### Handling Different HTTP Methods
+
+```python
+# eg
+from django.http import HttpResponse
+
+def article_view(request):
+    if request.method == 'GET':
+        return HttpResponse("Showing articles")
+
+    elif request.method == 'POST':
+        return HttpResponse("Creating article")
+
+    elif request.method == 'DELETE':
+        return HttpResponse("Deleting article")
+```
+
+### URL Configuration
+
+Connect URLs to views in **urls.py**:
+
+```python
+# eg
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+    path('articles/', views.article_list, name='articles'),
+    path('articles/<int:id>/', views.article_detail, name='article_detail'),
+]
+```
+
+### Accessing URL Parameters
+
+```python
+# eg
+def article_detail(request, id):
+    # id is automatically passed from the URL
+    return HttpResponse(f"Article ID: {id}")
+```
+
+---
+
+### Query Parameters
+
+Access GET parameters from the URL:
+
+```python
+# eg
+# URL: /search/?q=python&page=2
+
+def search(request):
+    query = request.GET.get('q', '')       # 'python'
+    page = request.GET.get('page', '1')    # '2'
+    return HttpResponse(f"Searching: {query}, Page: {page}")
 ```
 
 ---
