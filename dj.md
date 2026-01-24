@@ -12,6 +12,7 @@
 - [Django Setup](#django-setup)
 - [URLs & Views](#urls--views)
 - [Templates & Static Files](#templates--static-files)
+- [Data and Models](#data-and-models)
 
 ---
 
@@ -101,6 +102,8 @@ The Controller is the "traffic cop" of the application, directing the flow of da
 10. **Response Sent**: HTML sent back to user's browser
 11. **Display**: Browser renders the page for user
 
+---
+
 #### Benefits of MVC Architecture
 
 | Benefit                    | Description                                                              |
@@ -113,6 +116,8 @@ The Controller is the "traffic cop" of the application, directing the flow of da
 | **Scalability**            | Easier to scale individual components                                    |
 | **Code Organization**      | Clear structure makes codebase easier to navigate                        |
 
+---
+
 #### MVC in Different Frameworks
 
 | Framework     | Language   | MVC Implementation           |
@@ -123,12 +128,6 @@ The Controller is the "traffic cop" of the application, directing the flow of da
 | Spring MVC    | Java       | Traditional MVC              |
 | Laravel       | PHP        | Traditional MVC              |
 | Express.js    | JavaScript | Flexible (can implement MVC) |
-
-#### Simple MVC Example
-
-```python
-# eg
-```
 
 ---
 
@@ -409,7 +408,6 @@ Contains all project configuration:
 Maps URLs to views:
 
 ```python
-# eg
 from django.urls import path
 from myapp import views
 
@@ -424,13 +422,11 @@ urlpatterns = [
 Defines database structure:
 
 ```python
-# eg
 from django.db import models
 
-class Article(models.Model):
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+class Book(models.Model):
+  title = models.CharField(max_length=50)
+  rating = models.IntegerField()
 ```
 
 #### 5. views.py
@@ -438,16 +434,16 @@ class Article(models.Model):
 Handles request processing:
 
 ```python
-# eg
 from django.shortcuts import render
-from .models import Article
 
-def article_list(request):
-    articles = Article.objects.all()
-    return render(request, 'articles.html', {'articles': articles})
+from .models import Book
+
+def index(request):
+  books = Book.objects.all()
+  return render(request, "book_outlet/index.html", {
+    "books": books
+  })
 ```
-
-<!-- more -->
 
 ---
 
@@ -504,7 +500,7 @@ A Django project can contain multiple apps. An app is a web application that doe
 
 **Example structure with multiple apps:**
 
-```
+```text
 myproject/
 ├── manage.py
 ├── myproject/          # Project settings
@@ -596,17 +592,6 @@ myproject/                 # Root directory (any name)
 
 ## URLs & Views
 
-### Creating a New Project
-
-```bash
-# Create fresh project for this module
-django-admin startproject urlsviews_project
-cd urlsviews_project
-python manage.py startapp challenges
-```
-
----
-
 #### What is Routing?
 
 Routing is the mechanism that maps URLs to specific code (views/controllers). When a user visits a URL, the routing system determines which function should handle the request.
@@ -630,46 +615,6 @@ Django uses a URL dispatcher defined in `urls.py` files. It matches incoming URL
 
 ---
 
-#### Basic URL Configuration
-
-**Project-level urls.py:**
-
-```python
-# eg
-from django.contrib import admin
-from django.urls import path, include
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('blog/', include('blog.urls')),  # Include app URLs
-    path('api/', include('api.urls')),
-]
-```
-
-**App-level urls.py (blog/urls.py):**
-
-```python
-# eg
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.post_list, name='post_list'),
-    path('<int:pk>/', views.post_detail, name='post_detail'),
-    path('create/', views.post_create, name='post_create'),
-]
-```
-
-#### Functional View
-
-```python
-# eg
-from django.http import HttpResponse
-
-def hello(request):
-    return HttpResponse("Hello, World!")
-```
-
 **The request object contains:**
 
 - `request.method` - HTTP method (GET, POST, etc.)
@@ -685,7 +630,7 @@ def hello(request):
 ### Handling Different HTTP Methods
 
 ```python
-# eg
+# Simple Example
 from django.http import HttpResponse
 
 def article_view(request):
@@ -697,31 +642,6 @@ def article_view(request):
 
     elif request.method == 'DELETE':
         return HttpResponse("Deleting article")
-```
-
-### URL Configuration
-
-Connect URLs to views in **urls.py**:
-
-```python
-# eg
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.home, name='home'),
-    path('articles/', views.article_list, name='articles'),
-    path('articles/<int:id>/', views.article_detail, name='article_detail'),
-]
-```
-
-### Accessing URL Parameters
-
-```python
-# eg
-def article_detail(request, id):
-    # id is automatically passed from the URL
-    return HttpResponse(f"Article ID: {id}")
 ```
 
 ---
@@ -742,71 +662,15 @@ def search(request):
 
 ---
 
-### Path Converters
-
-```python
-# eg
-from django.urls import path
-
-urlpatterns = [
-    # Integer parameter
-    path('article/<int:id>/', views.article_detail),
-
-    # String parameter
-    path('category/<str:name>/', views.category_view),
-
-    # Slug parameter (letters, numbers, hyphens, underscores)
-    path('post/<slug:slug>/', views.post_detail),
-
-    # Multiple parameters
-    path('archive/<int:year>/<int:month>/', views.archive),
-]
-```
-
-**In views:**
-
-```python
-# eg
-def article_detail(request, id):
-    # id is automatically converted to integer
-    return HttpResponse(f"Article {id}")
-
-def archive(request, year, month):
-    return HttpResponse(f"Archive: {year}/{month}")
-```
-
----
-
-### Named URLs
-
-Give URLs names for easy referencing:
-
-```python
-# eg
-path('articles/', views.article_list, name='article_list'),
-path('articles/<int:id>/', views.article_detail, name='article_detail'),
-```
-
-**Using named URLs in templates:**
-
-```html
-<a href="{% url 'article_list' %}">All Articles</a>
-<a href="{% url 'article_detail' id=5 %}">Article 5</a>
-```
-
-**Using named URLs in views:**
-
-```python
-# eg
-from django.urls import reverse
-from django.shortcuts import redirect
-
-def my_view(request):
-    url = reverse('article_detail', args=[5])  # '/articles/5/'
-    return redirect('article_list')  # Redirect by name
-```
-
 ### Creating a First View & URL
+
+**Creating fresh Project**
+
+```bash
+django-admin startproject urlsviews_project
+cd urlsviews_project
+python manage.py startapp challenges
+```
 
 **Create View (challenges/views.py)**
 
@@ -817,7 +681,7 @@ def index(request):
     return HttpResponse("Welcome to the Challenges App!")
 ```
 
-**Create App URLs (challenges/urls.py)**
+**Create App level URLs (challenges/urls.py)**
 
 ```python
 from django.urls import path
@@ -863,6 +727,8 @@ urlpatterns = [
 ---
 
 ### Dynamic Path Segments & Captured Values
+
+**Accessing URL Parameters**
 
 ```python
 # challenges/urls.py
@@ -1298,7 +1164,7 @@ def article_api(request, id=None):
 
 ### Template Directory Structure
 
-```
+```text
 myproject/
 ├── templates/              # Project-wide templates
 │   ├── base.html
@@ -2176,16 +2042,6 @@ Book.objects.all()[1].is_bestselling
 # True
 ```
 
-```py
-from django.contrib import admin
-from django.urls import path, include
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("", include("book_outlet.urls"))
-]
-```
-
 **Delete**
 
 ```py
@@ -2384,6 +2240,16 @@ Book.objects.aggregate(total=Count('id'))
 **Register url**
 
 ```py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path("", include("book_outlet.urls"))
+]
+```
+
+```py
 from django.urls import path
 
 from . import views
@@ -2517,146 +2383,6 @@ def book_detail(request, id):
       </li>
     {% endfor %}
   </ul>
-{% endblock %}
-</pre>
-```
-
----
-
-**Using slug instead of id**
-
-**Update model**
-
-```py
-from django.core import validators
-from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.urls import reverse
-from django.utils.text import slugify
-
-
-class Book(models.Model):
-    title = models.CharField(max_length=50)
-    rating = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)])
-    author = models.CharField(null=True, max_length=100)
-    is_bestselling = models.BooleanField(default=False)
-    # Harry Potter 1 => harry-potter-1
-    slug = models.SlugField(default="", null=False, db_index=True)
-
-    def get_absolute_url(self):
-        return reverse("book-detail", args=[self.slug])
-        # return reverse("book-detail", args=[self.id])
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.title} ({self.rating})"
-```
-
-**Just call save again to add slug**
-
-```py
-Book.objects.get(title="Harry Potter 1").save()
-Book.objects.get(title="Harry Potter 1").slug
-# 'harry-potter-1'
-Book.objects.get(title="Lord of the Rings").save()
-Book.objects.get(title="Lord of the Rings").slug
-# 'lord-of-the-rings'
-Book.objects.get(title="My Story").save()
-Book.objects.get(title="Some random book").save()
-```
-
-**Update urls**
-
-```py
-from django.urls import path
-
-from . import views
-
-urlpatterns = [
-    path("", views.index),
-    path("<slug:slug>", views.book_detail, name="book-detail")
-]
-```
-
-**Update view**
-
-```py
-def book_detail(request, slug):
-  book = get_object_or_404(Book, slug=slug)
-  return render(request, "book_outlet/book_detail.html", {
-    "title": book.title,
-    "author": book.author,
-    "rating": book.rating,
-    "is_bestseller": book.is_bestselling
-  })
-```
-
-**Update index page**
-
-```html
-<pre>
-{% extends "book_outlet/base.html" %}
-
-{% block title %}
-  All Books
-{% endblock %}
-
-{% block content %}
-  <ul>
-    {% for book in books %}
-      <li><a href="{{ book.get_absolute_url }}">{{ book.title }}</a> (Rating: {{ book.rating }})</li>
-    {% endfor %}
-  </ul>
-{% endblock %}
-</pre>
-```
-
----
-
-**Adding Summary**
-
-**Update view**
-
-```py
-from django.db.models import Avg
-
-def index(request):
-  books = Book.objects.all().order_by("-rating")
-  num_books = books.count()
-  avg_rating = books.aggregate(Avg("rating")) # rating__avg, rating__min
-
-  return render(request, "book_outlet/index.html", {
-    "books": books,
-    "total_number_of_books": num_books,
-    "average_rating": avg_rating
-  })
-```
-
-**Update index page**
-
-```html
-<pre>
-{% extends "book_outlet/base.html" %}
-
-{% block title %}
-  All Books
-{% endblock %}
-
-{% block content %}
-  <ul>
-    {% for book in books %}
-      <li><a href="{{ book.get_absolute_url }}">{{ book.title }}</a> (Rating: {{ book.rating }})</li>
-    {% endfor %}
-  </ul>
-
-  <hr>
-
-  <p>Total Number Of Books: {{ total_number_of_books }}</p>
-  <p>Average Rating: {{ average_rating.rating__avg }}</p>
 {% endblock %}
 </pre>
 ```
