@@ -607,10 +607,60 @@ python manage.py startapp challenges
 
 ---
 
-### What are URLs & Views?
+#### What is Routing?
+
+Routing is the mechanism that maps URLs to specific code (views/controllers). When a user visits a URL, the routing system determines which function should handle the request.
+
+#### What are URLs & Views?
+
+**URL Dispatcher**
+
+Django uses a URL dispatcher defined in `urls.py` files. It matches incoming URLs against patterns and calls the corresponding view.
+
+**How URL matching works:**
+
+1. Request comes in with a URL (e.g., `/articles/5/`)
+2. Django checks patterns in order from top to bottom
+3. First matching pattern wins
+4. Associated view function is called
+5. View returns a response
 
 **URLs:** Maps web addresses (URLs) to views
 **Views:** Python function or class that receives a web request and returns a web response. Views contain the logic that processes requests.
+
+---
+
+#### Basic URL Configuration
+
+**Project-level urls.py:**
+
+```python
+# eg
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls')),  # Include app URLs
+    path('api/', include('api.urls')),
+]
+```
+
+**App-level urls.py (blog/urls.py):**
+
+```python
+# eg
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.post_list, name='post_list'),
+    path('<int:pk>/', views.post_detail, name='post_detail'),
+    path('create/', views.post_create, name='post_create'),
+]
+```
+
+#### Functional View
 
 ```python
 # eg
@@ -691,6 +741,70 @@ def search(request):
 ```
 
 ---
+
+### Path Converters
+
+```python
+# eg
+from django.urls import path
+
+urlpatterns = [
+    # Integer parameter
+    path('article/<int:id>/', views.article_detail),
+
+    # String parameter
+    path('category/<str:name>/', views.category_view),
+
+    # Slug parameter (letters, numbers, hyphens, underscores)
+    path('post/<slug:slug>/', views.post_detail),
+
+    # Multiple parameters
+    path('archive/<int:year>/<int:month>/', views.archive),
+]
+```
+
+**In views:**
+
+```python
+# eg
+def article_detail(request, id):
+    # id is automatically converted to integer
+    return HttpResponse(f"Article {id}")
+
+def archive(request, year, month):
+    return HttpResponse(f"Archive: {year}/{month}")
+```
+
+---
+
+### Named URLs
+
+Give URLs names for easy referencing:
+
+```python
+# eg
+path('articles/', views.article_list, name='article_list'),
+path('articles/<int:id>/', views.article_detail, name='article_detail'),
+```
+
+**Using named URLs in templates:**
+
+```html
+<a href="{% url 'article_list' %}">All Articles</a>
+<a href="{% url 'article_detail' id=5 %}">Article 5</a>
+```
+
+**Using named URLs in views:**
+
+```python
+# eg
+from django.urls import reverse
+from django.shortcuts import redirect
+
+def my_view(request):
+    url = reverse('article_detail', args=[5])  # '/articles/5/'
+    return redirect('article_list')  # Redirect by name
+```
 
 ### Creating a First View & URL
 
@@ -835,6 +949,8 @@ def monthly_challenge_by_number(request, month):
 
 ### The Reverse Function & Named URLs
 
+Give URLs names for easy referencing:
+
 ```python
 from django.urls import reverse
 
@@ -902,6 +1018,317 @@ def index(request):
 ---
 
 ## Templates & Static Files
+
+Templating is the process of generating dynamic HTML by combining a template (HTML structure) with data. Templates separate presentation from logic.
+
+---
+
+### Django Template Language (DTL)
+
+Django's template language allows you to:
+
+- Insert dynamic data with `{{ variable }}`
+- Use logic with `{% tag %}`
+- Apply filters with `{{ variable|filter }}`
+
+---
+
+A Django template is a text file (usually HTML) that contains static content mixed with Django Template Language (DTL) to dynamically display data sent from a view.
+
+### Template Variables
+
+Output data using double curly braces:
+
+```html
+<!-- eg -->
+<h1>{{ title }}</h1>
+<p>Welcome, {{ user.username }}!</p>
+<p>You have {{ message_count }} messages.</p>
+```
+
+**Accessing nested data:**
+
+```html
+<!-- eg -->
+{{ user.profile.avatar }} {{ article.author.name }} {{ items.0 }}
+<!-- First item in list -->
+```
+
+---
+
+### Template Tags
+
+Control logic using `{% tag %}`:
+
+**If/Else:**
+
+```html
+<!-- eg -->
+{% if user.is_authenticated %}
+<p>Welcome back, {{ user.username }}!</p>
+{% else %}
+<p>Please <a href="/login/">log in</a>.</p>
+{% endif %}
+```
+
+**For Loop:**
+
+```html
+<!-- eg -->
+<ul>
+  {% for article in articles %}
+  <li>{{ article.title }}</li>
+  {% empty %}
+  <li>No articles found.</li>
+  {% endfor %}
+</ul>
+```
+
+**Loop variables:**
+
+```html
+<!-- eg -->
+{% for item in items %} {{ forloop.counter }}
+<!-- 1, 2, 3, ... -->
+{{ forloop.counter0 }}
+<!-- 0, 1, 2, ... -->
+{{ forloop.first }}
+<!-- True if first iteration -->
+{{ forloop.last }}
+<!-- True if last iteration -->
+{% endfor %}
+```
+
+---
+
+### Template Filters
+
+Transform data using `|filter`:
+
+```html
+<!-- eg -->
+{{ name|upper }}
+<!-- JOHN -->
+{{ name|lower }}
+<!-- john -->
+{{ name|title }}
+<!-- John Doe -->
+{{ text|truncatewords:20 }}
+<!-- First 20 words... -->
+{{ date|date:"Y-m-d" }}
+<!-- 2026-01-17 -->
+{{ price|floatformat:2 }}
+<!-- 19.99 -->
+{{ list|length }}
+<!-- 5 -->
+{{ value|default:"N/A" }}
+<!-- Shows "N/A" if empty -->
+{{ html_content|safe }}
+<!-- Renders HTML (careful!) -->
+```
+
+---
+
+### Template Inheritance
+
+Create a base template and extend it:
+
+**base.html:**
+
+```html
+<!-- eg -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}My Site{% endblock %}</title>
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about/">About</a>
+    </nav>
+
+    <main>{% block content %}{% endblock %}</main>
+
+    <footer>&copy; 2026 My Site</footer>
+  </body>
+</html>
+```
+
+**home.html:**
+
+```html
+<!-- eg -->
+{% extends "base.html" %} {% block title %}Home - My Site{% endblock %} {% block
+content %}
+<h1>Welcome to My Site</h1>
+<p>This is the homepage.</p>
+{% endblock %}
+```
+
+---
+
+### Including Templates
+
+Reuse template fragments:
+
+**navbar.html:**
+
+```html
+<!-- eg -->
+<nav>
+  <a href="/">Home</a>
+  <a href="/about/">About</a>
+</nav>
+```
+
+**page.html:**
+
+```html
+<!-- eg -->
+{% include "navbar.html" %}
+
+<h1>Page Content</h1>
+```
+
+**Passing variables to includes:**
+
+```html
+<!-- eg -->
+{% include "card.html" with title="My Card" content="Card content" %}
+```
+
+---
+
+```html
+<!-- eg -->
+<h1>Hello {{ user_name }}</h1>
+```
+
+```py
+# eg
+from django.shortcuts import render
+
+def hello_view(request):
+    context = {
+        'user_name': 'Bidur'
+    }
+    return render(request, 'hello.html', context)
+```
+
+### JSON Responses
+
+- For APIs, return JSON instead of HTML.
+- By default, `JsonResponse` expects a dictionary.
+
+```python
+# eg
+from django.http import JsonResponse
+
+def api_articles(request):
+    data = {
+        'articles': [
+            {'id': 1, 'title': 'First'},
+            {'id': 2, 'title': 'Second'},
+        ],
+        'count': 2
+    }
+    return JsonResponse(data)
+```
+
+**Response:**
+
+```json
+// eg
+{
+  "articles": [
+    { "id": 1, "title": "First" },
+    { "id": 2, "title": "Second" }
+  ],
+  "count": 2
+}
+```
+
+### Setting Custom Status Codes
+
+```python
+# eg
+from django.http import HttpResponse, JsonResponse
+
+def custom_status(request):
+    return HttpResponse("Created!", status=201)
+
+def json_error(request):
+    return JsonResponse({'error': 'Bad request'}, status=400)
+```
+
+---
+
+### Complete View Example
+
+```python
+# eg
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render, get_object_or_404
+
+def article_api(request, id=None):
+    """Handle article CRUD operations"""
+
+    if request.method == 'GET':
+        if id:
+            # Return single article
+            return JsonResponse({'id': id, 'title': 'Sample'})
+        else:
+            # Return all articles
+            return JsonResponse({'articles': []})
+
+    elif request.method == 'POST':
+        # Create new article
+        return JsonResponse({'message': 'Created'}, status=201)
+
+    elif request.method == 'DELETE':
+        if id:
+            # Delete article
+            return JsonResponse({'message': 'Deleted'})
+        return JsonResponse({'error': 'ID required'}, status=400)
+
+    # Method not allowed
+    return HttpResponse(status=405)
+```
+
+### Template Directory Structure
+
+```
+myproject/
+├── templates/              # Project-wide templates
+│   ├── base.html
+│   └── navbar.html
+│
+├── blog/
+│   └── templates/
+│       └── blog/           # App-specific templates
+│           ├── post_list.html
+│           └── post_detail.html
+│
+└── users/
+    └── templates/
+        └── users/
+            ├── login.html
+            └── profile.html
+```
+
+**Summary**
+
+| Concept           | Description                                     |
+| ----------------- | ----------------------------------------------- |
+| **HTTP Request**  | Message from client to server                   |
+| **HTTP Response** | Message from server to client                   |
+| **HTTP Methods**  | GET, POST, PUT, PATCH, DELETE                   |
+| **Status Codes**  | 2xx success, 4xx client error, 5xx server error |
+| **View**          | Python function/class handling requests         |
+| **render()**      | Returns HTML from template                      |
+| **JsonResponse**  | Returns JSON data                               |
+| **redirect()**    | Sends user to different URL                     |
 
 ### Adding & Registering Templates
 
@@ -1511,5 +1938,826 @@ li a:active {
 ---
 
 ---
+
+---
+
+## Data and Models
+
+### What is ORM?
+
+ORM (Object-Relational Mapping) is a technique that lets you work with databases using your programming language's objects instead of writing SQL queries.
+
+**Benefits of ORM:**
+
+- Write Python (or other language) instead of SQL
+- Database-agnostic code
+- Automatic SQL injection protection
+- Easier to maintain and read
+- Object-oriented database access
+
+**How ORM Works:**
+
+![Class to Table Mapping](/images/unit-3/class-to-table-mapping.webp)
+
+**Supported Databases:**
+
+- SQLite (default, file-based)
+- PostgreSQL (recommended for production)
+- MySQL
+- Oracle
+
+**Create fresh project**
+
+```bash
+# Create fresh project for this module
+django-admin startproject book_store
+cd book_store
+python manage.py startapp book_outlet
+```
+
+**Register in settings.py:**
+
+```python
+INSTALLED_APPS = [
+    # ...
+    'book_outlet',
+]
+```
+
+### Django ORM
+
+Django includes a powerful built-in ORM. You define models as Python classes, and Django handles the database operations.
+
+**Defining Models**
+
+Models are defined in `models.py`:
+
+```py
+from django.db import models
+
+class Book(models.Model):
+  title = models.CharField(max_length=50)
+  rating = models.IntegerField()
+```
+
+**Equivalent to sql below after we migrate**
+
+```sql
+CREATE TABLE books (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  rating INTEGER NOT NULL
+)
+```
+
+**Create file `db.sqlite3` if not present already.**
+
+---
+
+### Common Field Types
+
+| Field Type        | Description                      | Example                               |
+| ----------------- | -------------------------------- | ------------------------------------- |
+| `CharField`       | Short text (requires max_length) | `name = CharField(max_length=100)`    |
+| `TextField`       | Long text                        | `bio = TextField()`                   |
+| `IntegerField`    | Integer numbers                  | `age = IntegerField()`                |
+| `FloatField`      | Decimal numbers                  | `price = FloatField()`                |
+| `BooleanField`    | True/False                       | `active = BooleanField(default=True)` |
+| `DateField`       | Date only                        | `birth_date = DateField()`            |
+| `DateTimeField`   | Date and time                    | `created_at = DateTimeField()`        |
+| `EmailField`      | Email validation                 | `email = EmailField()`                |
+| `URLField`        | URL validation                   | `website = URLField()`                |
+| `ForeignKey`      | Many-to-one relationship         | `author = ForeignKey(Author)`         |
+| `ManyToManyField` | Many-to-many relationship        | `tags = ManyToManyField(Tag)`         |
+
+---
+
+### Field Options
+
+| Option         | Description                          |
+| -------------- | ------------------------------------ |
+| `max_length`   | Maximum length for CharField         |
+| `default`      | Default value for the field          |
+| `null=True`    | Allow NULL in database               |
+| `blank=True`   | Allow empty in forms                 |
+| `unique=True`  | Enforce unique values                |
+| `choices`      | Limit to specific choices            |
+| `auto_now_add` | Set to current time on creation      |
+| `auto_now`     | Update to current time on every save |
+
+---
+
+### Migrations
+
+After defining/changing models, you need to create and apply migrations:
+
+```bash
+# Create migration files based on model changes
+python manage.py makemigrations
+
+# Apply migrations to database
+python manage.py migrate
+```
+
+**What migrations do:**
+
+1. Detect changes in your models
+2. Generate SQL to update the database
+3. Keep track of database schema versions
+4. Allow reverting changes
+
+**Open Django Shell**
+
+```bash
+python3 manage.py shell
+```
+
+**Create Book**
+
+```py
+from book_outlet.models import Book
+harry_potter = Book(title="Harry Potter 1 – The Philosopher's Stone", rating=5)
+harry_potter.save()
+```
+
+**Equivalent to:**
+
+```sql
+INSERT INTO books ( title, rating )
+VALUES ('Lord of the Rings', 5)
+```
+
+```py
+lord_of_the_rings = Book(title="Lord of the Rings", rating=4)
+lord_of_the_rings.save()
+```
+
+**Read Book**
+
+```py
+Book.objects.all()
+# <QuerySet [<Book: Book object (1)>, <Book: Book object (2)>]>
+```
+
+**Equivalent to:**
+
+```sql
+SELECT * FROM books;
+```
+
+---
+
+**Add more attributes and str method**
+
+```py
+from django.core import validators
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+class Book(models.Model):
+    title = models.CharField(max_length=50)
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)])
+    author = models.CharField(null=True, max_length=100)
+    is_bestselling = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.title} ({self.rating})"
+```
+
+**Migrate**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+
+# Open Django Shell
+python3 manage.py shell
+```
+
+**Read and Update**
+
+```py
+from book_outlet.models import Book
+
+Book.objects.all()[1]
+# <Book: Lord of the Rings (4)>
+
+Book.objects.all()[1].author
+Book.objects.all()[1].is_bestselling
+# False
+
+Book.objects.all()[1].rating
+# 4
+
+harry_potter = Book.objects.all()[0]
+harry_potter.title
+# "Harry Potter 1 – The Philosopher's Stone"
+
+lotr = Book.objects.all()[1]
+lotr.title
+# 'Lord of the Rings'
+
+harry_potter.author = "J.K. Rowling"
+harry_potter.is_bestselling = True
+harry_potter.save()
+
+Book.objects.all()[0].author
+# 'J.K. Rowling'
+
+lotr.author = "J.R.R. Tolkien"
+lotr.is_bestselling = True
+lotr.save()
+
+Book.objects.all()[1].author
+# 'J.R.R. Tolkien'
+
+Book.objects.all()[1].is_bestselling
+# True
+```
+
+```py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path("", include("book_outlet.urls"))
+]
+```
+
+**Delete**
+
+```py
+harry_potter = Book.objects.all()[0]
+harry_potter.delete()
+# (1, {'book_outlet.Book': 1})
+Book.objects.all()
+# <QuerySet [<Book: Lord of the Rings (4)>]>
+```
+
+**create method**
+
+```py
+Book.objects.create(title="Harry Potter 1", rating=5, author="J.K. Rowling", is_bestselling=True)
+# <Book: Harry Potter 1 (5)>
+Book.objects.all()
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>]>
+Book.objects.create(title="My Story", rating=2, author="Max", is_bestselling=False)
+# <Book: My Story (2)>
+Book.objects.create(title="Some random book", rating=1, author="Random Dude", is_bestselling=False)
+# <Book: Some random book (1)>
+Book.objects.all()
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>, <Book: My Story (2)>, <Book: Some random book (1)>]>
+```
+
+**get method**
+
+```py
+Book.objects.get(title="My Story")
+# <Book: My Story (2)>
+Book.objects.get(rating=5)
+# <Book: Harry Potter 1 (5)>
+Book.objects.all()
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>, <Book: My Story (2)>, <Book: Some random book (1)>]>
+Book.objects.get(is_bestselling=True)
+# Traceback (most recent call last):
+#   ...
+# django.core.exceptions.MultipleObjectsReturned: get() returned more than one Book -- it returned 2!
+```
+
+**filter method**
+
+```py
+Book.objects.filter(is_bestselling=True)
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>]>
+Book.objects.filter(is_bestselling=False)
+# <QuerySet [<Book: My Story (2)>, <Book: Some random book (1)>]>
+Book.objects.filter(is_bestselling=False, rating=2)
+# <QuerySet [<Book: My Story (2)>]>
+Book.objects.filter(rating<3)
+# Traceback (most recent call last):
+#   ...
+# NameError: name 'rating' is not defined
+Book.objects.filter(rating__lt=3)
+# <QuerySet [<Book: My Story (2)>, <Book: Some random book (1)>]>
+Book.objects.filter(rating__lt=3, title__contains="Story")
+# <QuerySet [<Book: My Story (2)>]>
+```
+
+**case-insensitive lookups and "OR" queries using Q objects**
+
+```py
+Book.objects.filter(rating__lt=3, title__contains="story")
+# <QuerySet []>, but works for sqlite
+Book.objects.filter(rating__lt=3, title__icontains="story")
+# <QuerySet [<Book: My Story (2)>]>
+from django.db.models import Q
+Book.objects.filter(Q(rating__lt=3) | Q(is_bestselling=True)))
+#   File "<console>", line 1
+#     Book.objects.filter(Q(rating__lt=3) | Q(is_bestselling=True)))
+#                                                                 ^
+# SyntaxError: unmatched ')'
+Book.objects.filter(Q(rating__lt=3) | Q(is_bestselling=True))
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>, <Book: My Story (2)>, <Book: Some random book (1)>]>
+
+Book.objects.filter(Q(rating__lt=3) | Q(is_bestselling=True), Q(author="J.K. Rowling"))
+# <QuerySet [<Book: Harry Potter 1 (5)>]>
+Book.objects.filter(Q(rating__lt=3) | Q(is_bestselling=True), author="J.K. Rowling")
+# <QuerySet [<Book: Harry Potter 1 (5)>]>
+Book.objects.filter(author="J.K. Rowling", Q(rating__lt=3) | Q(is_bestselling=True))
+#   File "<console>", line 1
+#     Book.objects.filter(author="J.K. Rowling", Q(rating__lt=3) | Q(is_bestselling=True))
+#                                              ^
+# SyntaxError: positional argument follows keyword argument
+```
+
+**Query Optimizations**
+
+```py
+bestsellers = Book.objects.filter(is_bestselling=True)
+amazing_bestsellers = bestsellers.filter(rating__gt=4)
+print(bestsellers)
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>]>
+print(amazing_bestsellers)
+# <QuerySet [<Book: Harry Potter 1 (5)>]>
+print(bestsellers)
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>]>
+
+print(Book.objects.filter(rating__gt=3))
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>]>
+print(Book.objects.filter(rating__gt=3))
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>]>
+good_books = Book.objects.filter(rating__gt=3)
+print(good_books)
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>]>
+print(good_books)
+# <QuerySet [<Book: Lord of the Rings (4)>, <Book: Harry Potter 1 (5)>]>
+```
+
+**Ordering and Aggregation**
+
+```py
+# Ordering
+Book.objects.order_by('title')  # Ascending
+Book.objects.order_by('-title')  # Descending
+# Aggregation
+Book.objects.aggregate(Avg('rating'))
+Book.objects.aggregate(total=Count('id'))
+```
+
+---
+
+### QuerySet Methods
+
+| Method       | Description                                   |
+| ------------ | --------------------------------------------- |
+| `all()`      | Get all records                               |
+| `get()`      | Get single record (raises error if not found) |
+| `filter()`   | Get records matching conditions               |
+| `exclude()`  | Get records NOT matching conditions           |
+| `order_by()` | Sort records                                  |
+| `first()`    | Get first record                              |
+| `last()`     | Get last record                               |
+| `count()`    | Count records                                 |
+| `exists()`   | Check if records exist                        |
+| `values()`   | Return dictionaries instead of objects        |
+| `distinct()` | Remove duplicates                             |
+
+---
+
+### Lookup Expressions (Filters)
+
+| Lookup       | Description               | Example                             |
+| ------------ | ------------------------- | ----------------------------------- |
+| `exact`      | Exact match               | `filter(name__exact='John')`        |
+| `iexact`     | Case-insensitive exact    | `filter(name__iexact='john')`       |
+| `contains`   | Contains substring        | `filter(title__contains='Python')`  |
+| `icontains`  | Case-insensitive contains | `filter(title__icontains='python')` |
+| `startswith` | Starts with               | `filter(name__startswith='J')`      |
+| `endswith`   | Ends with                 | `filter(email__endswith='.com')`    |
+| `gt`         | Greater than              | `filter(age__gt=18)`                |
+| `gte`        | Greater than or equal     | `filter(age__gte=18)`               |
+| `lt`         | Less than                 | `filter(price__lt=100)`             |
+| `lte`        | Less than or equal        | `filter(price__lte=100)`            |
+| `in`         | In a list                 | `filter(id__in=[1, 2, 3])`          |
+| `isnull`     | Is NULL                   | `filter(bio__isnull=True)`          |
+
+---
+
+**Implementing Models in Django**
+
+**Create book_outlet\templates\book_outlet\base.html**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock title %}</title>
+  </head>
+  <body>
+    {% block content %} {% endblock content %}
+  </body>
+</html>
+```
+
+**Create book_outlet\templates\book_outlet\index.html**
+
+```html
+<pre>
+{% extends "book_outlet/base.html" %}
+
+{% block title %}
+  All Books
+{% endblock title %}
+
+{% block content %}
+  <ul>
+    <li>Book 1...</li>
+  </ul>
+{% endblock content %}
+</pre>
+```
+
+**Register url**
+
+```py
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("", views.index)
+]
+```
+
+**Create view**
+
+```py
+from django.shortcuts import render
+
+def index(request):
+  return render(request, "book_outlet/index.html")
+```
+
+**Update view**
+
+```py
+from django.shortcuts import render
+
+from .models import Book
+
+def index(request):
+  books = Book.objects.all()
+  return render(request, "book_outlet/index.html", {
+    "books": books
+  })
+```
+
+**Update book_outlet\templates\book_outlet\index.html**
+
+```html
+<pre>
+{% extends "book_outlet/base.html" %}
+
+{% block title %}
+  All Books
+{% endblock title %}
+
+{% block content %}
+  <ul>
+    {% for book in books %}
+      <li>{{ book.title }} (Rating: {{ book.rating }})</li>
+    {% endfor %}
+  </ul>
+{% endblock content %}
+</pre>
+```
+
+---
+
+**Create book_outlet\templates\book_outlet\book_detail.html**
+
+```html
+<pre>
+{% extends "book_outlet/base.html" %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <h2>{{ author }}</h2>
+  <p>The book has a rating of {{ rating }} 
+  {% if is_bestseller %}
+    and is a bestseller.
+  {% else %}
+    but isn't a bestseller.
+  {% endif %}
+  </p>
+{% endblock %}
+</pre>
+```
+
+**Add Book detail url**
+
+```py
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("", views.index),
+    path("<int:id>", views.book_detail, name="book-detail")
+]
+```
+
+**Add Book detail view**
+
+```py
+from django.shortcuts import get_object_or_404, render
+from django.http import Http404
+
+
+def book_detail(request, id):
+  # try:
+  #   book = Book.objects.get(pk=id)
+  # except:
+  #   raise Http404()
+  book = get_object_or_404(Book, pk=id)
+  return render(request, "book_outlet/book_detail.html", {
+    "title": book.title,
+    "author": book.author,
+    "rating": book.rating,
+    "is_bestseller": book.is_bestselling
+  })
+```
+
+**Update index page**
+
+```html
+<pre>
+{% extends "book_outlet/base.html" %}
+
+{% block title %}
+  All Books
+{% endblock %}
+
+{% block content %}
+  <ul>
+    {% for book in books %}
+      <li>
+        <a href="{% url 'book-detail' book.id %}">
+          {{ book.title }}
+        </a>
+        (Rating: {{ book.rating }})
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+</pre>
+```
+
+---
+
+**Using slug instead of id**
+
+**Update model**
+
+```py
+from django.core import validators
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.urls import reverse
+from django.utils.text import slugify
+
+
+class Book(models.Model):
+    title = models.CharField(max_length=50)
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)])
+    author = models.CharField(null=True, max_length=100)
+    is_bestselling = models.BooleanField(default=False)
+    # Harry Potter 1 => harry-potter-1
+    slug = models.SlugField(default="", null=False, db_index=True)
+
+    def get_absolute_url(self):
+        return reverse("book-detail", args=[self.slug])
+        # return reverse("book-detail", args=[self.id])
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.title} ({self.rating})"
+```
+
+**Just call save again to add slug**
+
+```py
+Book.objects.get(title="Harry Potter 1").save()
+Book.objects.get(title="Harry Potter 1").slug
+# 'harry-potter-1'
+Book.objects.get(title="Lord of the Rings").save()
+Book.objects.get(title="Lord of the Rings").slug
+# 'lord-of-the-rings'
+Book.objects.get(title="My Story").save()
+Book.objects.get(title="Some random book").save()
+```
+
+**Update urls**
+
+```py
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("", views.index),
+    path("<slug:slug>", views.book_detail, name="book-detail")
+]
+```
+
+**Update view**
+
+```py
+def book_detail(request, slug):
+  book = get_object_or_404(Book, slug=slug)
+  return render(request, "book_outlet/book_detail.html", {
+    "title": book.title,
+    "author": book.author,
+    "rating": book.rating,
+    "is_bestseller": book.is_bestselling
+  })
+```
+
+**Update index page**
+
+```html
+<pre>
+{% extends "book_outlet/base.html" %}
+
+{% block title %}
+  All Books
+{% endblock %}
+
+{% block content %}
+  <ul>
+    {% for book in books %}
+      <li><a href="{{ book.get_absolute_url }}">{{ book.title }}</a> (Rating: {{ book.rating }})</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+</pre>
+```
+
+---
+
+**Adding Summary**
+
+**Update view**
+
+```py
+from django.db.models import Avg
+
+def index(request):
+  books = Book.objects.all().order_by("-rating")
+  num_books = books.count()
+  avg_rating = books.aggregate(Avg("rating")) # rating__avg, rating__min
+
+  return render(request, "book_outlet/index.html", {
+    "books": books,
+    "total_number_of_books": num_books,
+    "average_rating": avg_rating
+  })
+```
+
+**Update index page**
+
+```html
+<pre>
+{% extends "book_outlet/base.html" %}
+
+{% block title %}
+  All Books
+{% endblock %}
+
+{% block content %}
+  <ul>
+    {% for book in books %}
+      <li><a href="{{ book.get_absolute_url }}">{{ book.title }}</a> (Rating: {{ book.rating }})</li>
+    {% endfor %}
+  </ul>
+
+  <hr>
+
+  <p>Total Number Of Books: {{ total_number_of_books }}</p>
+  <p>Average Rating: {{ average_rating.rating__avg }}</p>
+{% endblock %}
+</pre>
+```
+
+---
+
+---
+
+---
+
+## Form Data Handling and Sessions
+
+#### What are HTML Forms?
+
+HTML forms are the primary way users submit data to a web server. Forms allow users to:
+
+- Enter text (usernames, passwords, comments)
+- Select options (dropdowns, checkboxes, radio buttons)
+- Upload files
+- Submit data for processing
+
+#### HTTP Methods for Forms
+
+| Method   | Usage                               | Data Location                    |
+| -------- | ----------------------------------- | -------------------------------- |
+| **GET**  | Retrieving data, search forms       | URL query string (`?name=value`) |
+| **POST** | Submitting data, creating resources | Request body (hidden from URL)   |
+
+**When to use each:**
+
+- **GET**: Search forms, filters, bookmarkable pages
+- **POST**: Login forms, registration, file uploads, sensitive data
+
+---
+
+### Basic HTML Form
+
+```html
+<form method="POST" action="/submit/">
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" />
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" />
+
+  <button type="submit">Submit</button>
+</form>
+```
+
+**Key attributes:**
+
+- `method`: HTTP method (GET or POST)
+- `action`: URL where form data is sent
+- `name`: Field name used to access data on server
+
+---
+
+### Processing Form Data in Django
+
+#### Accessing POST Data
+
+```python
+from django.http import HttpResponse
+from django.shortcuts import render
+
+def register(request):
+    if request.method == 'POST':
+        # Access form data using field names
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+
+        # Process the data (save to database, etc.)
+        return HttpResponse(f"Welcome, {username}!")
+
+    # Show empty form for GET request
+    return render(request, 'register.html')
+```
+
+---
+
+#### Accessing GET Data
+
+```python
+def search(request):
+    # Access query parameters
+    query = request.GET.get('q', '')  # Default to empty string
+    page = request.GET.get('page', '1')
+
+    # Perform search with query
+    return HttpResponse(f"Searching for: {query}")
+```
+
+---
+
+### Form Data Methods
+
+| Method                                 | Description                               |
+| -------------------------------------- | ----------------------------------------- |
+| `request.POST.get('field')`            | Get single value, returns None if missing |
+| `request.POST.get('field', 'default')` | Get value with default                    |
+| `request.POST['field']`                | Get value, raises error if missing        |
+| `request.POST.getlist('field')`        | Get multiple values (checkboxes)          |
 
 ---
