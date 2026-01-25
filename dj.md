@@ -651,7 +651,8 @@ def article_view(request):
 Access GET parameters from the URL:
 
 ```python
-# eg
+# Simple Example
+
 # URL: /search/?q=python&page=2
 
 def search(request):
@@ -887,6 +888,8 @@ def index(request):
 
 Templating is the process of generating dynamic HTML by combining a template (HTML structure) with data. Templates separate presentation from logic.
 
+A Django template is a text file (usually HTML) that contains static content mixed with Django Template Language (DTL) to dynamically display data sent from a view.
+
 ---
 
 ### Django Template Language (DTL)
@@ -894,201 +897,18 @@ Templating is the process of generating dynamic HTML by combining a template (HT
 Django's template language allows you to:
 
 - Insert dynamic data with `{{ variable }}`
-- Use logic with `{% tag %}`
-- Apply filters with `{{ variable|filter }}`
+- Use logic with `{% tag %}`. (if/else, loop)
+- Apply filters with `{{ variable|filter }}`. (title, upper, lower)
 
 ---
 
-A Django template is a text file (usually HTML) that contains static content mixed with Django Template Language (DTL) to dynamically display data sent from a view.
-
-### Template Variables
-
-Output data using double curly braces:
-
-```html
-<!-- eg -->
-<h1>{{ title }}</h1>
-<p>Welcome, {{ user.username }}!</p>
-<p>You have {{ message_count }} messages.</p>
-```
-
-**Accessing nested data:**
-
-```html
-<!-- eg -->
-{{ user.profile.avatar }} {{ article.author.name }} {{ items.0 }}
-<!-- First item in list -->
-```
-
----
-
-### Template Tags
-
-Control logic using `{% tag %}`:
-
-**If/Else:**
-
-```html
-<!-- eg -->
-{% if user.is_authenticated %}
-<p>Welcome back, {{ user.username }}!</p>
-{% else %}
-<p>Please <a href="/login/">log in</a>.</p>
-{% endif %}
-```
-
-**For Loop:**
-
-```html
-<!-- eg -->
-<ul>
-  {% for article in articles %}
-  <li>{{ article.title }}</li>
-  {% empty %}
-  <li>No articles found.</li>
-  {% endfor %}
-</ul>
-```
-
-**Loop variables:**
-
-```html
-<!-- eg -->
-{% for item in items %} {{ forloop.counter }}
-<!-- 1, 2, 3, ... -->
-{{ forloop.counter0 }}
-<!-- 0, 1, 2, ... -->
-{{ forloop.first }}
-<!-- True if first iteration -->
-{{ forloop.last }}
-<!-- True if last iteration -->
-{% endfor %}
-```
-
----
-
-### Template Filters
-
-Transform data using `|filter`:
-
-```html
-<!-- eg -->
-{{ name|upper }}
-<!-- JOHN -->
-{{ name|lower }}
-<!-- john -->
-{{ name|title }}
-<!-- John Doe -->
-{{ text|truncatewords:20 }}
-<!-- First 20 words... -->
-{{ date|date:"Y-m-d" }}
-<!-- 2026-01-17 -->
-{{ price|floatformat:2 }}
-<!-- 19.99 -->
-{{ list|length }}
-<!-- 5 -->
-{{ value|default:"N/A" }}
-<!-- Shows "N/A" if empty -->
-{{ html_content|safe }}
-<!-- Renders HTML (careful!) -->
-```
-
----
-
-### Template Inheritance
-
-Create a base template and extend it:
-
-**base.html:**
-
-```html
-<!-- eg -->
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>{% block title %}My Site{% endblock %}</title>
-  </head>
-  <body>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-    </nav>
-
-    <main>{% block content %}{% endblock %}</main>
-
-    <footer>&copy; 2026 My Site</footer>
-  </body>
-</html>
-```
-
-**home.html:**
-
-```html
-<!-- eg -->
-{% extends "base.html" %} {% block title %}Home - My Site{% endblock %} {% block
-content %}
-<h1>Welcome to My Site</h1>
-<p>This is the homepage.</p>
-{% endblock %}
-```
-
----
-
-### Including Templates
-
-Reuse template fragments:
-
-**navbar.html:**
-
-```html
-<!-- eg -->
-<nav>
-  <a href="/">Home</a>
-  <a href="/about/">About</a>
-</nav>
-```
-
-**page.html:**
-
-```html
-<!-- eg -->
-{% include "navbar.html" %}
-
-<h1>Page Content</h1>
-```
-
-**Passing variables to includes:**
-
-```html
-<!-- eg -->
-{% include "card.html" with title="My Card" content="Card content" %}
-```
-
----
-
-```html
-<!-- eg -->
-<h1>Hello {{ user_name }}</h1>
-```
-
-```py
-# eg
-from django.shortcuts import render
-
-def hello_view(request):
-    context = {
-        'user_name': 'Bidur'
-    }
-    return render(request, 'hello.html', context)
-```
-
-### JSON Responses
+#### JSON Responses
 
 - For APIs, return JSON instead of HTML.
 - By default, `JsonResponse` expects a dictionary.
 
 ```python
-# eg
+# Simple Example
 from django.http import JsonResponse
 
 def api_articles(request):
@@ -1105,7 +925,7 @@ def api_articles(request):
 **Response:**
 
 ```json
-// eg
+// Simple Example
 {
   "articles": [
     { "id": 1, "title": "First" },
@@ -1115,86 +935,7 @@ def api_articles(request):
 }
 ```
 
-### Setting Custom Status Codes
-
-```python
-# eg
-from django.http import HttpResponse, JsonResponse
-
-def custom_status(request):
-    return HttpResponse("Created!", status=201)
-
-def json_error(request):
-    return JsonResponse({'error': 'Bad request'}, status=400)
-```
-
 ---
-
-### Complete View Example
-
-```python
-# eg
-from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, get_object_or_404
-
-def article_api(request, id=None):
-    """Handle article CRUD operations"""
-
-    if request.method == 'GET':
-        if id:
-            # Return single article
-            return JsonResponse({'id': id, 'title': 'Sample'})
-        else:
-            # Return all articles
-            return JsonResponse({'articles': []})
-
-    elif request.method == 'POST':
-        # Create new article
-        return JsonResponse({'message': 'Created'}, status=201)
-
-    elif request.method == 'DELETE':
-        if id:
-            # Delete article
-            return JsonResponse({'message': 'Deleted'})
-        return JsonResponse({'error': 'ID required'}, status=400)
-
-    # Method not allowed
-    return HttpResponse(status=405)
-```
-
-### Template Directory Structure
-
-```text
-myproject/
-├── templates/              # Project-wide templates
-│   ├── base.html
-│   └── navbar.html
-│
-├── blog/
-│   └── templates/
-│       └── blog/           # App-specific templates
-│           ├── post_list.html
-│           └── post_detail.html
-│
-└── users/
-    └── templates/
-        └── users/
-            ├── login.html
-            └── profile.html
-```
-
-**Summary**
-
-| Concept           | Description                                     |
-| ----------------- | ----------------------------------------------- |
-| **HTTP Request**  | Message from client to server                   |
-| **HTTP Response** | Message from server to client                   |
-| **HTTP Methods**  | GET, POST, PUT, PATCH, DELETE                   |
-| **Status Codes**  | 2xx success, 4xx client error, 5xx server error |
-| **View**          | Python function/class handling requests         |
-| **render()**      | Returns HTML from template                      |
-| **JsonResponse**  | Returns JSON data                               |
-| **redirect()**    | Sends user to different URL                     |
 
 ### Adding & Registering Templates
 
@@ -1252,6 +993,7 @@ def monthly_challenge(request, month):
         challenge_text = monthly_challenges[month.lower()]
         response_data = render_to_string("challenges/challenge.html")
         return HttpResponse(response_data)
+        # return HttpResponse(response_data, status=200)  # Setting Status Codes
     except:
         return HttpResponseNotFound("<h1>This month is not supported!</h1>")
 ```
@@ -1274,7 +1016,9 @@ def monthly_challenge(request, month):
 
 ---
 
-### Template Language & Variable Interpolation
+#### Template Language & Template Variable Interpolation
+
+Output data using double curly braces:
 
 ```html
 <!-- challenges/templates/challenges/challenge.html -->
@@ -1322,21 +1066,30 @@ def monthly_challenge(request, month):
 
 ### Filters
 
+- Transform data using `|filter`:
+
 **Common Filters:**
 
 ```html
+<!-- eg -->
+{{ name|upper }}
+<!-- JOHN -->
+{{ name|lower }}
+<!-- john -->
 {{ name|title }}
-<!-- Capitalizes each word -->
-{{ text|truncatewords:30 }}
-<!-- Limits to 30 words -->
-{{ date|date:"D d M Y" }}
-<!-- Date formatting -->
-{{ text|default:"N/A" }}
-<!-- Default value -->
-{{ text|length }}
-<!-- String/list length -->
-{{ html|safe }}
-<!-- Mark as safe HTML -->
+<!-- John Doe -->
+{{ text|truncatewords:20 }}
+<!-- First 20 words... -->
+{{ date|date:"Y-m-d" }}
+<!-- 2026-01-17 -->
+{{ price|floatformat:2 }}
+<!-- 19.99 -->
+{{ list|length }}
+<!-- 5 -->
+{{ value|default:"N/A" }}
+<!-- Shows "N/A" if empty -->
+{{ html_content|safe }}
+<!-- Renders HTML (careful!) -->
 ```
 
 ```html
@@ -1470,6 +1223,8 @@ TEMPLATES = [
 
 **Create `templates/base.html` (Parent Template):**
 
+- Create a base template and extend it:
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -1530,6 +1285,8 @@ TEMPLATES = [
 
 ### Including Partial Template Snippets
 
+- Reuse template fragments:
+
 **Create `challenges\templates\challenges\includes\header.html`**
 
 ```html
@@ -1546,6 +1303,20 @@ TEMPLATES = [
 <pre>
 {% block content %}
   {% include "challenges/includes/header.html" %}
+  <!-- ... -->
+{% endblock %}
+</pre>
+```
+
+**Optional: Passing extra variables to includes:**
+
+- They already have access to variables that parent has access to.
+- You can pass extra data using: `with`
+
+```html
+<pre>
+{% block content %}
+  {% include "challenges/includes/header.html" with data1="something" data2="anything" %}
   <!-- ... -->
 {% endblock %}
 </pre>
@@ -2363,6 +2134,8 @@ def book_detail(request, id):
 ```
 
 **Update index page**
+
+Also an example of accessing nested data in template:
 
 ```html
 <pre>
