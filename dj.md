@@ -13,6 +13,7 @@
 - [URLs & Views](#urls--views)
 - [Templates & Static Files](#templates--static-files)
 - [Data and Models](#data-and-models)
+- [Questions](#questions)
 - [Lab: CRUD with Django](#lab-crud-with-django)
 
 ---
@@ -2259,6 +2260,781 @@ def search(request):
 | `request.POST.get('field', 'default')` | Get value with default                    |
 | `request.POST['field']`                | Get value, raises error if missing        |
 | `request.POST.getlist('field')`        | Get multiple values (checkboxes)          |
+
+---
+
+---
+
+---
+
+## Questions
+
+**Write a view that accepts username and password as arguments and check with student table, if credential match, redirect to dashboard page otherwise display 'Invalid username/password'.**
+
+---
+
+**Step 1: Create Student Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class Student(models.Model):
+    username = models.CharField(max_length=100, unique=True)
+    password = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.username
+```
+
+---
+
+**Step 2: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 3: Create Login View**
+
+- Solution using Session
+
+- Solution with Hashed Password
+
+```python
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth.hashers import check_password
+from .models import Student
+
+def student_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        try:
+            student = Student.objects.get(username=username)
+            # Check hashed password
+            if check_password(password, student.password):
+                request.session['student_id'] = student.id
+                return redirect('dashboard')
+            else:
+                return render(request, 'myauthapp/login.html', {
+                    'error': 'Invalid username/password'
+                })
+        except Student.DoesNotExist:
+            return render(request, 'myauthapp/login.html', {
+                'error': 'Invalid username/password'
+            })
+
+    return render(request, 'myauthapp/login.html')
+
+
+def dashboard(request):
+    # Check if student is logged in
+    if 'student_id' not in request.session:
+        return redirect('login')
+
+    student_name = request.session.get('student_name')
+    return render(request, 'myauthapp/dashboard.html', {'name': student_name})
+
+
+def logout(request):
+    # Clear session
+    request.session.flush()
+    return redirect('login')
+```
+
+---
+
+**Step 4: Create Login Template**
+
+```html
+<!-- templates/myauthapp/login.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Student Login</title>
+  </head>
+  <body>
+    <h1>Student Login</h1>
+
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <label>Username:</label>
+      <input type="text" name="username" required /><br /><br />
+
+      <label>Password:</label>
+      <input type="password" name="password" required /><br /><br />
+
+      <button type="submit">Login</button>
+    </form>
+  </body>
+</html>
+```
+
+---
+
+**Step 5: Create Dashboard Template**
+
+```html
+<!-- templates/myauthapp/dashboard.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <h1>Welcome to Dashboard</h1>
+    <p>You have successfully logged in.</p>
+  </body>
+</html>
+```
+
+---
+
+**Step 6: Configure URLs**
+
+```python
+# app level urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('login/', views.student_login, name='login'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+]
+
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('auth/', include('myauthapp.urls'))
+]
+```
+
+---
+
+**Testing Login**
+
+- Create test user first.
+
+```bash
+python manage.py shell
+```
+
+```py
+from django.contrib.auth.hashers import make_password
+from testapp.models import Student   # adjust app name if different
+
+Student.objects.create(
+    username="b2rsp",
+    password=make_password("password123"),
+    name="Bidur",
+    email="bidursapkota00@gmail.com"
+)
+```
+
+- Visit `http://127.0.0.1:8000/login/` to test login
+
+---
+
+---
+
+**Write server side script to create and validate form with following rule and store given data into 'patients' table with details (name, patient_id, mobile, gender, address, dob, doctor name):**
+
+- **Name, Mobile, Doctor Name, Gender, DOB: Required**
+- **Mobile: 10 digit start with 98, 97 or 96**
+- **DOB: YYYY-MM-DD format**
+
+---
+
+**Step 1: Create Patient Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class Patient(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+
+    name = models.CharField(max_length=200)
+    patient_id = models.CharField(max_length=50, unique=True)
+    mobile = models.CharField(max_length=10)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    address = models.TextField(blank=True, null=True)
+    dob = models.DateField()
+    doctor_name = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.patient_id})"
+```
+
+---
+
+**Step 2: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 3: Create Django Form with Validation**
+
+```python
+# forms.py
+from django import forms
+import re
+
+
+class PatientForm(forms.Form):
+    GENDER_CHOICES = [
+        ('', '-- Select Gender --'),
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+
+    name = forms.CharField(
+        max_length=200,
+        error_messages={'required': 'Name is required'}
+    )
+
+    patient_id = forms.CharField(
+        max_length=50,
+        required=False
+    )
+
+    mobile = forms.CharField(
+        max_length=10,
+        error_messages={'required': 'Mobile is required'}
+    )
+
+    gender = forms.ChoiceField(
+        choices=GENDER_CHOICES,
+        error_messages={'required': 'Gender is required'}
+    )
+
+    address = forms.CharField(
+        widget=forms.Textarea,
+        required=False
+    )
+
+    dob = forms.CharField(
+        error_messages={'required': 'Date of Birth is required'}
+    )
+
+    doctor_name = forms.CharField(
+        max_length=200,
+        error_messages={'required': 'Doctor Name is required'}
+    )
+
+    def clean_mobile(self):
+        mobile = self.cleaned_data['mobile']
+
+        mobile_regex = r'^(98|97|96)\d{8}$'
+        if not re.match(mobile_regex, mobile):
+            raise forms.ValidationError(
+                'Mobile must be 10 digits and start with 98, 97 or 96'
+            )
+
+        return mobile
+
+    def clean_dob(self):
+        dob = self.cleaned_data['dob']
+
+        # Regex for YYYY-MM-DD
+        dob_regex = r'^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$'
+
+        if not re.match(dob_regex, dob):
+            raise forms.ValidationError(
+                'Date of Birth must be in YYYY-MM-DD format'
+            )
+
+        from datetime import datetime
+        try:
+            dob_date = datetime.strptime(dob, '%Y-%m-%d').date()
+        except ValueError:
+            raise forms.ValidationError('Invalid calendar date')
+
+        return dob_date
+```
+
+---
+
+**Step 4: Create View**
+
+```python
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import PatientForm
+from .models import Patient
+import uuid
+
+
+def patient_registration(request):
+    if request.method == 'POST':
+        form = PatientForm(request.POST)
+
+        if form.is_valid():
+            # Generate patient_id if not provided
+            patient_id = form.cleaned_data.get('patient_id')
+            if not patient_id:
+                patient_id = 'PAT-' + str(uuid.uuid4())[:8].upper()
+
+            # Create patient record
+            patient = Patient(
+                name=form.cleaned_data['name'],
+                patient_id=patient_id,
+                mobile=form.cleaned_data['mobile'],
+                gender=form.cleaned_data['gender'],
+                address=form.cleaned_data.get('address', ''),
+                dob=form.cleaned_data['dob'],
+                doctor_name=form.cleaned_data['doctor_name'],
+            )
+            patient.save()
+
+            messages.success(request, 'Patient registered successfully!')
+            return redirect('patient_list')
+    else:
+        form = PatientForm()
+
+    return render(request, 'patient/patient_form.html', {'form': form})
+
+
+def patient_list(request):
+    patients = Patient.objects.all()
+    return render(request, 'patient/patient_list.html', {'patients': patients})
+```
+
+---
+
+**Step 5: Create Patient Form Template**
+
+```html
+<!-- templates/patient/patient_form.html -->
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Patient Registration</title>
+        <style>
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .error {
+                color: red;
+                font-size: 0.9em;
+            }
+            input,
+            select,
+            textarea {
+                padding: 8px;
+                width: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Patient Registration Form</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}*{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}<p class="error">{{ field.errors.0 }}</p>{% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Extra: Create Patient List Template**
+
+```html
+<!-- templates/patient/patient_list.html -->
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Patient List</title>
+        <style>
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        </style>
+    </head>
+    <body>
+        <h1>Registered Patients</h1>
+        <a href="{% url 'patient_register' %}">+ Add New Patient</a>
+        <table>
+            <tr>
+                <th>Patient ID</th>
+                <th>Name</th>
+                <th>Mobile</th>
+                <th>Gender</th>
+                <th>DOB</th>
+                <th>Doctor</th>
+            </tr>
+            {% for patient in patients %}
+                <tr>
+                    <td>{{ patient.patient_id }}</td>
+                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.mobile }}</td>
+                    <td>{{ patient.get_gender_display }}</td>
+                    <td>{{ patient.dob }}</td>
+                    <td>{{ patient.doctor_name }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No patients registered yet.</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Step 6: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('register/', views.patient_registration, name='patient_register'),
+    path('', views.patient_list, name='patient_list'),
+]
+```
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('patient/', include('patient.urls'))
+]
+```
+
+---
+
+---
+
+**Design following forms in HTML and write corresponding server side code to store the user's values after satisfying following validation rules:**
+
+- **Length of Full name up to 40 characters**
+- **Email address must be valid email address**
+- **Username must start with string and followed by number**
+- **Password length must be more than 8 characters**
+
+---
+
+**Step 1: Create User Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class User(models.Model):
+    full_name = models.CharField(max_length=40)
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=100, unique=True)
+    password = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username
+```
+
+---
+
+**Step 2: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 3: Create Django Form with Validation**
+
+```python
+# forms.py
+from django import forms
+import re
+
+
+class UserRegistrationForm(forms.Form):
+    full_name = forms.CharField(
+        max_length=40,
+        error_messages={
+            'required': 'Full name is required',
+            'max_length': 'Full name must be up to 40 characters'
+        }
+    )
+
+    email = forms.EmailField(
+        error_messages={
+            'required': 'Email is required',
+            'invalid': 'Please enter a valid email address'
+        }
+    )
+
+    username = forms.CharField(
+        max_length=100,
+        error_messages={'required': 'Username is required'}
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput,
+        error_messages={'required': 'Password is required'}
+    )
+
+    def clean_username(self):
+        """Validate username: must start with string and followed by number"""
+        username = self.cleaned_data.get('username')
+
+        # Pattern: starts with letters, followed by at least one number
+        username_regex = r'^[a-zA-Z]+\d+$'
+        if not re.match(username_regex, username):
+            raise forms.ValidationError(
+                'Username must start with letters and end with numbers'
+            )
+
+        return username
+
+    def clean_password(self):
+        """Validate password length more than 8 characters"""
+        password = self.cleaned_data.get('password')
+
+        if len(password) < 8:
+            raise forms.ValidationError(
+                'Password must be more than 8 characters'
+            )
+
+        return password
+```
+
+---
+
+**Step 4: Create View**
+
+```python
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from .forms import UserRegistrationForm
+from .models import User
+
+
+def user_registration(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+
+        if form.is_valid():
+            # Check if email already exists
+            email = form.cleaned_data['email']
+            if User.objects.filter(email=email).exists():
+                form.add_error('email', 'Email already registered')
+                return render(request, 'user/user_form.html', {'form': form})
+
+            # Check if username already exists
+            username = form.cleaned_data['username']
+            if User.objects.filter(username=username).exists():
+                form.add_error('username', 'Username already taken')
+                return render(request, 'user/user_form.html', {'form': form})
+
+            # Create user record
+            user = User(
+                full_name=form.cleaned_data['full_name'],
+                email=email,
+                username=username,
+                password=make_password(form.cleaned_data['password']),
+            )
+            user.save()
+
+            messages.success(request, 'User registered successfully!')
+            return redirect('user_list')
+    else:
+        form = UserRegistrationForm()
+
+    return render(request, 'user/user_form.html', {'form': form})
+
+
+def user_list(request):
+    users = User.objects.all()
+    return render(request, 'user/user_list.html', {'users': users})
+```
+
+---
+
+**Step 5: Create Registration Form Template (HTML)**
+
+```html
+<!-- templates/user_form.html -->
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User Registration</title>
+        <style>
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .error {
+                color: red;
+                font-size: 0.9em;
+            }
+            input,
+            select,
+            textarea {
+                padding: 8px;
+                width: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>User Registration Form</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}*{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}<p class="error">{{ field.errors.0 }}</p>{% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Step 6: (Optional) Create User List Template**
+
+```html
+<!-- templates/user_list.html -->
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User List</title>
+        <style>
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        </style>
+    </head>
+    <body>
+        <h1>Registered Users</h1>
+        <a href="{% url 'user_register' %}">+ Add New User</a>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Created At</th>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.full_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.created_at }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No users registered yet.</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Step 7: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('register/', views.user_registration, name='user_register'),
+    path('', views.user_list, name='user_list'),
+]
+```
+
+```py
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('user/', include('user.urls')),
+]
+```
 
 ---
 
