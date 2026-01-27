@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Grocery Bud - Django</title>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+        <link rel="stylesheet" href="{% static 'grocery/css/global.css' %}" />
+        <link rel="stylesheet" href="{% static 'grocery/css/global.css' %}" />
+        <link rel="stylesheet" href="{% static 'grocery/css/single-item.css' %}" />
+        <link rel="stylesheet" href="{% static 'grocery/css/items.css' %}" />
+        <link rel="stylesheet" href="{% static 'grocery/css/form.css' %}" />
+    </head>
+    <body>
+        <section class="section-center">
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+            {% endif %}
+            <!-- Form -->
+            <form method="POST"
+                  action="{% if edit_item %}{% url 'grocery:update' edit_item.id %}{% else %}{% url 'grocery:add' %}{% endif %}">
+                {% csrf_token %}
+                <h2>grocery bud</h2>
+                <div class="form-control">
+                    <input type="text"
+                           name="name"
+                           class="form-input"
+                           placeholder="e.g. eggs"
+                           value="{{ edit_item.name|default:'' }}"
+                           {% if edit_item %}autofocus{% endif %} />
+                    <button type="submit" class="btn">
+                        {% if edit_item %}
+                            edit item
+                        {% else %}
+                            add item
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+            <div class="items">
+                {% for item in items %}
+                    <div class="single-item">
+                        <form method="POST" action="{% url 'grocery:toggle' item.id %}">
+                            {% csrf_token %}
+                            <input type="checkbox"
+                                   {% if item.completed %}checked{% endif %}
+                                   onchange="this.form.submit()" />
+                        </form>
+                        <p style="text-decoration: {% if item.completed %}line-through{% else %}none{% endif %}">{{ item.name }}</p>
+                        <a href="{% url 'grocery:edit' item.id %}" class="btn icon-btn edit-btn">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </a>
+                        <form method="POST"
+                              action="{% url 'grocery:delete' item.id %}"
+                              style="display: inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn icon-btn remove-btn">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </form>
+                    </div>
+                {% empty %}
+                    <p style="text-align: center; color: #888;">No items yet. Add one above!</p>
+                {% endfor %}
+            </div>
+        </section>
+    </body>
+</html>
