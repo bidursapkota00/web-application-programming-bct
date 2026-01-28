@@ -2295,7 +2295,7 @@ When you click the button, the **event object** provides details about the click
 
 ## Forms and Client Side Validation
 
-##### Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf or image. File size should be less than 2MB. Email field must include @. Password must be at least 6 character long. Password and confirm password should match.
+##### Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf, ms-word or image. File size should be less than 2MB. Email field must include @. Password must be at least 6 character long. Password and confirm password should match.
 
 ```html
 <html lang="en">
@@ -2360,13 +2360,12 @@ When you click the button, the **event object** provides details about the click
         required
       />
       <br /><br />
-      <label for="resume">Upload Resume (PDF / Image only): </label>
+      <label for="resume">Upload Resume (PDF / Image / Word): </label>
       <input
         type="file"
         id="resume"
         name="resume"
-        accept="application/pdf,image/jpeg,image/png"
-        required
+        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
       />
       <br /><br />
       <label for="password">Password: </label>
@@ -2454,11 +2453,10 @@ When you click the button, the **event object** provides details about the click
           return;
         }
 
-        const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-        if (!allowedTypes.includes(resume.type)) {
-          alert("Unsupported file format");
-          return;
-        }
+        const allowedExtensions = ["pdf", "jpg", "jpeg", "png", "doc", "docx"];
+        const extension = resume.name.split(".").pop().toLowerCase();
+        if (!allowedExtensions.includes(extension))
+          return alert("Unsupported file format");
 
         // Check file size (less than 2MB)
         const maxSize = 2 * 1024 * 1024; // 2 MB in bytes
@@ -3968,7 +3966,7 @@ console.log(validatePassword("weakpass")); // false
 14. What is dialog box? Explain different dialog boxes with suitable example in JavaScript.
 15. What is JavaScript Event? Explain with Example.
 16. What is Event Object? Explain with Example.
-17. Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf or image. File size should be less than 2MB. Email field must include @. Password must be at least 6 character long. Password and confirm password should match.
+17. Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf, ms-word or image. File size should be less than 2MB. Email field must include @. Password must be at least 6 character long. Password and confirm password should match.
 18. Create a form to input Name, Email, password.
     - All fields are required.
     - Email should be valid.
@@ -6051,7 +6049,7 @@ AJAX (Asynchronous JavaScript and XML) allows web pages to update asynchronously
 
 ### Form Handling
 
-##### Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf or image. File size should be less than 2MB. Email should be valid. Phone number should be valid. Password must be at least 8 character long with at least one lowercase, uppercase, number and symbol. Password and confirm password should match.
+##### Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. All fields are required. Appointment date cannot be in past. Resume should be either pdf, ms-word or image. File size should be less than 2MB. Email should be valid. Phone number should be valid. Password must be at least 8 character long with at least one lowercase, uppercase, number and symbol. Password and confirm password should match.
 
 ##### Create Form Layout
 
@@ -6119,12 +6117,12 @@ AJAX (Asynchronous JavaScript and XML) allows web pages to update asynchronously
       <input type="number" id="phone" name="phone" placeholder="Phone Number" />
       <br /><br />
 
-      <label for="resume">Upload Resume (PDF / Image only): </label>
+      <label for="resume">Upload Resume (PDF / Image / Word): </label>
       <input
         type="file"
         id="resume"
         name="resume"
-        accept="application/pdf,image/jpeg,image/png"
+        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
       />
       <br /><br />
 
@@ -6199,8 +6197,9 @@ AJAX (Asynchronous JavaScript and XML) allows web pages to update asynchronously
         return alert("Please enter a valid phone number");
 
       if (!resume) return alert("Please upload resume");
-      const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-      if (!allowedTypes.includes(resume.type))
+      const allowedExtensions = ["pdf", "jpg", "jpeg", "png", "doc", "docx"];
+      const extension = resume.name.split(".").pop().toLowerCase();
+      if (!allowedExtensions.includes(extension))
         return alert("Unsupported file format");
 
       const maxSize = 2 * 1024 * 1024; // 2MB
