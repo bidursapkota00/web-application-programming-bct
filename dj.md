@@ -1976,7 +1976,7 @@ Book.objects.aggregate(total=Count('id'))
 
 **Implementing Models in Django**
 
-**Create book_outlet\templates\book_outlet\base.html**
+**Create `book_outlet\templates\book_outlet\base.html`**
 
 ```html
 <!DOCTYPE html>
@@ -1992,7 +1992,7 @@ Book.objects.aggregate(total=Count('id'))
 </html>
 ```
 
-**Create book_outlet\templates\book_outlet\index.html**
+**Create `book_outlet\templates\book_outlet\index.html`**
 
 ```html
 <pre>
@@ -2055,7 +2055,7 @@ def index(request):
   })
 ```
 
-**Update book_outlet\templates\book_outlet\index.html**
+**Update `book_outlet\templates\book_outlet\index.html`**
 
 ```html
 <pre>
@@ -2077,7 +2077,7 @@ def index(request):
 
 ---
 
-**Create book_outlet\templates\book_outlet\book_detail.html**
+**Create `book_outlet\templates\book_outlet\book_detail.html`**
 
 ```html
 <pre>
@@ -2887,12 +2887,8 @@ def patient_list(request):
     <head>
         <title>Patient Registration</title>
         <style>
-            .form-group {
-                margin-bottom: 15px;
-            }
-            .error {
+            .errorlist {
                 color: red;
-                font-size: 0.9em;
             }
             input,
             select,
@@ -2906,17 +2902,7 @@ def patient_list(request):
         <h1>Patient Registration Form</h1>
         <form method="post">
             {% csrf_token %}
-            {{ form.non_field_errors }}
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">
-                        {{ field.label }}
-                        {% if field.field.required %}*{% endif %}
-                    </label>
-                    {{ field }}
-                    {% if field.errors %}<p class="error">{{ field.errors.0 }}</p>{% endif %}
-                </div>
-            {% endfor %}
+            {{ form.as_p }}
             <button type="submit">Submit</button>
         </form>
     </body>
@@ -3161,19 +3147,15 @@ def user_list(request):
 **Step 5: Create Registration Form Template (HTML)**
 
 ```html
-<!-- templates/user_form.html -->
+<!-- templates/user/user_form.html -->
 <pre>
 <!DOCTYPE html>
 <html>
     <head>
         <title>User Registration</title>
         <style>
-            .form-group {
-                margin-bottom: 15px;
-            }
-            .error {
+            .errorlist {
                 color: red;
-                font-size: 0.9em;
             }
             input,
             select,
@@ -3187,17 +3169,7 @@ def user_list(request):
         <h1>User Registration Form</h1>
         <form method="post">
             {% csrf_token %}
-            {{ form.non_field_errors }}
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">
-                        {{ field.label }}
-                        {% if field.field.required %}*{% endif %}
-                    </label>
-                    {{ field }}
-                    {% if field.errors %}<p class="error">{{ field.errors.0 }}</p>{% endif %}
-                </div>
-            {% endfor %}
+            {{ form.as_p }}
             <button type="submit">Submit</button>
         </form>
     </body>
@@ -3210,7 +3182,7 @@ def user_list(request):
 **Step 6: (Optional) Create User List Template**
 
 ```html
-<!-- templates/user_list.html -->
+<!-- templates/user/user_list.html -->
 <pre>
 <!DOCTYPE html>
 <html>
@@ -3394,37 +3366,17 @@ def upload_success(request):
     <head>
         <title>File Upload</title>
         <style>
-      .error {
-        color: red;
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
+            .errorlist {
+                color: red;
+            }
         </style>
     </head>
     <body>
-        <h2>Upload File</h2>
-        <form method="POST" enctype="multipart/form-data">
+        <h1>Upload File</h1>
+        <form method="post">
             {% csrf_token %}
-            {% comment %}
-                <div class="form-group">
-                    <label for='{{ form.file.id_for_label }}'>
-                        {{ form.file.label }}
-                        {% if form.file.field.required %}*{% endif %}
-                    </label>
-                    <br />
-                    {{ form.file }}
-                    <p style="color: gray; font-size: 0.9em;">Allowed: JPG, JPEG, PNG, GIF (Max 2MB)</p>
-                    {% if form.file.errors %}<p class="error">{{ form.file.errors.0 }}</p>{% endif %}
-                </div>
-            {% endcomment %}
-            <div class="form-group">
-                <label>Select File:</label>
-                <br />
-                <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif" />
-                <p style="color: gray; font-size: 0.9em;">Allowed: JPG, JPEG, PNG, GIF (Max 2MB)</p>
-                {% if form.file.errors %}<p class="error">{{ form.file.errors.0 }}</p>{% endif %}
-            </div>
+            {{ form.as_p }}
+            <p style="color: gray; font-size: 0.9em;">Allowed: JPG, JPEG, PNG, GIF (Max 2MB)</p>
             <button type="submit">Upload</button>
         </form>
     </body>
@@ -4963,17 +4915,6 @@ Now you can edit grocery item names by clicking the edit button.
 ---
 
 **Add Messages for Notifications**
-
-**Update `djangocrud/settings.py`** (Add at the bottom)
-
-```python
-from django.contrib.messages import constants as messages
-
-MESSAGE_TAGS = {
-    messages.ERROR: 'error',
-    messages.SUCCESS: 'success',
-}
-```
 
 **Update `grocery/static/grocery/css/global.css`**
 
