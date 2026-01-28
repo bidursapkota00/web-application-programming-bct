@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit Note</title>
+        <style>
+      .error {
+        color: red;
+      }
+        </style>
+    </head>
+    <body>
+        <h2>Edit Note</h2>
+        <p>
+            <a href="{% url 'notes:index' %}">Home</a>
+        </p>
+        {% if errors %}
+            {% for error in errors %}<p class="error">{{ error }}</p>{% endfor %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <label>Title:</label>
+            <input type="text" name="title" value="{{ note.title }}" />
+            <br />
+            <br />
+            <label>Description:</label>
+            <textarea name="description">{{ note.description }}</textarea>
+            <br />
+            <br />
+            <input type="submit" value="Update" />
+        </form>
+    </body>
+</html>

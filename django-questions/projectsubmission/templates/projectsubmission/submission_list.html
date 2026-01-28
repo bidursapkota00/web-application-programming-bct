@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Submissions List</title>
+    </head>
+    <body>
+        <h1>Project Submissions</h1>
+        <a href="{% url 'project_upload' %}">+ Submit New Project</a>
+        <table border="1" cellpadding="10" style="margin-top: 20px;">
+            <tr>
+                <th>Registration No.</th>
+                <th>Email</th>
+                <th>Project File</th>
+                <th>Uploaded At</th>
+            </tr>
+            {% for submission in submissions %}
+                <tr>
+                    <td>{{ submission.tu_registration_number }}</td>
+                    <td>{{ submission.email }}</td>
+                    <td>
+                        <a href="{{ submission.project_file.url }}" target="_blank">View File</a>
+                    </td>
+                    <td>{{ submission.uploaded_at }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No submissions yet.</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

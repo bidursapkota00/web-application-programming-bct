@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>File Upload</title>
+        <style>
+            .errorlist {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Upload File</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <p style="color: gray; font-size: 0.9em;">Allowed: JPG, JPEG, PNG, GIF (Max 2MB)</p>
+            <button type="submit">Upload</button>
+        </form>
+    </body>
+</html>

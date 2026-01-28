@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Project Submission</title>
+    <style>
+      .errorlist {
+        color: red;
+      }
+      input {
+        padding: 8px;
+        width: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Project File Submission</h1>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Submit Project</button>
+    </form>
+  </body>
+</html>

@@ -458,7 +458,8 @@ def index(request):
 3. Install Pylance extension
 4. Install autopep8 extension
 5. Install Django extension
-6. Configure Python interpreter to use virtual environment
+6. Install SQLite Viewer extension
+7. Configure Python interpreter to use virtual environment
 
 ```json
 // .vscode/settings.json
@@ -487,6 +488,29 @@ python manage.py runserver
 
 ```bash
 python manage.py runserver 8080
+```
+
+---
+
+**Install djlint**
+
+- For formatting Django HTML templates
+
+```bash
+pip install djlint
+```
+
+- Configure djlint in vscode for local workspace
+
+```json
+{
+  "emmet.includeLanguages": {
+    "django-html": "html"
+  },
+  "[html][django-html]": {
+    "editor.defaultFormatter": "monosans.djlint"
+  }
+}
 ```
 
 ---
@@ -4184,6 +4208,9 @@ pip install djlint
 
 ```json
 {
+  "emmet.includeLanguages": {
+    "django-html": "html"
+  },
   "[html][django-html]": {
     "editor.defaultFormatter": "monosans.djlint"
   }

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Homepage</title>
+        <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 10px;
+      }
+      .success {
+        color: green;
+      }
+        </style>
+    </head>
+    <body>
+        <h2>Homepage</h2>
+        <p>
+            <a href="{% url 'notes:add' %}">Add New Data</a>
+        </p>
+        {% if messages %}
+            {% for message in messages %}<p class="success">{{ message }}</p>{% endfor %}
+        {% endif %}
+        <table width="80%">
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+            {% for note in notes %}
+                <tr>
+                    <td>{{ note.title }}</td>
+                    <td>{{ note.description }}</td>
+                    <td>
+                        <a href="{% url 'notes:edit' note.id %}">Edit</a>
+                        |
+                        <a href="{% url 'notes:delete' note.id %}"
+                           onclick="return confirm('Are you sure to delete?');">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No results Found</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

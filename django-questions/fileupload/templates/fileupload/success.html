@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Upload Success</title>
+    </head>
+    <body>
+        <h2>Uploaded Files</h2>
+        <a href="{% url 'upload_file' %}">Upload Another</a>
+        <ul>
+            {% for file in files %}
+                <li>
+                    <a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a>
+                    ({{ file.uploaded_at }})
+                </li>
+            {% empty %}
+                <li>No files uploaded yet.</li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>

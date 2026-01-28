@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Patient Registration</title>
+        <style>
+            .errorlist {
+                color: red;
+            }
+            input,
+            select,
+            textarea {
+                padding: 8px;
+                width: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Patient Registration Form</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>

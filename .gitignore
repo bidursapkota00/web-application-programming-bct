@@ -1,5 +1,5 @@
 *.pdf
-notes/
+/notes
 test.md
 test.js
 test.html
