@@ -11,6 +11,7 @@ urlpatterns = [
     path('upload/', include('fileupload.urls')),
     path('project/', include('projectsubmission.urls')),
     path('notes/', include('notes.urls')),
+    path('registration/', include('registration.urls')),
 ]
 
 if settings.DEBUG:

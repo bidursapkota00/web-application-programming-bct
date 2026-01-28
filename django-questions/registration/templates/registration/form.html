@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Form Validation (Django)</title>
+        <style>
+            .errorlist {
+                color: red;
+            }
+            .alert {
+                padding: 1rem;
+                border-radius: 4px;
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+
+            .alert-success {
+                background: #d1fae5;
+                color: #065f46;
+            }
+
+            .alert-error {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Registration Form</h1>
+            {% if messages %}
+                {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+            {% endif %}
+            <form id="registrationForm"
+                  method="POST"
+                  action="{% url 'registration:form' %}"
+                  enctype="multipart/form-data"
+                  onsubmit="return handleSubmit();">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn">Submit</button>
+            </form>
+        </div>
+        <script>
+            function handleSubmit() {
+                const form = document.getElementById("registrationForm");
+                const formData = new FormData(form);
+
+                const name = formData.get('name');
+
+                if (!name) {
+                    alert("Name is required")
+                    return false;
+                }
+
+                return true;
+            }
+        </script>
+    </body>
+</html>
