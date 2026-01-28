@@ -2267,6 +2267,114 @@ def search(request):
 
 ---
 
+**How to create, access and destroy session in Django?**
+
+---
+
+**Django Cookies**
+
+**Setting Cookies:**
+
+```python
+# views.py
+from django.http import HttpResponse
+
+
+def set_cookie(request):
+    response = HttpResponse("Cookie Set!")
+
+    # Set a cookie (expires in 30 days)
+    response.set_cookie('user', 'John Doe', max_age=86400 * 30)  # 30 days
+
+    # Set multiple cookies
+    response.set_cookie('theme', 'dark', max_age=86400 * 30)
+    response.set_cookie('language', 'en', max_age=86400 * 30)
+
+    # Secure cookie (HTTPS only, HttpOnly, SameSite)
+    # response.set_cookie(
+    #     'username',
+    #     username,
+    #     max_age=86400 * 30,
+    #     secure=True,       # Only send over HTTPS
+    #     httponly=True,     # JavaScript cannot access
+    #     samesite='Strict'  # CSRF protection
+    # )
+
+    return response
+```
+
+**Accessing Cookies:**
+
+```python
+# views.py
+from django.http import HttpResponse
+
+
+def get_cookie(request):
+    # Get single cookie
+    user = request.COOKIES.get('user')
+
+    if user:
+        return HttpResponse(f"Welcome {user}")
+    else:
+        return HttpResponse("Cookie not set.")
+
+
+def show_all_cookies(request):
+    # Display all cookies
+    output = ""
+    for key, value in request.COOKIES.items():
+        output += f"{key}: {value}<br>"
+
+    return HttpResponse(output)
+```
+
+---
+
+**Deleting Cookies:**
+
+```python
+# views.py
+from django.http import HttpResponse
+
+
+def delete_cookie(request):
+    response = HttpResponse("Cookie Deleted!")
+
+    # Delete cookie
+    response.delete_cookie('user')
+
+    return response
+```
+
+---
+
+---
+
+**Django Sessions**
+
+Django sessions are enabled by default. Data is stored on the server.
+
+**Session Settings (settings.py):**
+
+```python
+# Already included by default in INSTALLED_APPS:
+# 'django.contrib.sessions',
+
+# Already included in MIDDLEWARE:
+# 'django.contrib.sessions.middleware.SessionMiddleware',
+
+# Optional session settings:
+SESSION_COOKIE_AGE = 86400 * 30  # 30 days (default: 2 weeks)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Keep session after browser closes
+```
+
+---
+
+---
+
+---
+
 ## Questions
 
 **Write a view that accepts username and password as arguments and check with student table, if credential match, redirect to dashboard page otherwise display 'Invalid username/password'.**
@@ -2323,6 +2431,7 @@ def student_login(request):
             # Check hashed password
             if check_password(password, student.password):
                 request.session['student_id'] = student.id
+                request.session['student_name'] = student.name
                 return redirect('dashboard')
             else:
                 return render(request, 'myauthapp/login.html', {
@@ -2395,8 +2504,9 @@ def logout(request):
     <title>Dashboard</title>
   </head>
   <body>
-    <h1>Welcome to Dashboard</h1>
+    <h1>Welcome {{ name }}</h1>
     <p>You have successfully logged in.</p>
+    <a href="{% url 'logout' %}">Logout</a>
   </body>
 </html>
 ```
@@ -2413,6 +2523,7 @@ from . import views
 urlpatterns = [
     path('login/', views.student_login, name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('logout/', views.logout, name='logout'),
 ]
 
 # project level urls.py
@@ -2448,6 +2559,142 @@ Student.objects.create(
 ```
 
 - Visit `http://127.0.0.1:8000/login/` to test login
+
+---
+
+**Step 7: Create Registration View (Optional)**
+
+```python
+# views.py
+from django.contrib.auth.hashers import check_password, make_password
+
+def student_register(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+
+        # Validation
+        if not username or not password or not confirm_password or not name or not email:
+            return render(request, 'myauthapp/register.html', {
+                'error': 'All fields are required'
+            })
+
+        if password != confirm_password:
+            return render(request, 'myauthapp/register.html', {
+                'error': 'Passwords do not match'
+            })
+
+        # Check if username already exists
+        if Student.objects.filter(username=username).exists():
+            return render(request, 'myauthapp/register.html', {
+                'error': 'Username already exists'
+            })
+
+        # Check if email already exists
+        if Student.objects.filter(email=email).exists():
+            return render(request, 'myauthapp/register.html', {
+                'error': 'Email already registered'
+            })
+
+        # Create new student with hashed password
+        Student.objects.create(
+            username=username,
+            password=make_password(password),
+            name=name,
+            email=email
+        )
+
+        return render(request, 'myauthapp/register.html', {
+            'success': 'Account created successfully! You can now login.'
+        })
+
+    return render(request, 'myauthapp/register.html')
+```
+
+---
+
+**Step 8: Create Registration Template**
+
+```html
+<!-- templates/myauthapp/register.html -->
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Student Registration</title>
+    </head>
+    <body>
+        <h1>Create Account</h1>
+        {% if error %}<p style="color: red;">{{ error }}</p>{% endif %}
+        {% if success %}
+            <p style="color: green;">{{ success }}</p>
+            <a href="{% url 'login' %}">Go to Login</a>
+        {% else %}
+            <form method="POST">
+                {% csrf_token %}
+                <label>Username:</label>
+                <input type="text" name="username" required />
+                <br />
+                <br />
+                <label>Full Name:</label>
+                <input type="text" name="name" required />
+                <br />
+                <br />
+                <label>Email:</label>
+                <input type="email" name="email" required />
+                <br />
+                <br />
+                <label>Password:</label>
+                <input type="password" name="password" required />
+                <br />
+                <br />
+                <label>Confirm Password:</label>
+                <input type="password" name="confirm_password" required />
+                <br />
+                <br />
+                <button type="submit">Register</button>
+            </form>
+            <p>
+                Already have an account? <a href="{% url 'login' %}">Login here</a>
+            </p>
+        {% endif %}
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Step 9: Update Login Template with Registration Link**
+
+```html
+<!-- Update templates/myauthapp/login.html -->
+<!-- add before </body> -->
+<p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+```
+
+---
+
+**Step 10: Update URLs**
+
+```python
+# app level urls.py
+urlpatterns = [
+    path('register/', views.student_register, name='register'),
+]
+```
+
+---
+
+**Testing Registration**
+
+- Visit `http://127.0.0.1:8000/auth/register/` to create a new account
+- Fill in the registration form
+- After successful registration, click the login link
+- Login with your newly created credentials
 
 ---
 
@@ -3034,6 +3281,846 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('user.urls')),
 ]
+```
+
+---
+
+---
+
+**Write a Django view to upload a file and validate:**
+
+- **File extension (only allow image files: jpg, jpeg, png, gif)**
+- **File size (must be less than 2MB)**
+
+---
+
+**Step 1: Create Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class UploadedFile(models.Model):
+    file = models.FileField(upload_to='uploads/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.file.name
+```
+
+---
+
+**Step 2: Create Form with Validation**
+
+```python
+# forms.py
+from django import forms
+
+
+class FileUploadForm(forms.Form):
+    file = forms.FileField(
+        error_messages={'required': 'Please select a file to upload!'}
+    )
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+
+        # Validate file extension
+        allowed_extensions = ['jpg', 'jpeg', 'png', 'gif']
+        file_extension = file.name.split('.')[-1].lower()
+
+        if file_extension not in allowed_extensions:
+            raise forms.ValidationError(
+                f'Invalid file type. Allowed: {", ".join(allowed_extensions)}'
+            )
+
+        # Validate file size (max 2MB)
+        max_size = 2 * 1024 * 1024  # 2MB in bytes
+
+        if file.size > max_size:
+            raise forms.ValidationError(
+                'File size must be less than 2MB'
+            )
+
+        return file
+```
+
+---
+
+**Step 3: Create View**
+
+```python
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import FileUploadForm
+from .models import UploadedFile
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = FileUploadForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            # Save file to database
+            uploaded_file = UploadedFile(
+                file=form.cleaned_data['file']
+            )
+            uploaded_file.save()
+
+            messages.success(request, 'File uploaded successfully!')
+            return redirect('upload_success')
+    else:
+        form = FileUploadForm()
+
+    return render(request, 'fileupload/upload.html', {'form': form})
+
+
+def upload_success(request):
+    files = UploadedFile.objects.all().order_by('-uploaded_at')
+    return render(request, 'fileupload/success.html', {'files': files})
+```
+
+---
+
+**Step 4: Create Upload Template**
+
+```html
+<!-- templates/fileupload/upload.html -->
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>File Upload</title>
+        <style>
+      .error {
+        color: red;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+        </style>
+    </head>
+    <body>
+        <h2>Upload File</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% comment %}
+                <div class="form-group">
+                    <label for='{{ form.file.id_for_label }}'>
+                        {{ form.file.label }}
+                        {% if form.file.field.required %}*{% endif %}
+                    </label>
+                    <br />
+                    {{ form.file }}
+                    <p style="color: gray; font-size: 0.9em;">Allowed: JPG, JPEG, PNG, GIF (Max 2MB)</p>
+                    {% if form.file.errors %}<p class="error">{{ form.file.errors.0 }}</p>{% endif %}
+                </div>
+            {% endcomment %}
+            <div class="form-group">
+                <label>Select File:</label>
+                <br />
+                <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif" />
+                <p style="color: gray; font-size: 0.9em;">Allowed: JPG, JPEG, PNG, GIF (Max 2MB)</p>
+                {% if form.file.errors %}<p class="error">{{ form.file.errors.0 }}</p>{% endif %}
+            </div>
+            <button type="submit">Upload</button>
+        </form>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Step 5: Create Success Template**
+
+```html
+<!-- templates/fileupload/success.html -->
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Upload Success</title>
+    </head>
+    <body>
+        <h2>Uploaded Files</h2>
+        <a href="{% url 'upload_file' %}">Upload Another</a>
+        <ul>
+            {% for file in files %}
+                <li>
+                    <a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a>
+                    ({{ file.uploaded_at }})
+                </li>
+            {% empty %}
+                <li>No files uploaded yet.</li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Step 6: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.upload_file, name='upload_file'),
+    path('success/', views.upload_success, name='upload_success'),
+]
+```
+
+```py
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('upload/', include('fileupload.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+```
+
+---
+
+**Step 7: Configure Media Settings**
+
+```python
+# settings.py
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+```
+
+---
+
+---
+
+**Design following form in HTML and write corresponding server-side script to upload and submit user's data into database in consideration of following validation rules.**
+
+- **Form fields:** TU Registration Number, Email Address, Upload your Project File
+
+**Validation rules:**
+
+- Registration number, email and upload file are mandatory field
+- Email address should be a proper email format
+- Upload file format must include pdf, doc, docx, ppt, pptx, jpeg file format
+- File size must be less than 5MB
+
+---
+
+**Step 1: Create Project Submission Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class ProjectSubmission(models.Model):
+    tu_registration_number = models.CharField(max_length=50, unique=True)
+    email = models.EmailField()
+    project_file = models.FileField(upload_to='projects/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tu_registration_number} - {self.email}"
+```
+
+---
+
+**Step 2: Configure Media Settings**
+
+```python
+# settings.py (add at bottom)
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+```
+
+---
+
+**Step 3: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 4: Create Django Form with Validation**
+
+```python
+# forms.py
+from django import forms
+
+
+class ProjectSubmissionForm(forms.Form):
+    tu_registration_number = forms.CharField(
+        max_length=50,
+        error_messages={'required': 'TU Registration Number is required'}
+    )
+
+    email = forms.EmailField(
+        error_messages={
+            'required': 'Email Address is required',
+            'invalid': 'Please enter a valid email address'
+        }
+    )
+
+    project_file = forms.FileField(
+        error_messages={'required': 'Project File is required'}
+    )
+
+    def clean_project_file(self):
+        """Validate file type and size"""
+        project_file = self.cleaned_data.get('project_file')
+
+        # Allowed file extensions
+        allowed_extensions = ['pdf', 'doc',
+                              'docx', 'ppt', 'pptx', 'jpeg', 'jpg']
+        file_extension = project_file.name.split('.')[-1].lower()
+
+        if file_extension not in allowed_extensions:
+            raise forms.ValidationError(
+                'File format must be pdf, doc, docx, ppt, pptx, or jpeg'
+            )
+
+        # Check file size (max 5MB)
+        max_size = 5 * 1024 * 1024  # 5MB in bytes
+        if project_file.size > max_size:
+            raise forms.ValidationError(
+                'File size must be less than 5MB'
+            )
+
+        return project_file
+```
+
+---
+
+**Step 5: Create View**
+
+```python
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import ProjectSubmissionForm
+from .models import ProjectSubmission
+
+
+def project_upload(request):
+    if request.method == 'POST':
+        form = ProjectSubmissionForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            # Check if registration number already exists
+            reg_number = form.cleaned_data['tu_registration_number']
+            if ProjectSubmission.objects.filter(tu_registration_number=reg_number).exists():
+                form.add_error('tu_registration_number',
+                               'This registration number already submitted')
+                return render(request, 'projectsubmission/project_form.html', {'form': form})
+
+            # Create project submission record
+            submission = ProjectSubmission(
+                tu_registration_number=reg_number,
+                email=form.cleaned_data['email'],
+                project_file=form.cleaned_data['project_file'],
+            )
+            submission.save()
+
+            messages.success(request, 'Project submitted successfully!')
+            return redirect('submission_list')
+    else:
+        form = ProjectSubmissionForm()
+
+    return render(request, 'projectsubmission/project_form.html', {'form': form})
+
+
+def submission_list(request):
+    submissions = ProjectSubmission.objects.all()
+    return render(request, 'projectsubmission/submission_list.html', {'submissions': submissions})
+```
+
+---
+
+**Step 6: Create Project Upload Form Template (HTML)**
+
+```html
+<!-- templates/projectsubmission/project_form.html -->
+<pre>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Project Submission</title>
+    <style>
+      .errorlist {
+        color: red;
+      }
+      input {
+        padding: 8px;
+        width: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Project File Submission</h1>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Submit Project</button>
+    </form>
+  </body>
+</html>
+</pre>
+```
+
+---
+
+**Step 7: Create Submission List Template**
+
+```html
+<!-- templates/projectsubmission/submission_list.html -->
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Submissions List</title>
+    </head>
+    <body>
+        <h1>Project Submissions</h1>
+        <a href="{% url 'project_upload' %}">+ Submit New Project</a>
+        <table border="1" cellpadding="10" style="margin-top: 20px;">
+            <tr>
+                <th>Registration No.</th>
+                <th>Email</th>
+                <th>Project File</th>
+                <th>Uploaded At</th>
+            </tr>
+            {% for submission in submissions %}
+                <tr>
+                    <td>{{ submission.tu_registration_number }}</td>
+                    <td>{{ submission.email }}</td>
+                    <td>
+                        <a href="{{ submission.project_file.url }}" target="_blank">View File</a>
+                    </td>
+                    <td>{{ submission.uploaded_at }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No submissions yet.</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Step 8: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.submission_list, name='submission_list'),
+    path('submit/', views.project_upload, name='project_upload'),
+]
+```
+
+```py
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('projectsubmission/', include('project.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+```
+
+---
+
+---
+
+**Write code for CRUD operations in Django.**
+
+---
+
+**Step 1: Create Django Project and App**
+
+```bash
+# Create project
+django-admin startproject crud .
+
+# Create app
+python manage.py startapp notes
+```
+
+---
+
+**Step 2: Register App in Settings**
+
+```python
+# crud/settings.py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'notes',  # Add this
+]
+```
+
+---
+
+**Step 3: Create Note Model**
+
+```python
+# notes/models.py
+from django.db import models
+
+
+class Note(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-id']  # Latest first
+```
+
+**Equivalent SQL:**
+
+```sql
+CREATE TABLE `notes` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` varchar(100) NOT NULL,
+  `description` text NOT NULL,
+  `created_at` datetime NOT NULL
+);
+```
+
+---
+
+**Step 4: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 5: Create Views (CRUD Operations)**
+
+```python
+# notes/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Note
+
+
+# READ - Display all notes
+def index(request):
+    notes = Note.objects.all()  # Already ordered by -id in model Meta
+    return render(request, 'notes/index.html', {'notes': notes})
+
+
+# CREATE - Add new note
+def add_note(request):
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        description = request.POST.get('description', '').strip()
+
+        # Validation
+        errors = []
+        if not title:
+            errors.append('Title field is empty.')
+        if not description:
+            errors.append('Description field is empty.')
+
+        if errors:
+            return render(request, 'notes/add.html', {'errors': errors})
+
+        # Create note
+        Note.objects.create(title=title, description=description)
+        messages.success(request, 'Data added successfully!')
+        return redirect('notes:index')
+
+    return render(request, 'notes/add.html')
+
+
+# UPDATE - Edit note
+def edit_note(request, note_id):
+    note = get_object_or_404(Note, id=note_id)
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        description = request.POST.get('description', '').strip()
+
+        # Validation
+        errors = []
+        if not title:
+            errors.append('Title field is empty.')
+        if not description:
+            errors.append('Description field is empty.')
+
+        if errors:
+            return render(request, 'notes/edit.html', {
+                'note': note,
+                'errors': errors
+            })
+
+        # Update note
+        note.title = title
+        note.description = description
+        note.save()
+        messages.success(request, 'Data updated successfully!')
+        return redirect('notes:index')
+
+    return render(request, 'notes/edit.html', {'note': note})
+
+
+# DELETE - Delete
+def delete_note(request, note_id):
+    note = get_object_or_404(Note, id=note_id)
+    note.delete()
+    messages.success(request, 'Note deleted successfully!')
+    return redirect('notes:index')
+```
+
+---
+
+**Step 6: Create Templates**
+
+**Create `notes/templates/notes/index.html`**
+
+```html
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Homepage</title>
+        <style>
+            table,
+            th,
+            td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            th,
+            td {
+                padding: 10px;
+            }
+            .success {
+                color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Homepage</h2>
+        <p>
+            <a href="{% url 'notes:add' %}">Add New Data</a>
+        </p>
+        {% if messages %}
+            {% for message in messages %}<p class="success">{{ message }}</p>{% endfor %}
+        {% endif %}
+        <table width="80%">
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+            {% for note in notes %}
+                <tr>
+                    <td>{{ note.title }}</td>
+                    <td>{{ note.description }}</td>
+                    <td>
+                        <a href="{% url 'notes:edit' note.id %}">Edit</a>
+                        |
+                        <a href="{% url 'notes:delete' note.id %}"
+                           onclick="return confirm('Are you sure to delete?');">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No results Found</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Create `notes/templates/notes/add.html`**
+
+```html
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add Notes</title>
+        <style>
+      .error {
+        color: red;
+      }
+        </style>
+    </head>
+    <body>
+        <h2>Add Notes</h2>
+        <p>
+            <a href="{% url 'notes:index' %}">Home</a>
+        </p>
+        {% if errors %}
+            {% for error in errors %}<p class="error">{{ error }}</p>{% endfor %}
+        {% endif %}
+        <form action="{% url 'notes:add' %}" method="post">
+            {% csrf_token %}
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title" />
+            <br />
+            <br />
+            <label for="description">Description:</label>
+            <textarea name="description" id="description"></textarea>
+            <br />
+            <br />
+            <input type="submit" value="Submit" />
+        </form>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Create `notes/templates/notes/edit.html`**
+
+```html
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit Note</title>
+        <style>
+      .error {
+        color: red;
+      }
+        </style>
+    </head>
+    <body>
+        <h2>Edit Note</h2>
+        <p>
+            <a href="{% url 'notes:index' %}">Home</a>
+        </p>
+        {% if errors %}
+            {% for error in errors %}<p class="error">{{ error }}</p>{% endfor %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <label>Title:</label>
+            <input type="text" name="title" value="{{ note.title }}" />
+            <br />
+            <br />
+            <label>Description:</label>
+            <textarea name="description">{{ note.description }}</textarea>
+            <br />
+            <br />
+            <input type="submit" value="Update" />
+        </form>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Step 7: Configure URLs**
+
+**Create `notes/urls.py`**
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'notes'
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('add/', views.add_note, name='add'),
+    path('edit/<int:note_id>/', views.edit_note, name='edit'),
+    path('delete/<int:note_id>/', views.delete_note, name='delete'),
+]
+```
+
+**Update `crud/urls.py`**
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('notes/', include('notes.urls')),
+]
+```
+
+---
+
+**Step 8: Run the Server**
+
+```bash
+python manage.py runserver
+```
+
+Visit `http://127.0.0.1:8000/` to see the Note Taking App.
+
+---
+
+### Register Model in Admin (Optional)
+
+```python
+# notes/admin.py
+from django.contrib import admin
+from .models import Note
+
+
+@admin.register(Note)
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ['title', 'description', 'created_at']
+    search_fields = ['title', 'description']
 ```
 
 ---
@@ -4022,5 +5109,9 @@ python manage.py runserver
 ```
 
 Open your browser and navigate to `http://127.0.0.1:8000/` to see your Grocery Bud in action.
+
+---
+
+---
 
 ---
