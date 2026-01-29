@@ -6,16 +6,21 @@
 
 ## Table of Content
 
-- [MVC Architecture](#mvc-architecture)
-- [Role of Backend](#role-of-backend)
-- [Django](#django)
-- [Django Setup](#django-setup)
-- [URLs & Views](#urls--views)
-- [Templates & Static Files](#templates--static-files)
-- [Data and Models](#data-and-models)
-- [Sessions and Cookies](#sessions-and-cookies)
-- [Questions](#questions)
-- [Lab: CRUD with Django](#lab-crud-with-django)
+1. [MVC Architecture](#mvc-architecture)
+2. [Role of Backend](#role-of-backend)
+3. [Django](#django)
+4. [Django Setup](#django-setup)
+5. [URLs & Views](#urls--views)
+6. [Templates & Static Files](#templates--static-files)
+7. [Data and Models](#data-and-models)
+8. [Forms](#forms)
+9. [Admin](#admin)
+10. [Sessions and Cookies](#sessions-and-cookies)
+11. [Questions](#questions)
+12. [Middleware](#middleware)
+13. [Comparison of Backend Frameworks](#comparison-of-backend-frameworks)
+14. [Database Types](#database-types)
+15. [Lab: CRUD with Django](#lab-crud-with-django)
 
 ---
 
@@ -2193,7 +2198,7 @@ Also an example of accessing nested data in template:
 
 ---
 
-## Form Data Handling and Sessions
+## Forms
 
 #### What are HTML Forms?
 
@@ -2222,6 +2227,8 @@ HTML forms are the primary way users submit data to a web server. Forms allow us
 
 ```html
 <form method="POST" action="/submit/">
+  {% csrf_token %}
+
   <label for="username">Username:</label>
   <input type="text" id="username" name="username" />
 
@@ -2277,7 +2284,7 @@ def search(request):
 
 ---
 
-### Form Data Methods
+#### Form Data Methods
 
 | Method                                 | Description                               |
 | -------------------------------------- | ----------------------------------------- |
@@ -2288,7 +2295,96 @@ def search(request):
 
 ---
 
-### Complete Form Validation
+### What is CSRF?
+
+CSRF (Cross-Site Request Forgery) is a security attack where a malicious website tricks a user's browser into making unwanted requests to another site where the user is authenticated.
+
+**Example attack scenario:**
+
+1. User logs into their bank website
+2. User visits a malicious website (in another tab)
+3. Malicious site contains hidden form that submits to bank
+4. Bank thinks the request is legitimate (user is logged in)
+5. Money is transferred without user's knowledge
+
+---
+
+#### How CSRF Protection Works
+
+Django generates a unique CSRF token for each user session. This token must be included in every POST form. When the form is submitted, Django verifies the token matches.  
+For AJAX requests, include the token in headers.
+
+**CSRF PROTECTION FLOW**
+
+1. User requests a page with a form
+2. Django generates unique CSRF token
+3. Token is embedded in the form (hidden field)
+4. User submits form with token
+5. Django validates token matches session
+6. If valid → Process request
+   If invalid → Reject request (403 Forbidden)
+
+---
+
+### Using CSRF Token in Django
+
+**In templates, add the token inside your form:**
+
+```html
+<form method="POST" action="/submit/">
+  {% csrf_token %}
+
+  <input type="text" name="username" />
+  <button type="submit">Submit</button>
+</form>
+```
+
+The `{% csrf_token %}` tag generates a hidden input field:
+
+```html
+<input type="hidden" name="csrfmiddlewaretoken" value="abc123xyz..." />
+```
+
+---
+
+### Django Forms (Forms API)
+
+Django provides a forms framework for easier form handling:
+
+```python
+# forms.py
+from django import forms
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+
+# views.py
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Access cleaned data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            # Process form...
+            return HttpResponse("Thank you!")
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact.html', {'form': form})
+```
+
+**Template:**
+
+```html
+<form method="POST" action="{% url 'contact' %}">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Send</button>
+</form>
+```
+
+#### Complete Form Validation
 
 **Registration Form**
 
@@ -2807,15 +2903,84 @@ Open your browser and navigate to `http://127.0.0.1:8000/` to see your Registrat
 
 ---
 
-## Sessions and Cookies
+## Admin
 
-**How to create, access and destroy session in Django?**
+**Create Superuser**
+
+```bash
+python manage.py createsuperuser
+```
+
+**Visit admin panel**
+
+```bash
+python manage.py runserver
+```
+
+Open your browser and navigate to `http://127.0.0.1:8000/admin` to see your Admin Panel.
 
 ---
 
-**Django Cookies**
+**Register model for admin site**
 
-**Setting Cookies:**
+```py
+from django.contrib import admin
+
+from .models import Book
+
+admin.site.register(Book)
+```
+
+- Refresh admin panel
+
+**Configure Admin Panel**
+
+```py
+class BookAdmin(admin.ModelAdmin):
+  list_filter = ("author", "rating",)
+  list_display = ("title", "author",)
+
+admin.site.register(Book, BookAdmin)
+```
+
+---
+
+---
+
+---
+
+## Sessions and Cookies
+
+**Cookies**
+
+Cookies are small pieces of data stored by the browser and sent with every HTTP request to the same domain.
+
+**Cookie Characteristics:**
+
+- Stored on client (browser)
+- Automatically sent with requests
+- Can be read by JavaScript (unless HttpOnly)
+- Have expiration dates
+- Limited to ~4KB per cookie
+
+---
+
+### Cookie Attributes
+
+| Attribute    | Description                       |
+| ------------ | --------------------------------- |
+| `name=value` | The actual data                   |
+| `Expires`    | When the cookie expires           |
+| `Max-Age`    | Cookie lifetime in seconds        |
+| `Domain`     | Which domain can access           |
+| `Path`       | Which paths can access            |
+| `Secure`     | Only send over HTTPS              |
+| `HttpOnly`   | JavaScript cannot access          |
+| `SameSite`   | CSRF protection (Strict/Lax/None) |
+
+---
+
+**Setting Cookies in Django:**
 
 ```python
 # views.py
@@ -2895,7 +3060,31 @@ def delete_cookie(request):
 
 **Django Sessions**
 
-Django sessions are enabled by default. Data is stored on the server.
+Sessions allow the server to remember information about a user across multiple requests. Since HTTP is stateless (each request is independent), sessions provide a way to maintain state.
+
+**Common session uses:**
+
+- Keep users logged in
+- Store shopping cart contents
+- Remember user preferences
+- Track form progress (multi-step wizards)
+
+---
+
+### How Sessions Work
+
+**SESSION WORKFLOW**
+
+1. User makes first request to server
+2. Server creates unique Session ID
+3. Session ID sent to browser in cookie
+4. Browser stores cookie
+5. Every future request includes Session ID cookie
+6. Server uses Session ID to retrieve user's data
+
+Django sessions are enabled by default.
+
+---
 
 **Session Settings (settings.py):**
 
@@ -2910,6 +3099,67 @@ Django sessions are enabled by default. Data is stored on the server.
 SESSION_COOKIE_AGE = 86400 * 30  # 30 days (default: 2 weeks)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Keep session after browser closes
 ```
+
+**Create, Retrieve, Clear Session**
+
+```py
+# Store data in session
+request.session['username'] = username
+
+# Retrieve data from session
+    username = request.session.get('username', 'Guest')
+
+# Clear session data
+request.session.flush()  # Removes all session data
+```
+
+#### Session Methods
+
+| Method                                | Description            |
+| ------------------------------------- | ---------------------- |
+| `request.session['key'] = value`      | Set session value      |
+| `request.session.get('key')`          | Get session value      |
+| `request.session.get('key', default)` | Get with default       |
+| `del request.session['key']`          | Delete specific key    |
+| `request.session.flush()`             | Clear all session data |
+| `request.session.set_expiry(seconds)` | Set expiration time    |
+
+---
+
+#### Sessions vs Cookies
+
+| Aspect          | Cookies               | Sessions         |
+| --------------- | --------------------- | ---------------- |
+| **Storage**     | Browser (client)      | Server           |
+| **Size Limit**  | ~4KB                  | No limit         |
+| **Security**    | Visible to user       | Hidden from user |
+| **Data Access** | JavaScript can access | Server only      |
+| **Use Case**    | Preferences, tokens   | User data, cart  |
+
+---
+
+#### Authentication vs Authorization
+
+These two concepts are often confused but serve different purposes:
+
+| Concept            | Question           | Purpose           |
+| ------------------ | ------------------ | ----------------- |
+| **Authentication** | "Who are you?"     | Verify identity   |
+| **Authorization**  | "What can you do?" | Check permissions |
+
+---
+
+**Authentication Flow**
+
+AUTHENTICATION FLOW
+
+1. User submits credentials (username/password)
+2. Server verifies credentials against database
+3. If valid → Create session/token  
+   If invalid → Return error
+4. Send session ID or token to client
+5. Client stores and sends with future requests
+6. Server verifies session/token for each request
 
 ---
 
@@ -4615,6 +4865,679 @@ from .models import Note
 class NoteAdmin(admin.ModelAdmin):
     list_display = ['title', 'description', 'created_at']
     search_fields = ['title', 'description']
+```
+
+---
+
+---
+
+---
+
+## Middleware
+
+Middleware is software that sits between the request and response, processing each one. It's like a series of filters that every request/response passes through.
+
+Middleware processes requests/responses as they flow through Django. Each middleware can:
+
+- Inspect/modify incoming requests
+- Inspect/modify outgoing responses
+- Short-circuit the request (return early without calling view)
+- Add headers, log information, handle errors
+
+**Middleware Use Cases**
+
+| Use Case               | Description                                            |
+| ---------------------- | ------------------------------------------------------ |
+| **Authentication**     | Check if user is logged in                             |
+| **Logging**            | Log all requests for debugging                         |
+| **Security**           | Add security headers                                   |
+| **CORS**               | Handle cross-origin requests                           |
+| **Compression**        | Compress responses                                     |
+| **Caching**            | Cache responses                                        |
+| **Session Management** | Handle user sessions                                   |
+| **Error Handling**     | catches exceptions and provides custom error responses |
+
+**Django Built-in Middleware**
+
+Django comes with several middleware enabled by default in `settings.py`:
+
+```python
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',      # Security headers (forces https (http to https))
+    'django.contrib.sessions.middleware.SessionMiddleware',  # Sessions ( read session id from cookies)
+    'django.middleware.common.CommonMiddleware',          # Common utilities (url normalization like adding slash)
+    'django.middleware.csrf.CsrfViewMiddleware',          # CSRF protection (validate csrf token)
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # Auth (attaches request.user, resolving from session)
+    'django.contrib.messages.middleware.MessageMiddleware',  # Messages (attaches messages)
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',  # Clickjacking Protection
+]
+```
+
+**Creating custom middleware**
+
+**Logging Middleware**
+
+Logging helps track application behavior, debug issues, and monitor performance.
+
+```text
+your_project/
+├── middleware.py
+```
+
+**Create middleware**
+
+```py
+import time
+
+def request_timing_middleware(get_response):
+    """
+    Function-based middleware to log request processing time
+    """
+
+    def middleware(request):
+        start_time = time.time()
+
+        response = get_response(request)
+
+        duration = time.time() - start_time
+        print(f"{request.path} took {duration:.2f} seconds. Completed with status {response.status_code}.")
+
+        return response
+
+    return middleware
+```
+
+**Register:**
+
+```py
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
+    # register your middleware
+    'your_project.middleware.request_timing_middleware',
+
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+]
+```
+
+**Output**
+
+```text
+/login/ took 0.08 seconds
+/dashboard/ took 0.34 seconds
+```
+
+---
+
+---
+
+---
+
+## Comparison of Backend Frameworks
+
+#### What is a Web Framework?
+
+A web framework is a software framework designed to support web application development. It provides:
+
+- Pre-built components for common tasks
+- Structure and conventions for organizing code
+- Tools for handling HTTP requests/responses
+- Database integration
+- Security features
+- Development utilities
+
+Using a framework saves time, enforces best practices, and reduces the chance of security vulnerabilities.
+
+---
+
+#### Types of Web Frameworks
+
+| Type           | Description                                 | Examples               |
+| -------------- | ------------------------------------------- | ---------------------- |
+| **Full-Stack** | Everything included (ORM, templates, admin) | Django, Rails, Laravel |
+| **Micro**      | Minimal core, add what you need             | Flask, Express.js      |
+| **API-First**  | Optimized for building APIs                 | FastAPI, .NET Web API  |
+
+---
+
+#### Django (Python)
+
+**Type:** Full-stack framework
+
+**Philosophy:** "Batteries included" — comes with everything you need
+
+**Key Features:**
+
+- Built-in admin panel
+- ORM (Object-Relational Mapping)
+- Authentication system
+- Form handling
+- Template engine
+- Security features (CSRF, XSS protection)
+- URL routing
+- Middleware support
+
+**Best For:**
+
+- Content management systems
+- E-commerce sites
+- Social networks
+- Data-driven applications
+
+**Pros:**
+
+| Advantage        | Description                                |
+| ---------------- | ------------------------------------------ |
+| Complete package | Everything included out of the box         |
+| Admin panel      | Automatic admin interface                  |
+| Security         | Built-in protection against common attacks |
+| Scalability      | Powers Instagram, Pinterest                |
+| Documentation    | Excellent official documentation           |
+| Community        | Large, active community                    |
+
+**Cons:**
+
+| Disadvantage   | Description                        |
+| -------------- | ---------------------------------- |
+| Monolithic     | Can be overkill for small projects |
+| Learning curve | Many concepts to learn             |
+| Less flexible  | Encourages "Django way"            |
+
+---
+
+#### Flask (Python)
+
+**Type:** Micro framework
+
+**Philosophy:** "Micro" — minimal core, maximum flexibility
+
+**Key Features:**
+
+- Lightweight and simple
+- Jinja2 templating
+- Werkzeug WSGI toolkit
+- No ORM (use SQLAlchemy or others)
+- No form validation (use WTForms)
+- Extensible with plugins
+
+**Best For:**
+
+- Small to medium applications
+- APIs and microservices
+- Prototypes and MVPs
+- Learning web development
+
+**Pros:**
+
+| Advantage   | Description                |
+| ----------- | -------------------------- |
+| Simple      | Easy to learn and use      |
+| Flexible    | Choose your own components |
+| Lightweight | Small footprint            |
+| Explicit    | No "magic" — clear code    |
+
+**Cons:**
+
+| Disadvantage  | Description                               |
+| ------------- | ----------------------------------------- |
+| Manual setup  | Must add extensions for features          |
+| No standard   | Different projects structured differently |
+| Less built-in | No admin, forms, or ORM                   |
+
+---
+
+#### FastAPI (Python)
+
+**Type:** API-first micro framework
+
+**Philosophy:** Fast, modern, automatic documentation
+
+**Key Features:**
+
+- Async support (asyncio)
+- Automatic API documentation (Swagger/OpenAPI)
+- Type hints for validation
+- High performance
+- Dependency injection
+- OAuth2 support
+
+**Best For:**
+
+- REST APIs
+- Microservices
+- High-performance applications
+- Machine learning APIs
+
+**Pros:**
+
+| Advantage  | Description                          |
+| ---------- | ------------------------------------ |
+| Speed      | One of the fastest Python frameworks |
+| Modern     | Async/await, type hints              |
+| Auto docs  | Swagger UI generated automatically   |
+| Validation | Automatic request validation         |
+
+**Cons:**
+
+| Disadvantage     | Description                         |
+| ---------------- | ----------------------------------- |
+| API-focused      | Not ideal for traditional web apps  |
+| Newer            | Smaller community than Django/Flask |
+| Async complexity | Async can be harder to debug        |
+
+---
+
+#### ASP.NET Core MVC (C#/.NET)
+
+**Type:** Full-stack framework
+
+**Philosophy:** Enterprise-grade, cross-platform
+
+**Key Features:**
+
+- Built on .NET Core (cross-platform)
+- MVC architecture
+- Entity Framework ORM
+- Razor templating
+- Dependency injection
+- Strong typing
+- Identity for authentication
+
+**Best For:**
+
+- Enterprise applications
+- Windows environments
+- Large-scale systems
+- Microsoft ecosystem projects
+
+**Pros:**
+
+| Advantage   | Description                         |
+| ----------- | ----------------------------------- |
+| Performance | Very fast, compiled language        |
+| Enterprise  | Designed for large organizations    |
+| Tooling     | Excellent Visual Studio integration |
+| Type safety | Catches errors at compile time      |
+
+**Cons:**
+
+| Disadvantage | Description                      |
+| ------------ | -------------------------------- |
+| Complexity   | Steeper learning curve           |
+| Verbose      | More code than dynamic languages |
+| Licensing    | Some tools require licenses      |
+
+---
+
+#### Ruby on Rails (Ruby)
+
+**Type:** Full-stack framework
+
+**Philosophy:** "Convention over configuration"
+
+**Key Features:**
+
+- MVC architecture
+- Active Record ORM
+- Scaffold generation
+- Migrations for database
+- Asset pipeline
+- Action Cable (WebSockets)
+- Strong conventions
+
+**Best For:**
+
+- Startups and MVPs
+- Rapid prototyping
+- E-commerce platforms
+- Content-heavy sites
+
+**Pros:**
+
+| Advantage         | Description               |
+| ----------------- | ------------------------- |
+| Rapid development | Build features quickly    |
+| Conventions       | Less configuration needed |
+| Elegant           | Clean, readable Ruby code |
+| Mature            | 20+ years of development  |
+
+**Cons:**
+
+| Disadvantage  | Description                    |
+| ------------- | ------------------------------ |
+| Performance   | Slower than compiled languages |
+| Hosting       | Fewer hosting options          |
+| Ruby learning | Must learn Ruby language       |
+
+---
+
+#### Spring Boot (Java)
+
+**Type:** Full-stack framework
+
+**Philosophy:** Enterprise Java made easier
+
+**Key Features:**
+
+- Standalone applications
+- Embedded servers
+- Auto-configuration
+- Spring ecosystem integration
+- Dependency injection
+- Spring Security
+- Spring Data JPA
+
+**Best For:**
+
+- Enterprise applications
+- Microservices
+- Large-scale systems
+- Java ecosystem projects
+
+**Pros:**
+
+| Advantage   | Description                         |
+| ----------- | ----------------------------------- |
+| Ecosystem   | Huge Spring ecosystem               |
+| Enterprise  | Industry standard for large systems |
+| Performance | JVM optimization                    |
+| Community   | Massive community support           |
+
+**Cons:**
+
+| Disadvantage | Description              |
+| ------------ | ------------------------ |
+| Verbose      | Lots of boilerplate code |
+| Complexity   | Many concepts to learn   |
+| Memory       | JVM memory overhead      |
+
+---
+
+#### Node.js with Express.js (JavaScript)
+
+**Type:** Micro framework
+
+**Philosophy:** Minimalist, unopinionated
+
+**Key Features:**
+
+- JavaScript on server
+- Non-blocking I/O
+- Huge npm ecosystem
+- Middleware-based
+- Template engine support
+- WebSocket support
+
+**Best For:**
+
+- Real-time applications
+- APIs and microservices
+- Single-page apps (with React/Vue)
+- JavaScript full-stack development
+
+**Pros:**
+
+| Advantage     | Description                     |
+| ------------- | ------------------------------- |
+| Same language | JavaScript frontend and backend |
+| npm ecosystem | Millions of packages            |
+| Real-time     | Excellent for sockets/streaming |
+| Fast          | V8 engine, non-blocking         |
+
+**Cons:**
+
+| Disadvantage    | Description               |
+| --------------- | ------------------------- |
+| Callback hell   | Async code can get messy  |
+| No structure    | Must organize yourself    |
+| Single-threaded | CPU-intensive tasks block |
+
+---
+
+#### Framework Comparison Table
+
+| Feature         | Django    | Flask     | FastAPI   | ASP.NET        | Rails  | Spring Boot | Express    |
+| --------------- | --------- | --------- | --------- | -------------- | ------ | ----------- | ---------- |
+| **Language**    | Python    | Python    | Python    | C#             | Ruby   | Java        | JavaScript |
+| **Type**        | Full      | Micro     | API       | Full           | Full   | Full        | Micro      |
+| **ORM**         | Built-in  | Extension | Extension | EF Core        | AR     | JPA         | Extension  |
+| **Admin**       | Built-in  | No        | No        | No             | No     | No          | No         |
+| **Learning**    | Medium    | Easy      | Easy      | Hard           | Medium | Hard        | Easy       |
+| **Performance** | Good      | Good      | Excellent | Excellent      | Fair   | Excellent   | Good       |
+| **Async**       | Limited   | Limited   | Native    | Native         | No     | Yes         | Native     |
+| **Used By**     | Instagram | Netflix   | Microsoft | Stack Overflow | GitHub | Alibaba     | Netflix    |
+
+---
+
+#### Choosing the Right Framework
+
+**Choose Django if:**
+
+- You want everything included
+- You need an admin panel
+- You're building a content-heavy site
+- You prefer Python
+
+**Choose Flask if:**
+
+- You want full control
+- You're building a small app or API
+- You want to learn web fundamentals
+- You prefer minimalism
+
+**Choose FastAPI if:**
+
+- You're building a REST API
+- You need high performance
+- You want automatic documentation
+- You like type hints
+
+**Choose ASP.NET if:**
+
+- You're in a Microsoft environment
+- You need enterprise features
+- You prefer C# and strong typing
+- You need high performance
+
+**Choose Ruby on Rails if:**
+
+- You want rapid development
+- You prefer convention over configuration
+- You're building an MVP
+- You like Ruby
+
+**Choose Spring Boot if:**
+
+- You're building enterprise Java apps
+- You need the Spring ecosystem
+- You're working with microservices
+- Your team knows Java
+
+**Choose Express.js if:**
+
+- You want JavaScript everywhere
+- You're building real-time apps
+- You're working with React/Vue
+- You want flexibility
+
+---
+
+#### Summary: Framework Comparison
+
+| Consideration         | Recommendation                       |
+| --------------------- | ------------------------------------ |
+| **Beginner**          | Flask, Express                       |
+| **Rapid Development** | Django, Rails                        |
+| **APIs**              | FastAPI, Express                     |
+| **Enterprise**        | Spring Boot, ASP.NET                 |
+| **Full-Stack**        | Django, Rails, ASP.NET               |
+| **Microservices**     | FastAPI, Express, Spring Boot        |
+| **Real-Time**         | Express (Socket.io), Django Channels |
+
+---
+
+---
+
+---
+
+## Database Types
+
+#### What is a Database?
+
+A database is an organized collection of structured data stored electronically. Databases allow applications to:
+
+- Store data permanently
+- Retrieve data efficiently
+- Update and delete data
+- Maintain data integrity
+- Handle concurrent access
+
+---
+
+#### Types of Databases
+
+#### 1. Relational Databases (SQL)
+
+Relational databases store data in tables with rows and columns. Tables can be related to each other through keys.
+
+**Characteristics:**
+
+- Data stored in structured tables
+- Predefined schema (structure)
+- Uses SQL (Structured Query Language)
+- ACID compliant (Atomicity, Consistency, Isolation, Durability)
+- Strong data integrity
+- Relationships between tables
+
+**Popular Relational Databases:**
+
+| Database       | Description                         |
+| -------------- | ----------------------------------- |
+| **PostgreSQL** | Advanced, open-source, feature-rich |
+| **MySQL**      | Popular, fast, widely used          |
+| **SQLite**     | Lightweight, file-based, embedded   |
+| **Oracle**     | Enterprise, commercial              |
+| **SQL Server** | Microsoft, enterprise               |
+
+**Example Table Structure:**
+
+```text
+┌─────────────────────────────────────────────────────┐
+│                    users TABLE                      │
+├─────┬──────────┬─────────────────────┬──────────────┤
+│ id  │ username │ email               │ created_at   │
+├─────┼──────────┼─────────────────────┼──────────────┤
+│ 1   │ john     │ john@example.com    │ 2026-01-15   │
+│ 2   │ jane     │ jane@example.com    │ 2026-01-16   │
+│ 3   │ bob      │ bob@example.com     │ 2026-01-17   │
+└─────┴──────────┴─────────────────────┴──────────────┘
+```
+
+---
+
+#### 2. NoSQL Databases
+
+NoSQL databases store data in flexible formats other than traditional tables. They are designed for scalability and handling unstructured data.
+
+**Types of NoSQL Databases:**
+
+| Type              | Description                   | Examples         |
+| ----------------- | ----------------------------- | ---------------- |
+| **Document**      | Stores JSON-like documents    | MongoDB, CouchDB |
+| **Key-Value**     | Simple key-value pairs        | Redis, DynamoDB  |
+| **Column-Family** | Columns grouped into families | Cassandra, HBase |
+| **Graph**         | Nodes and relationships       | Neo4j, ArangoDB  |
+
+**Characteristics:**
+
+- Flexible schema (schema-less)
+- Horizontal scaling
+- High performance for specific use cases
+- Good for unstructured/semi-structured data
+- Eventually consistent (often)
+
+**Example Document (MongoDB):**
+
+```json
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "username": "john",
+  "email": "john@example.com",
+  "profile": {
+    "bio": "Software developer",
+    "avatar": "avatar.jpg"
+  },
+  "tags": ["developer", "python", "django"]
+}
+```
+
+---
+
+#### Relational vs NoSQL Comparison
+
+| Aspect             | Relational (SQL)               | NoSQL                       |
+| ------------------ | ------------------------------ | --------------------------- |
+| **Schema**         | Fixed, predefined              | Flexible, dynamic           |
+| **Scaling**        | Vertical (bigger server)       | Horizontal (more servers)   |
+| **Relationships**  | Strong (foreign keys)          | Weak or embedded            |
+| **Query Language** | SQL                            | Varies (MongoDB uses JSON)  |
+| **Transactions**   | ACID compliant                 | Often eventually consistent |
+| **Best For**       | Structured data, relationships | Flexibility, large scale    |
+| **Examples**       | Banking, ERP, CRM              | Social media, IoT, logs     |
+
+---
+
+**Choose Relational Database When:**
+
+- Data has clear relationships
+- Data integrity is critical
+- You need complex queries and joins
+- Transactions are important
+- Schema is well-defined
+
+**Choose NoSQL When:**
+
+- Schema is evolving/unknown
+- You need horizontal scaling
+- Handling large volumes of data
+- Data is semi-structured or unstructured
+- Speed is more important than consistency
+
+---
+
+#### What is CRUD?
+
+**CRUD** represents the four basic operations for persistent storage:
+
+| Operation  | Description          | SQL Command | HTTP Method |
+| ---------- | -------------------- | ----------- | ----------- |
+| **C**reate | Add new data         | INSERT      | POST        |
+| **R**ead   | Retrieve data        | SELECT      | GET         |
+| **U**pdate | Modify existing data | UPDATE      | PUT/PATCH   |
+| **D**elete | Remove data          | DELETE      | DELETE      |
+
+---
+
+### CRUD with Raw SQL
+
+```sql
+-- CREATE: Insert a new record
+INSERT INTO users (username, email) VALUES ('john', 'john@example.com');
+
+-- READ: Select records
+SELECT * FROM users;                    -- All users
+SELECT * FROM users WHERE id = 1;       -- Specific user
+SELECT username, email FROM users;      -- Specific columns
+
+-- UPDATE: Modify a record
+UPDATE users SET email = 'newemail@example.com' WHERE id = 1;
+
+-- DELETE: Remove a record
+DELETE FROM users WHERE id = 1;
 ```
 
 ---
