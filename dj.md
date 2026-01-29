@@ -2223,7 +2223,7 @@ HTML forms are the primary way users submit data to a web server. Forms allow us
 
 ---
 
-### Basic HTML Form
+#### Basic HTML Form
 
 ```html
 <form method="POST" action="/submit/">
@@ -2247,7 +2247,7 @@ HTML forms are the primary way users submit data to a web server. Forms allow us
 
 ---
 
-### Processing Form Data in Django
+#### Processing Form Data in Django
 
 #### Accessing POST Data
 
@@ -2349,7 +2349,22 @@ The `{% csrf_token %}` tag generates a hidden input field:
 
 ### Django Forms (Forms API)
 
-Django provides a forms framework for easier form handling:
+Django forms provide a powerful way to handle user input, validate data, and render HTML forms. Forms in Django help you avoid writing repetitive HTML form code and provide built-in validation mechanisms.
+
+#### Why Use Django Forms?
+
+| Benefit                 | Description                                 |
+| ----------------------- | ------------------------------------------- |
+| **Automatic Rendering** | Forms can render themselves as HTML         |
+| **Validation**          | Built-in and custom validation support      |
+| **Security**            | CSRF protection, XSS prevention             |
+| **Data Binding**        | Easy binding of form data to Python objects |
+| **Error Handling**      | Automatic error message handling            |
+
+**Types of Forms**
+
+1. **`forms.Form`**: Standard form. You define fields manually. Used for non-model data (e.g., contact form, search).
+2. **`forms.ModelForm`**: Connected to a database model. Automatically generates fields based on the model.
 
 ```python
 # forms.py
@@ -2379,16 +2394,154 @@ def contact(request):
 
 ```html
 <form method="POST" action="{% url 'contact' %}">
-  {% csrf_token %} {{ form.as_p }}
+  {% csrf_token %}
+
+  <!-- Option 1: Render paragraph for each field -->
+  {{ form.as_p }}
+
+  <!-- Option 2: Render table rows -->
+  {{ form.as_table }}
+
+  <!-- Option 3: Render list items -->
+  {{ form.as_ul }}
+
+  <!-- Option 4: Manual Rendering (Best Control) -->
+  <div class="form-group">
+    <label for="{{ form.name.id_for_label }}">Name:</label>
+    {{ form.name }} {{ form.name.errors }}
+  </div>
+
   <button type="submit">Send</button>
 </form>
 ```
 
+#### Common Form Fields
+
+| Field Type            | Description                  | HTML Element                    |
+| --------------------- | ---------------------------- | ------------------------------- |
+| `CharField`           | Text input                   | `<input type="text">`           |
+| `EmailField`          | Email input with validation  | `<input type="email">`          |
+| `IntegerField`        | Integer input                | `<input type="number">`         |
+| `FloatField`          | Decimal number input         | `<input type="number">`         |
+| `DateField`           | Date input                   | `<input type="date">`           |
+| `DateTimeField`       | Date and time input          | `<input type="datetime-local">` |
+| `BooleanField`        | Checkbox                     | `<input type="checkbox">`       |
+| `ChoiceField`         | Dropdown select              | `<select>`                      |
+| `MultipleChoiceField` | Multiple selection           | `<select multiple>`             |
+| `FileField`           | File upload                  | `<input type="file">`           |
+| `ImageField`          | Image upload with validation | `<input type="file">`           |
+
+---
+
+#### Form Field Arguments
+
+Common arguments that can be passed to form fields:
+
+```python
+from django import forms
+
+
+class ExampleForm(forms.Form):
+    # required - is the field mandatory? (default True)
+    name = forms.CharField(required=True)
+
+    # max_length - maximum character length
+    username = forms.CharField(max_length=50)
+
+    # min_length - minimum character length
+    password = forms.CharField(min_length=8)
+
+    # initial - default value
+    country = forms.CharField(initial='Nepal')
+
+    # help_text - helper text for the field
+    email = forms.EmailField(help_text='Enter a valid email address')
+
+    # label - custom label for the field
+    dob = forms.DateField(label='Date of Birth')
+
+    # error_messages - custom error messages
+    phone = forms.CharField(
+        error_messages={
+            'required': 'Phone number is required',
+            'max_length': 'Phone number too long'
+        }
+    )
+
+    # disabled - make field read-only
+    id_number = forms.CharField(disabled=True)
+```
+
+---
+
+#### Validation
+
+Validation happens when you call `form.is_valid()`.
+
+**A. Built-in Validation:**
+
+- `required=True` (default)
+- `max_length`, `min_length`
+- Email format, URL format, etc.
+
+**B. Custom Field Validation (`clean_<fieldname>`):**
+
+```python
+def clean_email(self):
+    email = self.cleaned_data['email']
+    if not email.endswith('@example.com'):
+        raise forms.ValidationError("Only example.com emails are allowed!")
+    return email
+```
+
+**C. Custom Cross-Field Validation (`clean`):**
+
+```python
+def clean(self):
+    cleaned_data = super().clean()
+    password = cleaned_data.get("password")
+    confirm_password = cleaned_data.get("confirm_password")
+
+    if password != confirm_password:
+        raise forms.ValidationError("Passwords do not match")
+```
+
+```html
+<!-- Display non-field errors -->
+{% if form.non_field_errors %}
+<div class="errors">
+  {% for error in form.non_field_errors %}
+  <p>{{ error }}</p>
+  {% endfor %}
+</div>
+{% endif %}
+```
+
+---
+
+#### Widgets
+
+Widgets control how the HTML is rendered (e.g., `<input>` vs `<textarea>`).
+
+```python
+name = forms.CharField(
+    widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name'})
+)
+
+password = forms.CharField(
+    widget=forms.PasswordInput()  # Renders as type="password"
+)
+
+birth_date = forms.DateField(
+    widget=forms.DateInput(attrs={'type': 'date'})  # HTML5 Date Picker
+)
+```
+
+---
+
 #### Complete Form Validation
 
-**Registration Form**
-
-Build a Registration Form with comprehensive validation using Django.
+<b>Create a form to input Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. Write server side code to perform form validation. All fields are required. Appointment date cannot be in past. Resume should be either pdf, ms-word or image. File size should be less than 2MB. Email should be valid. Phone number should be valid ( `9*********` or `01*******` ). Password must be at least 8 character long with at least one lowercase, uppercase, number and symbol. Password and confirm password should match.</b>
 
 **Prerequisites**
 
@@ -2939,6 +3092,7 @@ admin.site.register(Book)
 class BookAdmin(admin.ModelAdmin):
   list_filter = ("author", "rating",)
   list_display = ("title", "author",)
+  search_fields = ['title',]
 
 admin.site.register(Book, BookAdmin)
 ```
@@ -4853,22 +5007,6 @@ Visit `http://127.0.0.1:8000/` to see the Note Taking App.
 
 ---
 
-### Register Model in Admin (Optional)
-
-```python
-# notes/admin.py
-from django.contrib import admin
-from .models import Note
-
-
-@admin.register(Note)
-class NoteAdmin(admin.ModelAdmin):
-    list_display = ['title', 'description', 'created_at']
-    search_fields = ['title', 'description']
-```
-
----
-
 ---
 
 ---
@@ -6484,30 +6622,6 @@ Add messages display after section-center opening:
 Now you will see success/error messages for all actions.
 
 ![Grocery List Output](/grocery-bud-django/screenshots/op6.png)
-
----
-
-**Register Model in Admin (Optional)**
-
-**Update `grocery/admin.py`**
-
-```python
-from django.contrib import admin
-from .models import GroceryItem
-
-
-@admin.register(GroceryItem)
-class GroceryItemAdmin(admin.ModelAdmin):
-    list_display = ['name', 'completed', 'created_at']
-    list_filter = ['completed']
-    search_fields = ['name']
-```
-
-**Create Superuser (Optional)**
-
-```bash
-python manage.py createsuperuser
-```
 
 ---
 
