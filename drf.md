@@ -1,4 +1,4 @@
-# Django REST Framework
+# Web Services & APIs
 
 ![Bidur Sapkota](https://www.bidursapkota.com.np/images/gravatar.webp "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
