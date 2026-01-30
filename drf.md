@@ -1521,3 +1521,2293 @@ An **API Gateway** is a server that acts as a single entry point for all client 
 24. What is gRPC and how does it differ from REST APIs? Explain Event-Driven Architecture in microservices including how services publish and subscribe to events, message brokers (RabbitMQ, Redis, Amazon SQS), benefits for loose coupling, eventual consistency challenges, and use cases for event-driven architecture. [2+6]
 
 25. Explain microservices architecture in detail including definition and comparison with monolithic architecture, key characteristics (at least four), advantages (at least five), disadvantages (at least four), service communication patterns, and when to use microservices vs monolithic architecture. [8]
+
+---
+
+#### Complete Form Validation API
+
+<b>Create a REST API to accept Name, gender, hobbies, appointment date & time, country, resume, Email, password and confirm Password. Write server side code to perform form validation. All fields are required. Appointment date cannot be in past. Resume should be either pdf, ms-word or image. File size should be less than 2MB. Email should be valid. Phone number should be valid ( `9*********` or `01*******` ). Password must be at least 8 character long with at least one lowercase, uppercase, number and symbol. Password and confirm password should match.</b>
+
+**Prerequisites**
+
+- Python 3.x installed
+- pip (Python package installer)
+
+---
+
+**Create Project**
+
+```bash
+cd Desktop
+mkdir drf-form-validation
+cd drf-form-validation
+```
+
+**Create Virtual Environment**
+
+```bash
+python -m venv venv
+```
+
+**Activate Virtual Environment**
+
+```bash
+# Windows
+venv\Scripts\activate
+
+# Linux/Mac
+source venv/bin/activate
+```
+
+**Install Django and Django Rest Framework**
+
+```bash
+pip install django djangorestframework
+```
+
+**Create Django Project**
+
+```bash
+django-admin startproject config .
+```
+
+**Create Django App**
+
+```bash
+python manage.py startapp registration
+```
+
+---
+
+**Project Structure**
+
+```text
+drf-form-validation/
+├── config/
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── registration/
+│   ├── migrations/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── urls.py
+│   └── views.py
+├── media/
+│   └── resumes/
+├── manage.py
+└── venv/
+```
+
+---
+
+**Register App in Settings**
+
+**Update `config/settings.py`**
+
+```python
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',  # Add DRF
+    'registration',  # Add this line
+]
+```
+
+**Add Media Settings** (at the bottom of `config/settings.py`)
+
+```python
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+```
+
+---
+
+**Create Model**
+
+**Update `registration/models.py`**
+
+```python
+from django.db import models
+
+
+class Registration(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+
+    HOBBY_CHOICES = [
+        ('football', 'Football'),
+        ('tableTennis', 'Table Tennis'),
+        ('basketball', 'Basketball'),
+    ]
+
+    COUNTRY_CHOICES = [
+        ('', '-- Select --'),
+        ('Nepal', 'Nepal'),
+        ('India', 'India'),
+        ('USA', 'USA'),
+    ]
+
+    name = models.CharField(max_length=100)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    hobbies = models.JSONField(default=list)  # Store multiple hobbies as JSON
+    appointment = models.DateTimeField()
+    country = models.CharField(max_length=50, choices=COUNTRY_CHOICES)
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=15)
+    resume = models.FileField(upload_to='resumes/')
+    password = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['-created_at']
+```
+
+---
+
+**Create and Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Create DRF Serializer with Validation**
+
+**Create `registration/serializers.py`**
+
+```python
+from rest_framework import serializers
+from django.utils import timezone
+from django.contrib.auth.hashers import make_password
+from .models import Registration
+import re
+
+
+class RegistrationSerializer(serializers.Serializer):
+    """Registration serializer with comprehensive validation"""
+
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(
+        max_length=100,
+        error_messages={'required': 'Name is required', 'blank': 'Name is required'}
+    )
+    gender = serializers.ChoiceField(
+        choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')],
+        error_messages={'required': 'Gender is required'}
+    )
+    hobbies = serializers.ListField(
+        child=serializers.CharField(),
+        error_messages={'required': 'Hobbies is required'}
+    )
+    appointment = serializers.DateTimeField(
+        error_messages={'required': 'Appointment date & time is required'}
+    )
+    country = serializers.ChoiceField(
+        choices=[('Nepal', 'Nepal'), ('India', 'India'), ('USA', 'USA')],
+        error_messages={'required': 'Country is required'}
+    )
+    email = serializers.EmailField(
+        error_messages={'required': 'Email is required', 'invalid': 'Enter a valid email address'}
+    )
+    phone = serializers.CharField(
+        max_length=15,
+        error_messages={'required': 'Phone number is required', 'blank': 'Phone number is required'}
+    )
+    resume = serializers.FileField(
+        error_messages={'required': 'Resume file is required'}
+    )
+    password = serializers.CharField(
+        write_only=True,
+        error_messages={'required': 'Password is required', 'blank': 'Password is required'}
+    )
+    confirm_password = serializers.CharField(
+        write_only=True,
+        error_messages={'required': 'Confirm Password is required'}
+    )
+    created_at = serializers.DateTimeField(read_only=True)
+
+    def validate_appointment(self, value):
+        """Validate appointment is not in the past"""
+        now = timezone.now()
+        if value < now:
+            raise serializers.ValidationError(
+                'Appointment date & time cannot be in the past'
+            )
+        return value
+
+    def validate_phone(self, value):
+        """Validate phone number format (Nepal format)"""
+        phone_regex = r'^(?:9\d{9}|01\d{7})$'
+        if not re.match(phone_regex, value):
+            raise serializers.ValidationError(
+                'Please enter a valid phone number (9xxxxxxxxx or 01xxxxxxx)'
+            )
+        return value
+
+    def validate_resume(self, value):
+        """Validate resume file type and size"""
+        allowed_extensions = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx']
+        extension = value.name.split('.')[-1].lower()
+        if extension not in allowed_extensions:
+            raise serializers.ValidationError(
+                f'Unsupported file format. Allowed: {", ".join(allowed_extensions)}'
+            )
+
+        max_size = 2 * 1024 * 1024  # 2MB in bytes
+        if value.size > max_size:
+            raise serializers.ValidationError(
+                'File size should be less than 2MB'
+            )
+        return value
+
+    def validate_password(self, value):
+        """Validate password strength"""
+        password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$'
+        if not re.match(password_regex, value):
+            raise serializers.ValidationError(
+                'Password must be at least 8 characters long and include '
+                'one uppercase letter, one lowercase letter, one number, '
+                'and one symbol'
+            )
+        return value
+
+    def validate_hobbies(self, value):
+        """Validate at least one hobby is selected"""
+        if not value or len(value) == 0:
+            raise serializers.ValidationError(
+                'Please select at least one hobby'
+            )
+        return value
+
+    def validate(self, data):
+        """Validate confirm password matches password"""
+        password = data.get('password')
+        confirm_password = data.get('confirm_password')
+
+        if password != confirm_password:
+            raise serializers.ValidationError({
+                'confirm_password': 'Confirm Password did not match Password'
+            })
+
+        return data
+
+    def create(self, validated_data):
+        """Create registration with hashed password"""
+        validated_data.pop('confirm_password')
+        validated_data['password'] = make_password(validated_data['password'])
+        return Registration.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """Update registration instance"""
+        validated_data.pop('confirm_password', None)
+        if 'password' in validated_data:
+            validated_data['password'] = make_password(validated_data['password'])
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+```
+
+---
+
+**Create API Views (Class-Based)**
+
+**Update `registration/views.py`**
+
+```python
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+from .serializers import RegistrationSerializer
+from .models import Registration
+
+
+class RegistrationListAPIView(APIView):
+    """Handle registration API - List all or Create new"""
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get(self, request):
+        registrations = Registration.objects.all()
+        serializer = RegistrationSerializer(registrations, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = RegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Registration successful!',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RegistrationDetailAPIView(APIView):
+    """Handle single registration - Get, Update or Delete"""
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_object(self, pk):
+        try:
+            return Registration.objects.get(pk=pk)
+        except Registration.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        registration = self.get_object(pk)
+        if not registration:
+            return Response(
+                {'error': 'Registration not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = RegistrationSerializer(registration)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        registration = self.get_object(pk)
+        if not registration:
+            return Response(
+                {'error': 'Registration not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = RegistrationSerializer(registration, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Registration updated successfully!',
+                'data': serializer.data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        registration = self.get_object(pk)
+        if not registration:
+            return Response(
+                {'error': 'Registration not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        registration.delete()
+        return Response(
+            {'message': 'Registration deleted successfully!'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+```
+
+---
+
+**Create App URLs**
+
+**Create `registration/urls.py`**
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'registration'
+
+urlpatterns = [
+    path('', views.RegistrationListAPIView.as_view(), name='registration-list'),
+    path('<int:pk>/', views.RegistrationDetailAPIView.as_view(), name='registration-detail'),
+]
+```
+
+---
+
+**Configure Project URLs**
+
+**Update `config/urls.py`**
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/registration/', include('registration.urls')),
+]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+---
+
+**Run the Project**
+
+```bash
+python manage.py runserver
+```
+
+**API Endpoints:**
+
+- `GET /api/registration/` - List all registrations
+- `POST /api/registration/` - Create new registration
+- `GET /api/registration/<id>/` - Get single registration
+- `PUT /api/registration/<id>/` - Update registration
+- `DELETE /api/registration/<id>/` - Delete registration
+
+---
+
+**Testing with cURL**
+
+```bash
+# Create Registration (multipart/form-data for file upload)
+curl -X POST http://127.0.0.1:8000/api/registration/ \
+  -F "name=John Doe" \
+  -F "gender=M" \
+  -F "hobbies=[\"football\", \"basketball\"]" \
+  -F "appointment=2026-02-15T10:30:00" \
+  -F "country=Nepal" \
+  -F "email=john@example.com" \
+  -F "phone=9812345678" \
+  -F "resume=@/path/to/resume.pdf" \
+  -F "password=Password@123" \
+  -F "confirm_password=Password@123"
+
+# Get All Registrations
+curl http://127.0.0.1:8000/api/registration/
+
+# Get Single Registration
+curl http://127.0.0.1:8000/api/registration/1/
+
+# Delete Registration
+curl -X DELETE http://127.0.0.1:8000/api/registration/1/
+```
+
+---
+
+---
+
+---
+
+## Questions
+
+**Write an API view that accepts username and password as arguments and check with student table, if credential match, return JWT token otherwise display 'Invalid username/password'.**
+
+---
+
+**Step 1: Install Required Packages**
+
+```bash
+pip install djangorestframework-simplejwt
+```
+
+---
+
+**Step 2: Configure Settings**
+
+```python
+# settings.py
+INSTALLED_APPS = [
+    # ...
+    'rest_framework',
+    'rest_framework_simplejwt',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+# JWT Settings
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+```
+
+---
+
+**Step 3: Create Student Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class Student(models.Model):
+    username = models.CharField(max_length=100, unique=True)
+    password = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.username
+```
+
+---
+
+**Step 4: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 5: Create Serializers**
+
+```python
+# serializers.py
+from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
+from .models import Student
+
+
+class StudentLoginSerializer(serializers.Serializer):
+    username = serializers.CharField(
+        max_length=100,
+        error_messages={'required': 'Username is required', 'blank': 'Username is required'}
+    )
+    password = serializers.CharField(
+        write_only=True,
+        error_messages={'required': 'Password is required', 'blank': 'Password is required'}
+    )
+
+
+class StudentSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    username = serializers.CharField(
+        max_length=100,
+        error_messages={'required': 'Username is required', 'blank': 'Username is required'}
+    )
+    name = serializers.CharField(
+        max_length=200,
+        error_messages={'required': 'Name is required', 'blank': 'Name is required'}
+    )
+    email = serializers.EmailField(
+        error_messages={'required': 'Email is required', 'invalid': 'Enter a valid email address'}
+    )
+
+
+class StudentRegisterSerializer(serializers.Serializer):
+    username = serializers.CharField(
+        max_length=100,
+        error_messages={'required': 'Username is required', 'blank': 'Username is required'}
+    )
+    name = serializers.CharField(
+        max_length=200,
+        error_messages={'required': 'Name is required', 'blank': 'Name is required'}
+    )
+    email = serializers.EmailField(
+        error_messages={'required': 'Email is required', 'invalid': 'Enter a valid email address'}
+    )
+    password = serializers.CharField(
+        write_only=True,
+        error_messages={'required': 'Password is required', 'blank': 'Password is required'}
+    )
+    confirm_password = serializers.CharField(
+        write_only=True,
+        error_messages={'required': 'Confirm Password is required'}
+    )
+
+    def validate(self, data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({
+                'confirm_password': 'Passwords do not match'
+            })
+        return data
+
+    def validate_username(self, value):
+        if Student.objects.filter(username=value).exists():
+            raise serializers.ValidationError('Username already exists')
+        return value
+
+    def validate_email(self, value):
+        if Student.objects.filter(email=value).exists():
+            raise serializers.ValidationError('Email already registered')
+        return value
+
+    def create(self, validated_data):
+        validated_data.pop('confirm_password')
+        validated_data['password'] = make_password(validated_data['password'])
+        return Student.objects.create(**validated_data)
+```
+
+---
+
+**Step 6: Create Login API View (Class-Based)**
+
+```python
+# views.py
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.hashers import check_password
+from .models import Student
+from .serializers import StudentLoginSerializer, StudentSerializer, StudentRegisterSerializer
+
+
+class StudentLoginAPIView(APIView):
+    """Student login API - Returns JWT tokens"""
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = StudentLoginSerializer(data=request.data)
+
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            password = request.data.get('password')
+
+            try:
+                student = Student.objects.get(username=username)
+                # Check hashed password
+                if check_password(password, student.password):
+                    # Generate JWT tokens manually
+                    refresh = RefreshToken()
+                    refresh['student_id'] = student.id
+                    refresh['student_name'] = student.name
+                    refresh['username'] = student.username
+
+                    return Response({
+                        'message': 'Login successful',
+                        'tokens': {
+                            'refresh': str(refresh),
+                            'access': str(refresh.access_token),
+                        },
+                        'student': StudentSerializer(student).data
+                    })
+                else:
+                    return Response(
+                        {'error': 'Invalid username/password'},
+                        status=status.HTTP_401_UNAUTHORIZED
+                    )
+            except Student.DoesNotExist:
+                return Response(
+                    {'error': 'Invalid username/password'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DashboardAPIView(APIView):
+    """Protected dashboard API - Requires JWT token"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            'message': 'Welcome to the dashboard!',
+            'note': 'You are authenticated with JWT token'
+        })
+
+
+class StudentLogoutAPIView(APIView):
+    """Logout API - Blacklist refresh token"""
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get('refresh')
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({'message': 'Logout successful'})
+        except Exception as e:
+            return Response(
+                {'error': 'Invalid token'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class StudentRegisterAPIView(APIView):
+    """Student registration API"""
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = StudentRegisterSerializer(data=request.data)
+
+        if serializer.is_valid():
+            student = serializer.save()
+            return Response({
+                'message': 'Account created successfully!',
+                'student': StudentSerializer(student).data
+            }, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+```
+
+---
+
+**Step 7: Configure URLs**
+
+```python
+# app level urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('register/', views.StudentRegisterAPIView.as_view(), name='register'),
+    path('login/', views.StudentLoginAPIView.as_view(), name='login'),
+    path('dashboard/', views.DashboardAPIView.as_view(), name='dashboard'),
+    path('logout/', views.StudentLogoutAPIView.as_view(), name='logout'),
+]
+
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/auth/', include('myauthapp.urls'))
+]
+```
+
+---
+
+**Testing Login API**
+
+- Create test user first.
+
+```bash
+python manage.py shell
+```
+
+```py
+from django.contrib.auth.hashers import make_password
+from testapp.models import Student   # adjust app name if different
+
+Student.objects.create(
+    username="b2rsp",
+    password=make_password("password123"),
+    name="Bidur",
+    email="bidursapkota00@gmail.com"
+)
+```
+
+- Test Login API:
+
+```bash
+# Login
+curl -X POST http://127.0.0.1:8000/api/auth/login/ \
+  -H "Content-Type: application/json" \
+  -d '{"username": "b2rsp", "password": "password123"}'
+
+# Response:
+# {
+#   "message": "Login successful",
+#   "tokens": {
+#     "refresh": "eyJ...",
+#     "access": "eyJ..."
+#   },
+#   "student": {
+#     "id": 1,
+#     "name": "Bidur",
+#     "username": "b2rsp",
+#     "email": "bidursapkota00@gmail.com"
+#   }
+# }
+
+# Access Protected Dashboard
+curl http://127.0.0.1:8000/api/auth/dashboard/ \
+  -H "Authorization: Bearer <access_token>"
+
+# Logout (blacklist token)
+curl -X POST http://127.0.0.1:8000/api/auth/logout/ \
+  -H "Content-Type: application/json" \
+  -d '{"refresh": "<refresh_token>"}'
+```
+
+---
+
+**Testing Registration API**
+
+```bash
+# Register new student
+curl -X POST http://127.0.0.1:8000/api/auth/register/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "newuser",
+    "name": "New User",
+    "email": "newuser@example.com",
+    "password": "password123",
+    "confirm_password": "password123"
+  }'
+
+# Login with new credentials
+curl -X POST http://127.0.0.1:8000/api/auth/login/ \
+  -H "Content-Type: application/json" \
+  -d '{"username": "newuser", "password": "password123"}'
+```
+
+---
+
+---
+
+**Write server side API to create and validate patient data with following rule and store given data into 'patients' table with details (name, patient_id, mobile, gender, address, dob, doctor name):**
+
+- **Name, Mobile, Doctor Name, Gender, DOB: Required**
+- **Mobile: 10 digit start with 98, 97 or 96**
+- **DOB: YYYY-MM-DD format**
+
+---
+
+**Step 1: Create Patient Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class Patient(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+
+    name = models.CharField(max_length=200)
+    patient_id = models.CharField(max_length=50, unique=True)
+    mobile = models.CharField(max_length=10)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    address = models.TextField(blank=True, null=True)
+    dob = models.DateField()
+    doctor_name = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.patient_id})"
+```
+
+---
+
+**Step 2: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 3: Create DRF Serializer with Validation**
+
+```python
+# serializers.py
+from rest_framework import serializers
+from .models import Patient
+from datetime import datetime
+import re
+import uuid
+
+
+class PatientSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(
+        max_length=200,
+        error_messages={'required': 'Name is required', 'blank': 'Name is required'}
+    )
+    patient_id = serializers.CharField(
+        max_length=50,
+        required=False,
+        allow_blank=True
+    )
+    mobile = serializers.CharField(
+        max_length=10,
+        error_messages={'required': 'Mobile number is required', 'blank': 'Mobile number is required'}
+    )
+    gender = serializers.ChoiceField(
+        choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')],
+        error_messages={'required': 'Gender is required'}
+    )
+    address = serializers.CharField(
+        required=False,
+        allow_blank=True
+    )
+    dob = serializers.DateField(
+        error_messages={'required': 'Date of Birth is required', 'invalid': 'Enter a valid date (YYYY-MM-DD)'}
+    )
+    doctor_name = serializers.CharField(
+        max_length=200,
+        error_messages={'required': 'Doctor Name is required', 'blank': 'Doctor Name is required'}
+    )
+    created_at = serializers.DateTimeField(read_only=True)
+
+    def validate_mobile(self, value):
+        """Mobile must be 10 digits and start with 98, 97 or 96"""
+        mobile_regex = r'^(98|97|96)\d{8}$'
+        if not re.match(mobile_regex, value):
+            raise serializers.ValidationError(
+                'Mobile must be 10 digits and start with 98, 97 or 96'
+            )
+        return value
+
+    def validate_dob(self, value):
+        """Validate DOB is a valid date"""
+        if value > datetime.now().date():
+            raise serializers.ValidationError(
+                'Date of Birth cannot be in the future'
+            )
+        return value
+
+    def create(self, validated_data):
+        """Generate patient_id if not provided"""
+        if not validated_data.get('patient_id'):
+            validated_data['patient_id'] = 'PAT-' + str(uuid.uuid4())[:8].upper()
+        return Patient.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """Update patient instance"""
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+```
+
+---
+
+**Step 4: Create API Views (Class-Based)**
+
+```python
+# views.py
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import PatientSerializer
+from .models import Patient
+
+
+class PatientListAPIView(APIView):
+    """List all patients or create new patient"""
+
+    def get(self, request):
+        patients = Patient.objects.all()
+        serializer = PatientSerializer(patients, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = PatientSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Patient registered successfully!',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PatientDetailAPIView(APIView):
+    """Get, update or delete a patient"""
+
+    def get_object(self, pk):
+        try:
+            return Patient.objects.get(pk=pk)
+        except Patient.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        patient = self.get_object(pk)
+        if not patient:
+            return Response(
+                {'error': 'Patient not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = PatientSerializer(patient)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        patient = self.get_object(pk)
+        if not patient:
+            return Response(
+                {'error': 'Patient not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = PatientSerializer(patient, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Patient updated successfully!',
+                'data': serializer.data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        patient = self.get_object(pk)
+        if not patient:
+            return Response(
+                {'error': 'Patient not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        patient.delete()
+        return Response(
+            {'message': 'Patient deleted successfully!'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+```
+
+---
+
+**Step 5: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.PatientListAPIView.as_view(), name='patient-list'),
+    path('<int:pk>/', views.PatientDetailAPIView.as_view(), name='patient-detail'),
+]
+```
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/patients/', include('patient.urls'))
+]
+```
+
+---
+
+**Testing Patient API**
+
+```bash
+# Create Patient
+curl -X POST http://127.0.0.1:8000/api/patients/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Ram Sharma",
+    "mobile": "9812345678",
+    "gender": "M",
+    "address": "Kathmandu, Nepal",
+    "dob": "1990-05-15",
+    "doctor_name": "Dr. Hari Prasad"
+  }'
+
+# Get All Patients
+curl http://127.0.0.1:8000/api/patients/
+
+# Get Single Patient
+curl http://127.0.0.1:8000/api/patients/1/
+
+# Update Patient
+curl -X PUT http://127.0.0.1:8000/api/patients/1/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Ram Sharma",
+    "mobile": "9823456789",
+    "gender": "M",
+    "address": "Lalitpur, Nepal",
+    "dob": "1990-05-15",
+    "doctor_name": "Dr. Hari Prasad"
+  }'
+
+# Delete Patient
+curl -X DELETE http://127.0.0.1:8000/api/patients/1/
+```
+
+---
+
+---
+
+**Design REST API to store user data and perform following validation rules:**
+
+- **Length of Full name up to 40 characters**
+- **Email address must be valid email address**
+- **Username must start with string and followed by number**
+- **Password length must be more than 8 characters**
+
+---
+
+**Step 1: Create User Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class User(models.Model):
+    full_name = models.CharField(max_length=40)
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=100, unique=True)
+    password = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username
+```
+
+---
+
+**Step 2: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 3: Create DRF Serializer with Validation**
+
+```python
+# serializers.py
+from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
+from .models import User
+import re
+
+
+class UserSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    full_name = serializers.CharField(
+        max_length=40,
+        error_messages={'required': 'Full Name is required', 'blank': 'Full Name is required'}
+    )
+    email = serializers.EmailField(
+        error_messages={'required': 'Email is required', 'invalid': 'Enter a valid email address'}
+    )
+    username = serializers.CharField(
+        max_length=100,
+        error_messages={'required': 'Username is required', 'blank': 'Username is required'}
+    )
+    password = serializers.CharField(
+        write_only=True,
+        error_messages={'required': 'Password is required', 'blank': 'Password is required'}
+    )
+    created_at = serializers.DateTimeField(read_only=True)
+
+    def validate_full_name(self, value):
+        """Full name must be up to 40 characters"""
+        if len(value) > 40:
+            raise serializers.ValidationError(
+                'Full name must be up to 40 characters'
+            )
+        return value
+
+    def validate_username(self, value):
+        """Username must start with letters and followed by numbers"""
+        username_regex = r'^[a-zA-Z]+\d+$'
+        if not re.match(username_regex, value):
+            raise serializers.ValidationError(
+                'Username must start with letters and end with numbers'
+            )
+
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError('Username already taken')
+
+        return value
+
+    def validate_email(self, value):
+        """Check if email already exists"""
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError('Email already registered')
+        return value
+
+    def validate_password(self, value):
+        """Password must be more than 8 characters"""
+        if len(value) <= 8:
+            raise serializers.ValidationError(
+                'Password must be more than 8 characters'
+            )
+        return value
+
+    def create(self, validated_data):
+        """Hash password before saving"""
+        validated_data['password'] = make_password(validated_data['password'])
+        return User.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """Update user instance"""
+        if 'password' in validated_data:
+            validated_data['password'] = make_password(validated_data['password'])
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+```
+
+---
+
+**Step 4: Create API Views (Class-Based)**
+
+```python
+# views.py
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import UserSerializer
+from .models import User
+
+
+class UserListAPIView(APIView):
+    """List all users or create new user"""
+
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'User registered successfully!',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserDetailAPIView(APIView):
+    """Get, update or delete a user"""
+
+    def get_object(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        user = self.get_object(pk)
+        if not user:
+            return Response(
+                {'error': 'User not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        user = self.get_object(pk)
+        if not user:
+            return Response(
+                {'error': 'User not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'User updated successfully!',
+                'data': serializer.data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        user = self.get_object(pk)
+        if not user:
+            return Response(
+                {'error': 'User not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        user.delete()
+        return Response(
+            {'message': 'User deleted successfully!'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+```
+
+---
+
+**Step 5: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.UserListAPIView.as_view(), name='user-list'),
+    path('<int:pk>/', views.UserDetailAPIView.as_view(), name='user-detail'),
+]
+```
+
+```py
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/users/', include('user.urls')),
+]
+```
+
+---
+
+**Testing User API**
+
+```bash
+# Create User
+curl -X POST http://127.0.0.1:8000/api/users/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "full_name": "John Doe",
+    "email": "john@example.com",
+    "username": "john123",
+    "password": "securepassword123"
+  }'
+
+# Get All Users
+curl http://127.0.0.1:8000/api/users/
+
+# Get Single User
+curl http://127.0.0.1:8000/api/users/1/
+
+# Update User
+curl -X PUT http://127.0.0.1:8000/api/users/1/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "full_name": "John Updated",
+    "email": "johnupdated@example.com",
+    "username": "john456",
+    "password": "newpassword123"
+  }'
+
+# Delete User
+curl -X DELETE http://127.0.0.1:8000/api/users/1/
+```
+
+---
+
+---
+
+**Write a Django REST API to upload a file and validate:**
+
+- **File extension (only allow image files: jpg, jpeg, png, gif)**
+- **File size (must be less than 2MB)**
+
+---
+
+**Step 1: Create Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class UploadedFile(models.Model):
+    file = models.FileField(upload_to='uploads/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.file.name
+```
+
+---
+
+**Step 2: Create Serializer with Validation**
+
+```python
+# serializers.py
+from rest_framework import serializers
+from .models import UploadedFile
+
+
+class FileUploadSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    file = serializers.FileField(
+        error_messages={'required': 'File is required', 'empty': 'The submitted file is empty'}
+    )
+    uploaded_at = serializers.DateTimeField(read_only=True)
+
+    def validate_file(self, value):
+        """Validate file extension and size"""
+        allowed_extensions = ['jpg', 'jpeg', 'png', 'gif']
+        file_extension = value.name.split('.')[-1].lower()
+
+        if file_extension not in allowed_extensions:
+            raise serializers.ValidationError(
+                f'Invalid file type. Allowed: {", ".join(allowed_extensions)}'
+            )
+
+        max_size = 2 * 1024 * 1024  # 2MB in bytes
+
+        if value.size > max_size:
+            raise serializers.ValidationError(
+                'File size must be less than 2MB'
+            )
+
+        return value
+
+    def create(self, validated_data):
+        """Create uploaded file instance"""
+        return UploadedFile.objects.create(**validated_data)
+```
+
+---
+
+**Step 3: Create API Views (Class-Based)**
+
+```python
+# views.py
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+from .serializers import FileUploadSerializer
+from .models import UploadedFile
+
+
+class FileUploadAPIView(APIView):
+    """List all files or upload new file"""
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get(self, request):
+        files = UploadedFile.objects.all().order_by('-uploaded_at')
+        serializer = FileUploadSerializer(files, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = FileUploadSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'File uploaded successfully!',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FileDetailAPIView(APIView):
+    """Get or delete a file"""
+
+    def get_object(self, pk):
+        try:
+            return UploadedFile.objects.get(pk=pk)
+        except UploadedFile.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        file_obj = self.get_object(pk)
+        if not file_obj:
+            return Response(
+                {'error': 'File not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = FileUploadSerializer(file_obj)
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        file_obj = self.get_object(pk)
+        if not file_obj:
+            return Response(
+                {'error': 'File not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        # Delete file from storage
+        file_obj.file.delete()
+        file_obj.delete()
+        return Response(
+            {'message': 'File deleted successfully!'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+```
+
+---
+
+**Step 4: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.FileUploadAPIView.as_view(), name='file-upload'),
+    path('<int:pk>/', views.FileDetailAPIView.as_view(), name='file-detail'),
+]
+```
+
+```py
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/files/', include('fileupload.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+```
+
+---
+
+**Step 5: Configure Media Settings**
+
+```python
+# settings.py
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+```
+
+---
+
+**Testing File Upload API**
+
+```bash
+# Upload File
+curl -X POST http://127.0.0.1:8000/api/files/ \
+  -F "file=@/path/to/image.jpg"
+
+# Get All Files
+curl http://127.0.0.1:8000/api/files/
+
+# Get Single File
+curl http://127.0.0.1:8000/api/files/1/
+
+# Delete File
+curl -X DELETE http://127.0.0.1:8000/api/files/1/
+```
+
+---
+
+---
+
+**Design REST API to accept TU Registration Number, Email Address, and Upload Project File with following validation rules:**
+
+- **Registration number, email and upload file are mandatory field**
+- **Email address should be a proper email format**
+- **Upload file format must include pdf, doc, docx, ppt, pptx, jpeg file format**
+- **File size must be less than 5MB**
+
+---
+
+**Step 1: Create Project Submission Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class ProjectSubmission(models.Model):
+    tu_registration_number = models.CharField(max_length=50, unique=True)
+    email = models.EmailField()
+    project_file = models.FileField(upload_to='projects/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tu_registration_number} - {self.email}"
+```
+
+---
+
+**Step 2: Configure Media Settings**
+
+```python
+# settings.py (add at bottom)
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+```
+
+---
+
+**Step 3: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 4: Create DRF Serializer with Validation**
+
+```python
+# serializers.py
+from rest_framework import serializers
+from .models import ProjectSubmission
+
+
+class ProjectSubmissionSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    tu_registration_number = serializers.CharField(
+        max_length=50,
+        error_messages={'required': 'TU Registration Number is required', 'blank': 'TU Registration Number is required'}
+    )
+    email = serializers.EmailField(
+        error_messages={'required': 'Email Address is required', 'invalid': 'Please enter a valid email address'}
+    )
+    project_file = serializers.FileField(
+        error_messages={'required': 'Project File is required'}
+    )
+    uploaded_at = serializers.DateTimeField(read_only=True)
+
+    def validate_tu_registration_number(self, value):
+        """Check if registration number already exists"""
+        if ProjectSubmission.objects.filter(tu_registration_number=value).exists():
+            raise serializers.ValidationError('This registration number already submitted')
+        return value
+
+    def validate_project_file(self, value):
+        """Validate file type and size"""
+        allowed_extensions = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'jpeg', 'jpg']
+        file_extension = value.name.split('.')[-1].lower()
+
+        if file_extension not in allowed_extensions:
+            raise serializers.ValidationError(
+                'File format must be pdf, doc, docx, ppt, pptx, or jpeg'
+            )
+
+        # Check file size (max 5MB)
+        max_size = 5 * 1024 * 1024  # 5MB in bytes
+        if value.size > max_size:
+            raise serializers.ValidationError(
+                'File size must be less than 5MB'
+            )
+
+        return value
+
+    def create(self, validated_data):
+        """Create project submission instance"""
+        return ProjectSubmission.objects.create(**validated_data)
+```
+
+---
+
+**Step 5: Create API Views (Class-Based)**
+
+```python
+# views.py
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+from .serializers import ProjectSubmissionSerializer
+from .models import ProjectSubmission
+
+
+class ProjectSubmissionListAPIView(APIView):
+    """List all submissions or create new submission"""
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get(self, request):
+        submissions = ProjectSubmission.objects.all().order_by('-uploaded_at')
+        serializer = ProjectSubmissionSerializer(submissions, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ProjectSubmissionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Project submitted successfully!',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProjectSubmissionDetailAPIView(APIView):
+    """Get or delete a submission"""
+
+    def get_object(self, pk):
+        try:
+            return ProjectSubmission.objects.get(pk=pk)
+        except ProjectSubmission.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        submission = self.get_object(pk)
+        if not submission:
+            return Response(
+                {'error': 'Submission not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = ProjectSubmissionSerializer(submission)
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        submission = self.get_object(pk)
+        if not submission:
+            return Response(
+                {'error': 'Submission not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        # Delete file from storage
+        submission.project_file.delete()
+        submission.delete()
+        return Response(
+            {'message': 'Submission deleted successfully!'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+```
+
+---
+
+**Step 6: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.ProjectSubmissionListAPIView.as_view(), name='submission-list'),
+    path('<int:pk>/', views.ProjectSubmissionDetailAPIView.as_view(), name='submission-detail'),
+]
+```
+
+```python
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/submissions/', include('projectsubmission.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+```
+
+---
+
+**Testing Project Submission API**
+
+```bash
+# Create Submission (multipart/form-data for file upload)
+curl -X POST http://127.0.0.1:8000/api/submissions/ \
+  -F "tu_registration_number=TU-2024-001" \
+  -F "email=student@example.com" \
+  -F "project_file=@/path/to/project.pdf"
+
+# Get All Submissions
+curl http://127.0.0.1:8000/api/submissions/
+
+# Get Single Submission
+curl http://127.0.0.1:8000/api/submissions/1/
+
+# Delete Submission
+curl -X DELETE http://127.0.0.1:8000/api/submissions/1/
+```
+
+---
+
+---
+
+## Lab: CRUD API with Django Rest Framework
+
+**Notes API**
+
+Build a Notes CRUD API using Django Rest Framework.
+
+---
+
+**Step 1: Create Note Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class Note(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-id']  # Latest first
+```
+
+---
+
+**Step 2: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 3: Create DRF Serializer with Validation**
+
+```python
+# serializers.py
+from rest_framework import serializers
+from .models import Note
+
+
+class NoteSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    title = serializers.CharField(
+        max_length=100,
+        error_messages={'required': 'Title is required', 'blank': 'Title is required'}
+    )
+    description = serializers.CharField(
+        error_messages={'required': 'Description is required', 'blank': 'Description is required'}
+    )
+    created_at = serializers.DateTimeField(read_only=True)
+
+    def create(self, validated_data):
+        """Create note instance"""
+        return Note.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """Update note instance"""
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.save()
+        return instance
+```
+
+---
+
+**Step 4: Create API Views (Class-Based)**
+
+```python
+# views.py
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import NoteSerializer
+from .models import Note
+
+
+class NoteListAPIView(APIView):
+    """List all notes or create new note"""
+
+    def get(self, request):
+        notes = Note.objects.all()
+        serializer = NoteSerializer(notes, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = NoteSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Note added successfully!',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class NoteDetailAPIView(APIView):
+    """Get, update or delete a note"""
+
+    def get_object(self, pk):
+        try:
+            return Note.objects.get(pk=pk)
+        except Note.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        note = self.get_object(pk)
+        if not note:
+            return Response(
+                {'error': 'Note not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = NoteSerializer(note)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        note = self.get_object(pk)
+        if not note:
+            return Response(
+                {'error': 'Note not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = NoteSerializer(note, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Note updated successfully!',
+                'data': serializer.data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        note = self.get_object(pk)
+        if not note:
+            return Response(
+                {'error': 'Note not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        note.delete()
+        return Response(
+            {'message': 'Note deleted successfully!'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+```
+
+---
+
+**Step 5: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+app_name = 'notes'
+
+urlpatterns = [
+    path('', views.NoteListAPIView.as_view(), name='note-list'),
+    path('<int:pk>/', views.NoteDetailAPIView.as_view(), name='note-detail'),
+]
+```
+
+```python
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/notes/', include('notes.urls')),
+]
+```
+
+---
+
+**Testing Notes API**
+
+```bash
+# Create Note
+curl -X POST http://127.0.0.1:8000/api/notes/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "My First Note",
+    "description": "This is the content of my first note"
+  }'
+
+# Get All Notes
+curl http://127.0.0.1:8000/api/notes/
+
+# Get Single Note
+curl http://127.0.0.1:8000/api/notes/1/
+
+# Update Note
+curl -X PUT http://127.0.0.1:8000/api/notes/1/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Updated Title",
+    "description": "Updated description content"
+  }'
+
+# Delete Note
+curl -X DELETE http://127.0.0.1:8000/api/notes/1/
+```
+
+---
+
+---
+
+**Grocery Bud API**
+
+Build a Grocery List CRUD API using Django Rest Framework.
+
+---
+
+**Step 1: Create GroceryItem Model**
+
+```python
+# models.py
+from django.db import models
+
+
+class GroceryItem(models.Model):
+    name = models.CharField(max_length=200)
+    completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['-created_at']
+```
+
+---
+
+**Step 2: Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+**Step 3: Create DRF Serializer with Validation**
+
+```python
+# serializers.py
+from rest_framework import serializers
+from .models import GroceryItem
+
+
+class GroceryItemSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    name = serializers.CharField(
+        max_length=200,
+        error_messages={'required': 'Name is required', 'blank': 'Name is required'}
+    )
+    completed = serializers.BooleanField(default=False, required=False)
+    created_at = serializers.DateTimeField(read_only=True)
+
+    def create(self, validated_data):
+        """Create grocery item instance"""
+        return GroceryItem.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """Update grocery item instance"""
+        instance.name = validated_data.get('name', instance.name)
+        instance.completed = validated_data.get('completed', instance.completed)
+        instance.save()
+        return instance
+```
+
+---
+
+**Step 4: Create API Views (Class-Based)**
+
+```python
+# views.py
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import GroceryItemSerializer
+from .models import GroceryItem
+
+
+class GroceryListAPIView(APIView):
+    """List all grocery items or create new item"""
+
+    def get(self, request):
+        items = GroceryItem.objects.all()
+        serializer = GroceryItemSerializer(items, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = GroceryItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Item added successfully!',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GroceryDetailAPIView(APIView):
+    """Get, update or delete a grocery item"""
+
+    def get_object(self, pk):
+        try:
+            return GroceryItem.objects.get(pk=pk)
+        except GroceryItem.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        item = self.get_object(pk)
+        if not item:
+            return Response(
+                {'error': 'Item not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = GroceryItemSerializer(item)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        item = self.get_object(pk)
+        if not item:
+            return Response(
+                {'error': 'Item not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = GroceryItemSerializer(item, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Item updated successfully!',
+                'data': serializer.data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk):
+        """Partial update - used for toggling completed status"""
+        item = self.get_object(pk)
+        if not item:
+            return Response(
+                {'error': 'Item not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = GroceryItemSerializer(item, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Item updated successfully!',
+                'data': serializer.data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        item = self.get_object(pk)
+        if not item:
+            return Response(
+                {'error': 'Item not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        item.delete()
+        return Response(
+            {'message': 'Item deleted successfully!'},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
+class GroceryToggleAPIView(APIView):
+    """Toggle completed status of a grocery item"""
+
+    def post(self, request, pk):
+        try:
+            item = GroceryItem.objects.get(pk=pk)
+            item.completed = not item.completed
+            item.save()
+            serializer = GroceryItemSerializer(item)
+            return Response({
+                'message': 'Item toggled successfully!',
+                'data': serializer.data
+            })
+        except GroceryItem.DoesNotExist:
+            return Response(
+                {'error': 'Item not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+```
+
+---
+
+**Step 5: Configure URLs**
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+app_name = 'grocery'
+
+urlpatterns = [
+    path('', views.GroceryListAPIView.as_view(), name='grocery-list'),
+    path('<int:pk>/', views.GroceryDetailAPIView.as_view(), name='grocery-detail'),
+    path('<int:pk>/toggle/', views.GroceryToggleAPIView.as_view(), name='grocery-toggle'),
+]
+```
+
+```python
+# project level urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/grocery/', include('grocery.urls')),
+]
+```
+
+---
+
+**API Endpoints:**
+
+- `GET /api/grocery/` - List all grocery items
+- `POST /api/grocery/` - Create new grocery item
+- `GET /api/grocery/<id>/` - Get single grocery item
+- `PUT /api/grocery/<id>/` - Update grocery item (full update)
+- `PATCH /api/grocery/<id>/` - Partial update grocery item
+- `DELETE /api/grocery/<id>/` - Delete grocery item
+- `POST /api/grocery/<id>/toggle/` - Toggle completed status
+
+---
+
+**Testing Grocery API**
+
+```bash
+# Create Grocery Item
+curl -X POST http://127.0.0.1:8000/api/grocery/ \
+  -H "Content-Type: application/json" \
+  -d '{"name": "milk"}'
+
+# Get All Items
+curl http://127.0.0.1:8000/api/grocery/
+
+# Get Single Item
+curl http://127.0.0.1:8000/api/grocery/1/
+
+# Update Item (full update)
+curl -X PUT http://127.0.0.1:8000/api/grocery/1/ \
+  -H "Content-Type: application/json" \
+  -d '{"name": "whole milk", "completed": false}'
+
+# Toggle Completed Status
+curl -X POST http://127.0.0.1:8000/api/grocery/1/toggle/
+
+# Partial Update (just mark as completed)
+curl -X PATCH http://127.0.0.1:8000/api/grocery/1/ \
+  -H "Content-Type: application/json" \
+  -d '{"completed": true}'
+
+# Delete Item
+curl -X DELETE http://127.0.0.1:8000/api/grocery/1/
+```
+
+---
+
+**Create Test Data**
+
+```bash
+python manage.py shell
+```
+
+```python
+from grocery.models import GroceryItem
+
+GroceryItem.objects.create(name="milk", completed=True)
+GroceryItem.objects.create(name="bread", completed=True)
+GroceryItem.objects.create(name="eggs", completed=False)
+GroceryItem.objects.create(name="butter", completed=False)
+
+exit()
+```
+
+---
+
+---
