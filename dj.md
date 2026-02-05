@@ -9,18 +9,17 @@
 1. [MVC Architecture](#mvc-architecture)
 2. [Role of Backend](#role-of-backend)
 3. [Django](#django)
-4. [Django Setup](#django-setup)
-5. [URLs & Views](#urls--views)
-6. [Templates & Static Files](#templates--static-files)
-7. [Data and Models](#data-and-models)
-8. [Forms](#forms)
-9. [Admin](#admin)
-10. [Sessions and Cookies](#sessions-and-cookies)
-11. [Questions](#questions)
-12. [Middleware](#middleware)
-13. [Comparison of Backend Frameworks](#comparison-of-backend-frameworks)
-14. [Database Types](#database-types)
-15. [Lab: CRUD with Django](#lab-crud-with-django)
+4. [URLs & Views](#urls--views)
+5. [Templates & Static Files](#templates--static-files)
+6. [Data and Models](#data-and-models)
+7. [Forms](#forms)
+8. [Admin](#admin)
+9. [Sessions and Cookies](#sessions-and-cookies)
+10. [Questions](#questions)
+11. [Middleware](#middleware)
+12. [Comparison of Backend Frameworks](#comparison-of-backend-frameworks)
+13. [Database Types](#database-types)
+14. [Lab: CRUD with Django](#lab-crud-with-django)
 
 ---
 
@@ -2198,6 +2197,53 @@ Also an example of accessing nested data in template:
 
 ---
 
+## Admin
+
+**Create Superuser**
+
+```bash
+python manage.py createsuperuser
+```
+
+**Visit admin panel**
+
+```bash
+python manage.py runserver
+```
+
+Open your browser and navigate to `http://127.0.0.1:8000/admin` to see your Admin Panel.
+
+---
+
+**Register model for admin site**
+
+```py
+from django.contrib import admin
+
+from .models import Book
+
+admin.site.register(Book)
+```
+
+- Refresh admin panel
+
+**Configure Admin Panel**
+
+```py
+class BookAdmin(admin.ModelAdmin):
+  list_filter = ("author", "rating",)
+  list_display = ("title", "author",)
+  search_fields = ['title',]
+
+admin.site.register(Book, BookAdmin)
+```
+
+---
+
+---
+
+---
+
 ## Forms
 
 #### What are HTML Forms?
@@ -3049,53 +3095,6 @@ python manage.py runserver
 ```
 
 Open your browser and navigate to `http://127.0.0.1:8000/` to see your Registration Form in action.
-
----
-
----
-
----
-
-## Admin
-
-**Create Superuser**
-
-```bash
-python manage.py createsuperuser
-```
-
-**Visit admin panel**
-
-```bash
-python manage.py runserver
-```
-
-Open your browser and navigate to `http://127.0.0.1:8000/admin` to see your Admin Panel.
-
----
-
-**Register model for admin site**
-
-```py
-from django.contrib import admin
-
-from .models import Book
-
-admin.site.register(Book)
-```
-
-- Refresh admin panel
-
-**Configure Admin Panel**
-
-```py
-class BookAdmin(admin.ModelAdmin):
-  list_filter = ("author", "rating",)
-  list_display = ("title", "author",)
-  search_fields = ['title',]
-
-admin.site.register(Book, BookAdmin)
-```
 
 ---
 

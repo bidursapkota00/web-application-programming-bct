@@ -759,6 +759,71 @@ This example shows:
 
 ---
 
+#### Namespace in XML
+
+XML Namespaces provide a method to avoid element name conflicts.
+
+**Name Conflicts**
+
+- In XML, element names are defined by the developer. This often results in a conflict when trying to mix XML documents from different XML applications.
+
+- Name conflicts in XML can easily be avoided using a name prefix.
+
+**XML Namespaces - The xmlns Attribute**
+
+- When using prefixes in XML, a namespace for the prefix must be defined.
+- The namespace can be defined by an xmlns attribute in the start tag of an element.
+- The namespace declaration has the following syntax. xmlns:prefix="URI".
+
+**Example**
+
+```xml
+<root>
+
+<h:table xmlns:h="https://www.bidursapkota.com.np/fruits">
+  <h:tr>
+    <h:td>Apples</h:td>
+    <h:td>Bananas</h:td>
+  </h:tr>
+</h:table>
+
+<f:table xmlns:f="https://www.bidursapkota.com.np/furnitures">
+  <f:name>African Coffee Table</f:name>
+  <f:width>80</f:width>
+  <f:length>120</f:length>
+</f:table>
+
+</root>
+```
+
+**In the example above:**
+
+- The xmlns attribute in the first <table> element gives the h: prefix a qualified namespace.
+- The xmlns attribute in the second <table> element gives the f: prefix a qualified namespace.
+- When a namespace is defined for an element, all child elements with the same prefix are associated with the same namespace.
+- Namespaces can also be declared in the XML root element:
+
+```xml
+<root xmlns:h="https://www.bidursapkota.com.np/fruits" xmlns:f="https://www.bidursapkota.com.np/furnitures">
+
+<h:table>
+  <h:tr>
+    <h:td>Apples</h:td>
+    <h:td>Bananas</h:td>
+  </h:tr>
+</h:table>
+
+<f:table>
+  <f:name>African Coffee Table</f:name>
+  <f:width>80</f:width>
+  <f:length>120</f:length>
+</f:table>
+
+</root>
+```
+
+---
+
 #### JSON vs XML: Detailed Comparison
 
 **1. Syntax and Readability**
@@ -1039,7 +1104,13 @@ available_text = root.find("available").text
 available = available_text.lower() == "true"
 print("Available:", available)
 
+
 # Modify the XML
+
+# Updating existing property
+root.find('title').text = "The Great Gatsby!!!"
+
+# Creating new property with ET.SubElement
 rating = ET.SubElement(root, "rating")
 rating.text = "4.5"
 
@@ -1051,6 +1122,29 @@ new_genre.text = "Literary"
 modified_xml = ET.tostring(root, encoding="unicode")
 print("\nModified XML:")
 print(modified_xml)
+```
+
+**Output:**
+
+```text
+Book ID: 1
+Title: The Great Gatsby
+Author: F. Scott Fitzgerald
+Year: 1925
+Genres: Fiction, Classic
+Available: True
+
+Modified XML:
+<book id="1">
+    <title>The Great Gatsby!!!</title>
+    <author>F. Scott Fitzgerald</author>
+    <year>1925</year>
+    <genres>
+        <genre>Fiction</genre>
+        <genre>Classic</genre>
+    <genre>Literary</genre></genres>
+    <available>true</available>
+<rating>4.5</rating></book>
 ```
 
 #### JSON in Django REST Framework
@@ -1303,6 +1397,8 @@ If one service fails, it shouldn't bring down the entire system:
 - Fallback mechanisms provide degraded functionality
 - The system remains partially operational even during failures
 
+---
+
 ### Loose Coupling
 
 **Loose coupling** means that services have minimal dependencies on each other. Changes to one service should not require changes to other services.
@@ -1326,6 +1422,8 @@ If one service fails, it shouldn't bring down the entire system:
 **4. Event-Driven Architecture**: Services publish events when something happens. Other services subscribe to events they care about.
 
 **5. Versioned APIs**: When APIs change, support multiple versions to avoid breaking existing consumers.
+
+---
 
 ### Service Communication
 
@@ -1371,6 +1469,8 @@ In asynchronous communication, the caller sends a message and continues without 
 - More complex to implement and debug
 - Eventual consistency (data may not be immediately consistent)
 - Requires message broker infrastructure
+
+---
 
 ### API Gateway
 
@@ -1469,6 +1569,8 @@ An **API Gateway** is a server that acts as a single entry point for all client 
 - You're building a prototype or MVP
 - You don't have the operational expertise for distributed systems
 - Performance is critical (fewer network calls)
+
+---
 
 ## Questions
 
@@ -1619,7 +1721,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',  # Add DRF
-    'registration',  # Add this line
+    'registration',  # Add registration
 ]
 ```
 
@@ -1837,7 +1939,7 @@ class RegistrationSerializer(serializers.Serializer):
 ```python
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from .serializers import RegistrationSerializer
 from .models import Registration
@@ -1845,7 +1947,7 @@ from .models import Registration
 
 class RegistrationListAPIView(APIView):
     """Handle registration API - List all or Create new"""
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get(self, request):
         registrations = Registration.objects.all()
