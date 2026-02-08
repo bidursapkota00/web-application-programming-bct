@@ -1,6 +1,13 @@
-# Chapter 6: Web Application Deployment and Modern Trends
+# Web Application Deployment and Modern Trends
 
-Modern web development has evolved beyond simply writing code. Today's developers must understand how frontend and backend systems work together, how to ensure code quality through testing, how to deploy applications reliably, and how to build applications that work across all devices. This chapter covers the essential concepts and practices that transform code into production-ready applications.
+![Bidur Sapkota](https://www.bidursapkota.com.np/images/gravatar.webp "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
+
+![Django Web Application Testing and Deployment by Bidur Sapkota](/images/unit-6/15-testing-deployment-1200.webp "Django Web Application Testing and Deployment – Blog by Bidur Sapkota")
+
+## Table of Contents
+
+1. [Full-Stack Development](#61-full-stack-development)
+2. [Testing and QA](#62-testing-and-qa)
 
 ---
 
