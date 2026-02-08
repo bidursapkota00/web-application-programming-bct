@@ -803,6 +803,8 @@ XML Namespaces provide a method to avoid element name conflicts.
 - When a namespace is defined for an element, all child elements with the same prefix are associated with the same namespace.
 - Namespaces can also be declared in the XML root element:
 
+**Example**
+
 ```xml
 <root xmlns:h="https://www.bidursapkota.com.np/fruits" xmlns:f="https://www.bidursapkota.com.np/furnitures">
 
@@ -1339,7 +1341,7 @@ In a monolithic application:
 
 **Example of a Monolithic E-commerce Application:**
 
-![Monolithic E-commerce Application](/images/unit-4/microservices.webp)
+![Monolithic E-commerce Application](/images/unit-4/monolithic.webp)
 
 **2. Microservices Architecture**
 
@@ -1353,11 +1355,11 @@ In a microservices application:
 
 **Example of a Microservices E-commerce Application:**
 
-![Microservices E-commerce Application](/images/unit-4/monolithic.webp)
+![Microservices E-commerce Application](/images/unit-4/microservices.webp)
 
-### Key Characteristics of Microservices
+#### Key Characteristics of Microservices
 
-#### 1. Single Responsibility
+**1. Single Responsibility**
 
 Each microservice should do one thing and do it well. It focuses on a specific business capability. For example:
 
@@ -1367,19 +1369,16 @@ Each microservice should do one thing and do it well. It focuses on a specific b
 - Payment Service: Handles payment processing, refunds
 - Notification Service: Sends emails, SMS, push notifications
 
-#### 2. Independence
+**2. Independence**
 
 Microservices are independent in several ways:
 
-**Development Independence**: Different teams can work on different services without stepping on each other's toes.
+- **Development Independence**: Different teams can work on different services without stepping on each other's toes.
+- **Technology Independence**: Each service can use the best technology for its specific needs. The User Service might use Django, while the Payment Service uses Node.js.
+- **Deployment Independence**: Services can be deployed separately. Updating the Product Service doesn't require redeploying the Order Service.
+- **Scaling Independence**: Services experiencing high load can be scaled independently. If the Product Service gets 10x more traffic, you scale only that service.
 
-**Technology Independence**: Each service can use the best technology for its specific needs. The User Service might use Django, while the Payment Service uses Node.js.
-
-**Deployment Independence**: Services can be deployed separately. Updating the Product Service doesn't require redeploying the Order Service.
-
-**Scaling Independence**: Services experiencing high load can be scaled independently. If the Product Service gets 10x more traffic, you scale only that service.
-
-#### 3. Decentralized Data Management
+**3. Decentralized Data Management**
 
 Each microservice typically owns and manages its own data:
 
@@ -1388,7 +1387,7 @@ Each microservice typically owns and manages its own data:
 - Data is accessed only through service APIs
 - This ensures loose coupling between services
 
-#### 4. Resilience and Fault Isolation
+**4. Resilience and Fault Isolation**
 
 If one service fails, it shouldn't bring down the entire system:
 
@@ -1399,11 +1398,11 @@ If one service fails, it shouldn't bring down the entire system:
 
 ---
 
-### Loose Coupling
+#### Loose Coupling
 
-**Loose coupling** means that services have minimal dependencies on each other. Changes to one service should not require changes to other services.
+Loose coupling means that services have minimal dependencies on each other. Changes to one service should not require changes to other services.
 
-#### Why Loose Coupling Matters
+**Why Loose Coupling**
 
 1. **Independent Development**: Teams can work without waiting for other teams
 2. **Independent Deployment**: Deploy one service without affecting others
@@ -1411,25 +1410,21 @@ If one service fails, it shouldn't bring down the entire system:
 4. **Technology Flexibility**: Change implementation without affecting consumers
 5. **Easier Testing**: Test services in isolation
 
-#### Achieving Loose Coupling
+**Achieving Loose Coupling**
 
-**1. API Contracts**: Define clear interfaces between services. As long as the API contract is maintained, internal implementation can change freely.
-
-**2. Avoid Shared Databases**: Each service owns its data. Other services access data only through APIs.
-
-**3. Asynchronous Communication**: Use message queues for non-time-critical operations. The sender doesn't wait for the receiver.
-
-**4. Event-Driven Architecture**: Services publish events when something happens. Other services subscribe to events they care about.
-
-**5. Versioned APIs**: When APIs change, support multiple versions to avoid breaking existing consumers.
+1. **API Contracts**: Define clear interfaces between services. As long as the API contract is maintained, internal implementation can change freely.
+2. **Avoid Shared Databases**: Each service owns its data. Other services access data only through APIs.
+3. **Asynchronous Communication**: Use message queues for non-time-critical operations. The sender doesn't wait for the receiver.
+4. **Event-Driven Architecture**: Services publish events when something happens. Other services subscribe to events they care about.
+5. **Versioned APIs**: When APIs change, support multiple versions to avoid breaking existing consumers.
 
 ---
 
-### Service Communication
+#### Service Communication
 
 Microservices need to communicate with each other. There are two main patterns:
 
-#### Synchronous Communication
+**Synchronous Communication**
 
 In synchronous communication, the caller waits for a response before proceeding.
 
@@ -1449,7 +1444,7 @@ In synchronous communication, the caller waits for a response before proceeding.
 - If the called service is slow or down, the caller is blocked
 - Can create cascading failures
 
-#### Asynchronous Communication
+**Asynchronous Communication**
 
 In asynchronous communication, the caller sends a message and continues without waiting for a response.
 
@@ -1472,11 +1467,11 @@ In asynchronous communication, the caller sends a message and continues without 
 
 ---
 
-### API Gateway
+#### API Gateway
 
-An **API Gateway** is a server that acts as a single entry point for all client requests. Instead of clients calling individual microservices directly, they call the API Gateway, which routes requests to the appropriate services.
+An API Gateway is a server that acts as a single entry point for all client requests. Instead of clients calling individual microservices directly, they call the API Gateway, which routes requests to the appropriate services.
 
-#### Why Use an API Gateway?
+**Why Use an API Gateway?**
 
 **1. Single Entry Point**: Clients only need to know about one URL (the gateway), not dozens of service URLs.
 
@@ -1496,43 +1491,9 @@ An **API Gateway** is a server that acts as a single entry point for all client 
 
 **9. Monitoring and Logging**: Centralized logging and monitoring of all API traffic.
 
-#### API Gateway Architecture
+---
 
-```text
-                    ┌──────────────────────┐
-                    │       Clients        │
-                    │  (Web, Mobile, IoT)  │
-                    └──────────┬───────────┘
-                               │
-                    ┌──────────▼───────────┐
-                    │     API Gateway      │
-                    │  ┌────────────────┐  │
-                    │  │ Authentication │  │
-                    │  │ Rate Limiting  │  │
-                    │  │ Load Balancing │  │
-                    │  │ Routing        │  │
-                    │  └────────────────┘  │
-                    └──────────┬───────────┘
-                               │
-        ┌──────────────────────┼──────────────────────┐
-        │                      │                      │
-┌───────▼───────┐    ┌────────▼────────┐    ┌───────▼───────┐
-│ User Service  │    │ Product Service │    │ Order Service │
-└───────────────┘    └─────────────────┘    └───────────────┘
-```
-
-#### Popular API Gateway Solutions
-
-| Gateway             | Type          | Description                           |
-| ------------------- | ------------- | ------------------------------------- |
-| **Kong**            | Open Source   | Popular, extensible, based on NGINX   |
-| **AWS API Gateway** | Cloud Service | Fully managed, integrates with AWS    |
-| **NGINX**           | Open Source   | Can be configured as API gateway      |
-| **Traefik**         | Open Source   | Container-native, automatic discovery |
-| **Zuul**            | Open Source   | Netflix's gateway, Java-based         |
-| **Express Gateway** | Open Source   | Built on Express.js                   |
-
-### Advantages of Microservices
+**Advantages of Microservices**
 
 1. **Scalability**: Scale individual services based on demand
 2. **Technology Flexibility**: Use the best tool for each job
@@ -1542,7 +1503,7 @@ An **API Gateway** is a server that acts as a single entry point for all client 
 6. **Team Autonomy**: Teams own their services end-to-end
 7. **Easier Maintenance**: Smaller, focused codebases are easier to maintain
 
-### Disadvantages of Microservices
+**Disadvantages of Microservices**
 
 1. **Complexity**: Distributed systems are inherently more complex
 2. **Network Latency**: Service-to-service calls add latency
@@ -1551,8 +1512,6 @@ An **API Gateway** is a server that acts as a single entry point for all client 
 5. **Operational Overhead**: More services mean more things to deploy and monitor
 6. **Testing Challenges**: Integration testing across services is complex
 7. **Initial Cost**: Higher upfront investment in infrastructure and tooling
-
-### When to Use Microservices
 
 **Use Microservices When:**
 
@@ -1566,7 +1525,7 @@ An **API Gateway** is a server that acts as a single entry point for all client 
 
 - Your application is small or simple
 - You have a small team
-- You're building a prototype or MVP
+- You're building a prototype
 - You don't have the operational expertise for distributed systems
 - Performance is critical (fewer network calls)
 
@@ -1616,7 +1575,7 @@ An **API Gateway** is a server that acts as a single entry point for all client 
 
 21. What is an API Gateway? Explain the role and functions of an API Gateway in microservices including single entry point, request routing, authentication and authorization, rate limiting, load balancing, caching, SSL termination, and include an architecture diagram description. [2+6]
 
-22. Explain service communication patterns in microservices architecture comprehensively including synchronous communication (REST APIs, gRPC) with pros and cons, asynchronous communication (Message Queues, Event-Driven) with pros and cons, API Gateway purpose, architecture and functions, popular API Gateway solutions (Kong, AWS API Gateway, NGINX, Traefik, Zuul), and when to use each communication pattern. [8]
+22. Explain service communication patterns in microservices architecture comprehensively including synchronous communication (REST APIs, gRPC) with pros and cons, asynchronous communication (Message Queues, Event-Driven) with pros and cons, API Gateway purpose, architecture and functions, and when to use each communication pattern. [8]
 
 23. List any four advantages of microservices architecture. List any four disadvantages of microservices architecture. Explain when to use microservices vs monolithic architecture discussing factors like application size, team size, scaling needs, and operational expertise. [2+2+4]
 
