@@ -19,7 +19,8 @@
 11. [Middleware](#middleware)
 12. [Comparison of Backend Frameworks](#comparison-of-backend-frameworks)
 13. [Database Types](#database-types)
-14. [Lab: CRUD with Django](#lab-crud-with-django)
+14. [Optimized All](#optimized-all)
+15. [Lab: CRUD with Django](#lab-crud-with-django)
 
 ---
 
@@ -456,7 +457,7 @@ def index(request):
 
 ### Installing an IDE
 
-**Recommended: Visual Studio Code**
+**Recommended: Visual Studio Code Extensions**
 
 1. Download from code.visualstudio.com
 2. Install Python extension
@@ -5675,6 +5676,539 @@ UPDATE users SET email = 'newemail@example.com' WHERE id = 1;
 
 -- DELETE: Remove a record
 DELETE FROM users WHERE id = 1;
+```
+
+---
+
+---
+
+---
+
+## Optimized All
+
+#### CRUD Application
+
+**Install Python**
+
+```bash
+# Download Python from python.org
+# Verify installation
+python --version
+# or
+python3 --version
+```
+
+**Create Virtual Environment**
+
+```bash
+# Create project folder
+mkdir django_course
+cd django_course
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+```
+
+**Install Django**
+
+```bash
+pip install django
+# Verify installation
+django-admin --version
+```
+
+---
+
+**Create Django Project and App**
+
+```bash
+# Create project
+django-admin startproject crud .
+
+# Create app
+python manage.py startapp notes
+```
+
+**Recommended: Visual Studio Code Extensions**
+
+1. Download from code.visualstudio.com
+2. Install Python extension
+3. Install Pylance extension
+4. Install autopep8 extension
+5. Install Django extension
+6. Install SQLite Viewer extension
+7. Configure Python interpreter to use virtual environment
+
+**Install djlint**
+
+- For formatting Django-HTML templates
+
+```bash
+pip install djlint
+```
+
+- Enable emmet abbreviations for django-html
+- Configure djlint in vscode for local workspace
+- Configure Python interpreter to use virtual environment
+
+```json
+// .vscode/settings.json
+{
+  "emmet.includeLanguages": {
+    "django-html": "html"
+  },
+  "[html][django-html]": {
+    "editor.defaultFormatter": "monosans.djlint"
+  },
+  "djlint.showInstallError": false,
+  "python.languageServer": "Pylance"
+}
+```
+
+---
+
+**Register App in Settings**
+
+```python
+# crud/settings.py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'notes',  # Add this
+]
+```
+
+---
+
+**Create Note Model**
+
+```python
+# notes/models.py
+from django.db import models
+
+
+class Note(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
+```
+
+**Equivalent SQL:**
+
+```sql
+CREATE TABLE `notes` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` varchar(100) NOT NULL,
+  `description` text NOT NULL
+);
+```
+
+---
+
+**Run Migrations**
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+**Create Sample Notes Using Shell**
+
+```bash
+python manage.py shell
+```
+
+```python
+# Inside the shell
+from notes.models import Note
+
+# Create sample notes
+Note.objects.create(title="First Note", description="This is my first note with enough characters")
+Note.objects.create(title="Django Tutorial", description="Learning Django CRUD operations with forms and validation")
+Note.objects.create(title="Shopping List", description="Buy groceries: milk, eggs, bread, and vegetables")
+
+# Display all notes
+notes = Note.objects.all()
+for note in notes:
+    print(f"ID: {note.id}, Title: {note.title}, Description: {note.description}")
+
+# Exit shell
+exit()
+```
+
+---
+
+**Create Form with Validation**
+
+```python
+# notes/forms.py
+from django import forms
+from .models import Note
+
+
+class NoteForm(forms.Form):
+    title = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'id': 'title'}),
+        error_messages={'required': 'Title is required'}
+    )
+    description = forms.CharField(
+        # required=False,
+        widget=forms.Textarea(attrs={'id': 'description'}),
+        error_messages={'required': 'Description is required'}
+    )
+
+    def clean_description(self):
+        description = self.cleaned_data.get('description', '')
+        if len(description) < 10:
+            raise forms.ValidationError('Description must be at least 10 characters long.')
+        return description
+
+    def create(self, validated_data):
+        return Note.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.save()
+        return instance
+```
+
+---
+
+**Create Views (CRUD Operations)**
+
+```python
+# notes/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Note
+from .forms import NoteForm
+
+
+# READ - Display all notes
+def index(request):
+    notes = Note.objects.all().order_by('-id')  # Latest first
+    return render(request, 'notes/index.html', {'notes': notes})
+
+
+# CREATE - Add new note
+def add_note(request):
+    if request.method == 'POST':
+        form = NoteForm(request.POST)
+        if form.is_valid():
+            form.create(form.cleaned_data)
+            messages.success(request, 'Data added successfully!')
+            return redirect('notes:index')
+    else:
+        form = NoteForm()
+
+    return render(request, 'notes/add.html', {'form': form})
+
+
+# UPDATE - Edit note
+def edit_note(request, note_id):
+    note = get_object_or_404(Note, id=note_id)
+
+    if request.method == 'POST':
+        form = NoteForm(request.POST)
+        if form.is_valid():
+            form.update(note, form.cleaned_data)
+            messages.success(request, 'Data updated successfully!')
+            return redirect('notes:index')
+    else:
+        form = NoteForm(initial={
+            'title': note.title,
+            'description': note.description
+        })
+
+    return render(request, 'notes/edit.html', {'form': form, 'note': note})
+
+
+# DELETE - Delete
+def delete_note(request, note_id):
+    note = get_object_or_404(Note, id=note_id)
+    note.delete()
+    messages.success(request, 'Note deleted successfully!')
+    return redirect('notes:index')
+```
+
+---
+
+**Create Templates**
+
+**Create `notes/templates/notes/index.html`**
+
+```html
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Homepage</title>
+        <style>
+            table,
+            th,
+            td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            th,
+            td {
+                padding: 10px;
+            }
+            .success {
+                color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Homepage</h2>
+        <p>
+            <a href="{% url 'notes:add' %}">Add New Data</a>
+        </p>
+        {% if messages %}
+            {% for message in messages %}<p class="{{ message.tags }}">{{ message }}</p>{% endfor %}
+        {% endif %}
+        <table width="80%">
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+            {% for note in notes %}
+                <tr>
+                    <td>{{ note.title }}</td>
+                    <td>{{ note.description }}</td>
+                    <td>
+                        <a href="{% url 'notes:edit' note.id %}">Edit</a>
+                        |
+                        <a href="{% url 'notes:delete' note.id %}"
+                           onclick="return confirm('Are you sure to delete?');">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No results Found</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Create `notes/templates/notes/add.html`**
+
+```html
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add Notes</title>
+        <style>
+            .error {
+                color: red;
+            }
+            .errorlist {
+                color: red;
+                list-style: none;
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Add Notes</h2>
+        <p>
+            <a href="{% url 'notes:index' %}">Home</a>
+        </p>
+        <form action="{% url 'notes:add' %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Submit" />
+        </form>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Create `notes/templates/notes/edit.html`**
+
+```html
+<pre>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit Note</title>
+        <style>
+            .error {
+                color: red;
+            }
+            .errorlist {
+                color: red;
+                list-style: none;
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Edit Note</h2>
+        <p>
+            <a href="{% url 'notes:index' %}">Home</a>
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Update" />
+        </form>
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Configure URLs**
+
+**Create `notes/urls.py`**
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'notes'
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('add/', views.add_note, name='add'),
+    path('edit/<int:note_id>/', views.edit_note, name='edit'),
+    path('delete/<int:note_id>/', views.delete_note, name='delete'),
+]
+```
+
+**Update `crud/urls.py`**
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('notes/', include('notes.urls')),
+]
+```
+
+---
+
+**Run the Server**
+
+```bash
+python manage.py runserver
+```
+
+Visit `http://127.0.0.1:8000/notes/` to see the Note Taking App.
+
+---
+
+**Create Superuser**
+
+```bash
+python manage.py createsuperuser
+```
+
+**Visit admin panel**
+
+```bash
+python manage.py runserver
+```
+
+Open your browser and navigate to `http://127.0.0.1:8000/admin` to see your Admin Panel.
+
+**Register model for admin site**
+
+```py
+# models.py
+from django.contrib import admin
+
+from .models import Note
+
+admin.site.register(Note)
+```
+
+- Refresh admin panel
+
+---
+
+**Logging Middleware**
+
+Logging helps track application behavior, debug issues, and monitor performance.
+
+```text
+crud/
+├── middleware.py
+├── settings.py
+```
+
+**Create middleware**
+
+```py
+import time
+
+def request_timing_middleware(get_response):
+    """
+    Function-based middleware to log request processing time
+    """
+
+    def middleware(request):
+        start_time = time.time()
+
+        response = get_response(request)
+
+        duration = time.time() - start_time
+        print(f"{request.path} took {duration:.2f} seconds. Completed with status {response.status_code}.")
+
+        return response
+
+    return middleware
+```
+
+**Register:**
+
+```py
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
+    # register your middleware
+    'your_project.middleware.request_timing_middleware',
+
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+]
+```
+
+**Output**
+
+```text
+/login/ took 0.08 seconds. Completed with status 200.
+/dashboard/ took 0.34 seconds. Completed with status 200.
 ```
 
 ---

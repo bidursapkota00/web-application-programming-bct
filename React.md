@@ -112,7 +112,6 @@ my-react-app/
   Contains static assets
 
 - `index.html`
-
   - id="root" - our entire app
 
 - `src`
@@ -177,7 +176,7 @@ return (
 return React.createElement(
   "div",
   {},
-  React.createElement("h2", {}, "hello world")
+  React.createElement("h2", {}, "hello world"),
 );
 ```
 
@@ -1063,7 +1062,7 @@ function FetchUsers() {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          "https://jsonplaceholder.typicode.com/users"
+          "https://jsonplaceholder.typicode.com/users",
         );
         if (!response.ok) throw new Error("Failed to fetch users");
 
@@ -1760,7 +1759,7 @@ export default App;
 
 **Output**
 
-![Grocery List Output](/grocery-bud/screenshots/grocery-op1.png)
+![Grocery List Output](/grocery-bud-react/screenshots/grocery-op1.png)
 
 ---
 
@@ -1844,7 +1843,7 @@ export default SingleItem;
 
 **Output**
 
-![Grocery List Output with Edit](/grocery-bud/screenshots/grocery-op2.png)
+![Grocery List Output with Edit](/grocery-bud-react/screenshots/grocery-op2.png)
 
 ---
 
@@ -1954,7 +1953,7 @@ export default SingleItem;
 
 **Output**
 
-![Grocery List Output with Edit](/grocery-bud/screenshots/grocery-op3.png)
+![Grocery List Output with Edit](/grocery-bud-react/screenshots/grocery-op3.png)
 
 ---
 
@@ -2098,7 +2097,7 @@ export default App;
 
 **Output**
 
-![Output with Menus](/grocery-bud/screenshots/grocery-op4.png)
+![Output with Menus](/grocery-bud-react/screenshots/grocery-op4.png)
 
 ---
 
@@ -2272,7 +2271,7 @@ export default Form;
 
 **Output**
 
-![Grocery List Output with Edit Name](/grocery-bud/screenshots/grocery-op5.png)
+![Grocery List Output with Edit Name](/grocery-bud-react/screenshots/grocery-op5.png)
 
 ---
 
