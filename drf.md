@@ -17,6 +17,9 @@
 9. [Data Validation and Serialization](#data-validation-and-serialization)
 10. [Microservices](#microservices)
 11. [Questions](#questions)
+12. [Lab: CRUD with DRF](#lab-crud-with-drf)
+    - [Notes API](#notes-api)
+    - [Grocery Bud API](#grocery-bud-api)
 
 ## API Basics
 
@@ -828,7 +831,7 @@ XML Namespaces provide a method to avoid element name conflicts.
 
 #### JSON vs XML: Detailed Comparison
 
-1. **Syntax and Readability**
+**1. Syntax and Readability**
 
 **JSON:**
 
@@ -860,7 +863,7 @@ XML (119 characters):
 
 JSON is approximately 25% smaller for the same data.
 
-2. **Data Types**
+**2. Data Types**
 
 **JSON:**
 
@@ -875,7 +878,7 @@ JSON is approximately 25% smaller for the same data.
 - Data types must be inferred or defined in a schema
 - Requires parsing to determine if "30" is a number or string
 
-3. **Arrays and Collections**
+**3. Arrays and Collections**
 
 **JSON:**
 
@@ -890,7 +893,7 @@ JSON is approximately 25% smaller for the same data.
 - Requires wrapper elements or conventions
 - More verbose: `<colors><color>red</color><color>green</color></colors>`
 
-4. **Comments**
+**4. Comments**
 
 **JSON:**
 
@@ -903,7 +906,7 @@ JSON is approximately 25% smaller for the same data.
 - Supports comments with `<!-- comment -->` syntax
 - Useful for documentation within the data
 
-5. **Namespace Support**
+**5. Namespace Support**
 
 **JSON:**
 
@@ -916,7 +919,7 @@ JSON is approximately 25% smaller for the same data.
 - Useful for combining data from multiple sources
 - Example: `<book xmlns="http://example.com/books">`
 
-6. **Schema Validation**
+**6. Schema Validation**
 
 **JSON:**
 
@@ -930,7 +933,7 @@ JSON is approximately 25% smaller for the same data.
 - Comprehensive validation capabilities
 - Strong typing and complex constraints supported
 
-7. **Parsing and Performance**
+**7. Parsing and Performance**
 
 **JSON:**
 
@@ -1151,7 +1154,7 @@ Modified XML:
 
 #### JSON in Django REST Framework
 
-Django REST Framework uses JSON as the default format for API responses. When you make requests and receive responses, DRF automatically handles the conversion between Python objects and JSON.
+Django REST Framework supports JSON format for API responses using JSONParser. When you make requests and receive responses, DRF automatically handles the conversion between Python objects and JSON.
 
 DRF also supports content negotiation, allowing clients to request different formats by setting the `Accept` header or using format suffixes in URLs.
 
@@ -1271,19 +1274,19 @@ Each field can have validation options:
 
 #### Types of Validation in DRF
 
-1. **Built-in Field Validation**
+**1. Built-in Field Validation**
 
 Each field type has built-in validation. For example, `EmailField` validates email format, `URLField` validates URL format, and `IntegerField` ensures the value is an integer.
 
-2. **Field-Level Validation**
+**2. Field-Level Validation**
 
 You can add custom validation for individual fields by defining `validate_<fieldname>` methods in your serializer.
 
-3. **Object-Level Validation**
+**3. Object-Level Validation**
 
 For validation that depends on multiple fields, you override the `validate()` method. This is useful for validating relationships between fields.
 
-4. **Custom Validators**
+**4. Custom Validators**
 
 You can create reusable validator functions or classes that can be applied to multiple fields or serializers.
 
@@ -1443,6 +1446,8 @@ In synchronous communication, the caller waits for a response before proceeding.
 - Tight temporal coupling (caller must wait)
 - If the called service is slow or down, the caller is blocked
 - Can create cascading failures
+
+<br>
 
 **Asynchronous Communication**
 
@@ -3380,9 +3385,9 @@ curl -X DELETE http://127.0.0.1:8000/api/submissions/1/
 
 ---
 
-## Lab: CRUD API with Django Rest Framework
+## Lab: CRUD with DRF
 
-**Notes API**
+### Notes API
 
 Build a Notes CRUD API using Django Rest Framework.
 
@@ -3593,7 +3598,7 @@ curl -X DELETE http://127.0.0.1:8000/api/notes/1/
 
 ---
 
-**Grocery Bud API**
+### Grocery Bud API
 
 Build a Grocery List CRUD API using Django Rest Framework.
 
