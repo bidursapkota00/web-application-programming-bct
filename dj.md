@@ -5702,14 +5702,14 @@ python3 --version
 
 ```bash
 # Create project folder
-mkdir django_course
-cd django_course
+mkdir crud
+cd crud
 
 # Create virtual environment
 python -m venv venv
 
 # Activate virtual environment
-# Windows:
+# Windows: Command Prompt
 venv\Scripts\activate
 # macOS/Linux:
 source venv/bin/activate
@@ -5737,7 +5737,7 @@ python manage.py startapp notes
 
 **Recommended: Visual Studio Code Extensions**
 
-1. Download from code.visualstudio.com
+1. Download vscode from code.visualstudio.com
 2. Install Python extension
 3. Install Pylance extension
 4. Install autopep8 extension
@@ -5840,9 +5840,7 @@ Note.objects.create(title="Django Tutorial", description="Learning Django CRUD o
 Note.objects.create(title="Shopping List", description="Buy groceries: milk, eggs, bread, and vegetables")
 
 # Display all notes
-notes = Note.objects.all()
-for note in notes:
-    print(f"ID: {note.id}, Title: {note.title}, Description: {note.description}")
+Note.objects.all()
 
 # Exit shell
 exit()
@@ -6196,7 +6194,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 
     # register your middleware
-    'your_project.middleware.request_timing_middleware',
+    'crud.middleware.request_timing_middleware',
 
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
