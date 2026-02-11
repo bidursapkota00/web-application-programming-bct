@@ -6326,6 +6326,78 @@ OK
 
 ---
 
+**Create GitHub Actions Workflow for tests**
+
+Inside your project, create this folder structure:
+
+```text
+.github/workflows/django.yml
+```
+
+**Add This Code to `django.yml`**
+
+```yaml
+name: Django Tests
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          python manage.py test
+```
+
+**Make Sure You Have `requirements.txt`**
+
+```bash
+pip freeze > requirements.txt
+```
+
+Commit it.
+
+**Push to GitHub**
+
+```bash
+git add .
+git commit -m "Add GitHub Actions for testing"
+git push origin main
+```
+
+Now every time you push to `main`:
+
+- GitHub creates a virtual machine
+- Installs Python
+- Installs dependencies
+- Runs `python manage.py test`
+- Shows pass/fail result
+
+**Where to See Results**
+
+- Go to your GitHub repo
+- Click **Actions tab**
+- You’ll see the test run
+
+---
+
 ---
 
 ---
