@@ -6398,6 +6398,103 @@ Now every time you push to `main`:
 
 ---
 
+**Deploy on Render**
+
+**Update settings.py**
+
+```py
+import os
+
+# ...
+
+DEBUG = 'RENDER' not in os.environ
+
+ALLOWED_HOSTS = []
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+```
+
+**Set up static file serving**
+
+```bash
+pip install "whitenoise[brotli]"
+```
+
+- WhiteNoise is used to serve static files in production, without needing Nginx, Apache.
+- `[brotli]` installs extra compression support.
+
+**Update settings.py**
+
+```py
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    ...
+]
+
+# ...
+
+STATIC_URL = '/static/'
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+```
+
+**Create a build script**
+
+```sh
+set -o errexit
+
+pip install -r requirements.txt
+
+python manage.py collectstatic --no-input
+
+python manage.py migrate
+```
+
+- `set -o errexit` means: Exit immediately if any command fails
+- `--no-input` means: Run without asking for user confirmation.
+
+**Install Gunicorn and Uvicorn**
+
+```bash
+pip install gunicorn uvicorn
+pip freeze > requirements.txt
+```
+
+**Try running your project locally**
+
+```bash
+uvicorn crud.asgi:application
+```
+
+**Define your Django web service**
+
+- Create `render.yaml`
+
+```yaml
+services:
+  - type: web
+    plan: free
+    name: crud
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn crud.asgi:application -k uvicorn.workers.UvicornWorker"
+```
+
+**Deploy from Render dashboard**
+
+- In the Render Dashboard, go to the Blueprints page and click New Blueprint Instance.
+- Select the repository that contains your blueprint and click Connect.
+- Give your blueprint project a name and click Deploy.
+- That's it! Your project will be live at its `.onrender.com` URL as soon as the build finishes.
+
+---
+
 ---
 
 ---
