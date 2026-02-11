@@ -6093,7 +6093,7 @@ STATICFILES_DIRS = [
     <h2>Add Notes</h2>
     <form action="{% url 'notes:add' %}" method="post">
         {% csrf_token %} {{ form.as_p }}
-        <input type="submit" value="Submit" />
+        <input name="submit" type="submit" value="Submit" />
     </form>
 {% endblock content %}
 </pre>
@@ -6113,7 +6113,7 @@ STATICFILES_DIRS = [
     <h2>Edit Note</h2>
     <form method="post">
         {% csrf_token %} {{ form.as_p }}
-        <input type="submit" value="Update" />
+        <input name="submit" type="submit" value="Update" />
     </form>
 {% endblock content %}
 </pre>
@@ -6372,8 +6372,6 @@ jobs:
 pip freeze > requirements.txt
 ```
 
-Commit it.
-
 **Push to GitHub**
 
 ```bash
@@ -6492,6 +6490,115 @@ services:
 - Select the repository that contains your blueprint and click Connect.
 - Give your blueprint project a name and click Deploy.
 - That's it! Your project will be live at its `.onrender.com` URL as soon as the build finishes.
+
+---
+
+**UI testing with selenium**
+
+**Install selenium and pytest**
+
+```bash
+pip install selenium pytest
+```
+
+**Create `uitest.py`**
+
+```py
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+
+def test_notes_can_be_created():
+    # Arrange
+    driver = webdriver.Chrome()
+    driver.get('http://127.0.0.1:8000/notes/add/')
+
+    # Act
+    driver.find_element(By.NAME, 'title').send_keys('Django Course')
+    driver.find_element(By.NAME, 'description').send_keys(
+        'Complete course with urls, templates, models, etc')
+    driver.find_element(By.NAME, 'submit').click()
+    time.sleep(2)  # Bad but easy
+
+    # Assert
+    title = driver.find_element(By.TAG_NAME, 'td').text
+    assert 'Django Course' in title
+
+    driver.quit()
+
+
+def test_error_occurs_if_description_is_less_than_10_chars_long():
+    # Arrange
+    driver = webdriver.Chrome()
+    driver.get('http://127.0.0.1:8000/notes/add/')
+
+    # Act
+    driver.find_element(By.NAME, 'title').send_keys('Django Course')
+    driver.find_element(By.NAME, 'description').send_keys('dj')
+    driver.find_element(By.NAME, 'submit').click()
+    time.sleep(2)  # Bad but easy
+
+    # Assert
+    error = driver.find_element(By.TAG_NAME, 'li').text
+    assert 'Description must be at least 10 characters long' in error
+
+    driver.quit()
+```
+
+**Run Test**
+
+```bash
+pytest uitest.py
+```
+
+**Easy Test Example without django project**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="#" onsubmit="handleSubmit(event)">
+      <input type="text" name="username" />
+      <input type="password" name="password" />
+      <button type="submit" id="login-button">Submit</button>
+    </form>
+    <script>
+      function handleSubmit(event) {
+        event.preventDefault();
+        document.body.innerHTML += "<h3 id='welcome'>Welcome, testuser</h3>";
+      }
+    </script>
+  </body>
+</html>
+```
+
+```py
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+
+def test_user_can_login():
+    # Arrange
+    driver = webdriver.Chrome()
+    driver.get('http://127.0.0.1:5500/login.html')
+
+    # Act
+    driver.find_element(By.NAME, 'username').send_keys('testuser')
+    driver.find_element(By.NAME, 'password').send_keys('testpass123')
+    driver.find_element(By.ID, 'login-button').click()
+
+    # Assert
+    welcome_message = driver.find_element(By.ID, 'welcome').text
+    assert 'Welcome, testuser' in welcome_message
+
+    driver.quit()
+```
 
 ---
 
