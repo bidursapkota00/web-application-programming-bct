@@ -5945,65 +5945,137 @@ def delete_note(request, note_id):
 
 ---
 
-**Create Templates**
+**Create CSS File**
+
+**Create `notes/static/notes/css/style.css`**
+
+```css
+table {
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.success {
+  color: green;
+}
+
+.error {
+  color: red;
+}
+
+.errorlist {
+  color: red;
+  list-style: none;
+  padding: 0;
+}
+```
+
+**Configure Static Files in Settings**
+
+**Update `crud/settings.py`**
+
+```python
+# At the bottom of the file, after STATIC_URL
+
+STATIC_URL = 'static/'
+
+# Add this line
+STATICFILES_DIRS = [
+    BASE_DIR / 'notes' / 'static',
+]
+```
+
+---
+
+**Navigation Partial**
+
+**Create `notes/templates/notes/partials/navigation.html`**
+
+```html
+<pre>
+<nav>
+    <p>
+        <a href="{% url 'notes:index' %}">Home</a>
+        |
+        <a href="{% url 'notes:add' %}">Add New Data</a>
+    </p>
+</nav>
+</pre>
+```
+
+---
+
+**Create Base Template**
+
+**Create `notes/templates/notes/base.html`**
+
+```html
+<pre>
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            {% block title %}
+                Notes App
+            {% endblock title %}
+        </title>
+        <link rel="stylesheet" href="{% static 'notes/css/style.css' %}" />
+    </head>
+    <body>
+        {% include 'notes/partials/navigation.html' %}
+        {% if messages %}
+            {% for message in messages %}<p class="{{ message.tags }}">{{ message }}</p>{% endfor %}
+        {% endif %}
+        {% block content %}
+        {% endblock content %}
+    </body>
+</html>
+</pre>
+```
+
+---
+
+**Index Template**
 
 **Create `notes/templates/notes/index.html`**
 
 ```html
 <pre>
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Homepage</title>
-        <style>
-            table,
-            th,
-            td {
-                border: 1px solid black;
-                border-collapse: collapse;
-            }
-            th,
-            td {
-                padding: 10px;
-            }
-            .success {
-                color: green;
-            }
-        </style>
-    </head>
-    <body>
-        <h2>Homepage</h2>
-        <p>
-            <a href="{% url 'notes:add' %}">Add New Data</a>
-        </p>
-        {% if messages %}
-            {% for message in messages %}<p class="{{ message.tags }}">{{ message }}</p>{% endfor %}
-        {% endif %}
-        <table width="80%">
+{% extends 'notes/base.html' %}
+{% block title %}
+    Homepage
+{% endblock title %}
+{% block content %}
+    <h2>Homepage</h2>
+    <table width="80%">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Action</th>
+        </tr>
+        {% for note in notes %}
             <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Action</th>
+                <td>{{ note.title }}</td>
+                <td>{{ note.description }}</td>
+                <td>
+                    <a href="{% url 'notes:edit' note.id %}">Edit</a>
+                    |
+                    <a href="{% url 'notes:delete' note.id %}" onclick="return confirm('Are you sure to delete?');">Delete</a>
+                </td>
             </tr>
-            {% for note in notes %}
-                <tr>
-                    <td>{{ note.title }}</td>
-                    <td>{{ note.description }}</td>
-                    <td>
-                        <a href="{% url 'notes:edit' note.id %}">Edit</a>
-                        |
-                        <a href="{% url 'notes:delete' note.id %}"
-                           onclick="return confirm('Are you sure to delete?');">Delete</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="3">No results Found</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </body>
-</html>
+        {% empty %}
+            <tr>
+                <td colspan="3">No results Found</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock content %}
 </pre>
 ```
 
@@ -6013,33 +6085,17 @@ def delete_note(request, note_id):
 
 ```html
 <pre>
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Add Notes</title>
-        <style>
-            .error {
-                color: red;
-            }
-            .errorlist {
-                color: red;
-                list-style: none;
-                padding: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <h2>Add Notes</h2>
-        <p>
-            <a href="{% url 'notes:index' %}">Home</a>
-        </p>
-        <form action="{% url 'notes:add' %}" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Submit" />
-        </form>
-    </body>
-</html>
+{% extends 'notes/base.html' %}
+{% block title %}
+    Add Notes
+{% endblock title %}
+{% block content %}
+    <h2>Add Notes</h2>
+    <form action="{% url 'notes:add' %}" method="post">
+        {% csrf_token %} {{ form.as_p }}
+        <input type="submit" value="Submit" />
+    </form>
+{% endblock content %}
 </pre>
 ```
 
@@ -6049,33 +6105,17 @@ def delete_note(request, note_id):
 
 ```html
 <pre>
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Edit Note</title>
-        <style>
-            .error {
-                color: red;
-            }
-            .errorlist {
-                color: red;
-                list-style: none;
-                padding: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <h2>Edit Note</h2>
-        <p>
-            <a href="{% url 'notes:index' %}">Home</a>
-        </p>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Update" />
-        </form>
-    </body>
-</html>
+{% extends 'notes/base.html' %}
+{% block title %}
+    Edit Note
+{% endblock title %}
+{% block content %}
+    <h2>Edit Note</h2>
+    <form method="post">
+        {% csrf_token %} {{ form.as_p }}
+        <input type="submit" value="Update" />
+    </form>
+{% endblock content %}
 </pre>
 ```
 
