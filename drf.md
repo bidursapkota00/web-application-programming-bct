@@ -2069,28 +2069,37 @@ curl -X DELETE http://127.0.0.1:8000/api/registration/1/
 
 ---
 
-## Questions
-
 **Write an API view that accepts username and password as arguments and check with student table, if credential match, return JWT token otherwise display 'Invalid username/password'.**
 
 ---
 
-**Step 1: Install Required Packages**
+Simple implementation using Django's built-in User model and SimpleJWT's built-in token endpoints.
+
+---
+
+##### Step 1: Install Required Packages
 
 ```bash
-pip install djangorestframework-simplejwt
+pip install djangorestframework djangorestframework-simplejwt
 ```
 
 ---
 
-**Step 2: Configure Settings**
+##### Step 2: Configure Settings
 
 ```python
 # settings.py
 INSTALLED_APPS = [
-    # ...
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',  # Required for logout
+    'myapp',  # your app name
 ]
 
 REST_FRAMEWORK = {
@@ -2098,330 +2107,297 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
-
-# JWT Settings
-from datetime import timedelta
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-}
 ```
+
+> **Note:** Default SIMPLE_JWT settings are fine for basic usage. Only add custom SIMPLE_JWT configuration if you need to change token lifetimes or other specific behaviors.
 
 ---
 
-**Step 3: Create Student Model**
+##### Step 3: Run Migrations
 
-```python
-# models.py
-from django.db import models
-
-
-class Student(models.Model):
-    username = models.CharField(max_length=100, unique=True)
-    password = models.CharField(max_length=100)
-    name = models.CharField(max_length=200)
-    email = models.EmailField()
-
-    def __str__(self):
-        return self.username
-```
-
----
-
-**Step 4: Run Migrations**
+**Important:** After adding `token_blacklist` to INSTALLED_APPS, run migrations:
 
 ```bash
-python manage.py makemigrations
 python manage.py migrate
 ```
 
----
-
-**Step 5: Create Serializers**
-
-```python
-# serializers.py
-from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
-from .models import Student
-
-
-class StudentLoginSerializer(serializers.Serializer):
-    username = serializers.CharField(
-        max_length=100,
-        error_messages={'required': 'Username is required', 'blank': 'Username is required'}
-    )
-    password = serializers.CharField(
-        write_only=True,
-        error_messages={'required': 'Password is required', 'blank': 'Password is required'}
-    )
-
-
-class StudentSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    username = serializers.CharField(
-        max_length=100,
-        error_messages={'required': 'Username is required', 'blank': 'Username is required'}
-    )
-    name = serializers.CharField(
-        max_length=200,
-        error_messages={'required': 'Name is required', 'blank': 'Name is required'}
-    )
-    email = serializers.EmailField(
-        error_messages={'required': 'Email is required', 'invalid': 'Enter a valid email address'}
-    )
-
-
-class StudentRegisterSerializer(serializers.Serializer):
-    username = serializers.CharField(
-        max_length=100,
-        error_messages={'required': 'Username is required', 'blank': 'Username is required'}
-    )
-    name = serializers.CharField(
-        max_length=200,
-        error_messages={'required': 'Name is required', 'blank': 'Name is required'}
-    )
-    email = serializers.EmailField(
-        error_messages={'required': 'Email is required', 'invalid': 'Enter a valid email address'}
-    )
-    password = serializers.CharField(
-        write_only=True,
-        error_messages={'required': 'Password is required', 'blank': 'Password is required'}
-    )
-    confirm_password = serializers.CharField(
-        write_only=True,
-        error_messages={'required': 'Confirm Password is required'}
-    )
-
-    def validate(self, data):
-        if data['password'] != data['confirm_password']:
-            raise serializers.ValidationError({
-                'confirm_password': 'Passwords do not match'
-            })
-        return data
-
-    def validate_username(self, value):
-        if Student.objects.filter(username=value).exists():
-            raise serializers.ValidationError('Username already exists')
-        return value
-
-    def validate_email(self, value):
-        if Student.objects.filter(email=value).exists():
-            raise serializers.ValidationError('Email already registered')
-        return value
-
-    def create(self, validated_data):
-        validated_data.pop('confirm_password')
-        validated_data['password'] = make_password(validated_data['password'])
-        return Student.objects.create(**validated_data)
-```
+This creates the necessary database tables for token blacklisting.
 
 ---
 
-**Step 6: Create Login API View (Class-Based)**
+##### Step 4: Create Views
 
 ```python
 # views.py
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.hashers import check_password
-from .models import Student
-from .serializers import StudentLoginSerializer, StudentSerializer, StudentRegisterSerializer
-
-
-class StudentLoginAPIView(APIView):
-    """Student login API - Returns JWT tokens"""
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = StudentLoginSerializer(data=request.data)
-
-        if serializer.is_valid():
-            username = serializer.validated_data['username']
-            password = request.data.get('password')
-
-            try:
-                student = Student.objects.get(username=username)
-                # Check hashed password
-                if check_password(password, student.password):
-                    # Generate JWT tokens manually
-                    refresh = RefreshToken()
-                    refresh['student_id'] = student.id
-                    refresh['student_name'] = student.name
-                    refresh['username'] = student.username
-
-                    return Response({
-                        'message': 'Login successful',
-                        'tokens': {
-                            'refresh': str(refresh),
-                            'access': str(refresh.access_token),
-                        },
-                        'student': StudentSerializer(student).data
-                    })
-                else:
-                    return Response(
-                        {'error': 'Invalid username/password'},
-                        status=status.HTTP_401_UNAUTHORIZED
-                    )
-            except Student.DoesNotExist:
-                return Response(
-                    {'error': 'Invalid username/password'},
-                    status=status.HTTP_401_UNAUTHORIZED
-                )
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DashboardAPIView(APIView):
-    """Protected dashboard API - Requires JWT token"""
+    """Protected dashboard - Requires JWT token"""
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         return Response({
-            'message': 'Welcome to the dashboard!',
-            'note': 'You are authenticated with JWT token'
+            'message': f'Welcome {request.user.username}!',
+            'user': {
+                'id': request.user.id,
+                'username': request.user.username,
+                'email': request.user.email,
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+            }
         })
 
 
-class StudentLogoutAPIView(APIView):
+class LogoutAPIView(APIView):
     """Logout API - Blacklist refresh token"""
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
             refresh_token = request.data.get('refresh')
+            if not refresh_token:
+                return Response(
+                    {'error': 'Refresh token is required'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response({'message': 'Logout successful'})
+
+            return Response(
+                {'message': 'Logout successful'},
+                status=status.HTTP_200_OK
+            )
         except Exception as e:
             return Response(
-                {'error': 'Invalid token'},
+                {'error': f'Invalid token: {str(e)}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-
-class StudentRegisterAPIView(APIView):
-    """Student registration API"""
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = StudentRegisterSerializer(data=request.data)
-
-        if serializer.is_valid():
-            student = serializer.save()
-            return Response({
-                'message': 'Account created successfully!',
-                'student': StudentSerializer(student).data
-            }, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 ```
 
 ---
 
-**Step 7: Configure URLs**
+##### Step 5: Configure URLs
 
 ```python
-# app level urls.py
+# app level urls.py (e.g., myapp/urls.py)
 from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('register/', views.StudentRegisterAPIView.as_view(), name='register'),
-    path('login/', views.StudentLoginAPIView.as_view(), name='login'),
     path('dashboard/', views.DashboardAPIView.as_view(), name='dashboard'),
-    path('logout/', views.StudentLogoutAPIView.as_view(), name='logout'),
+    path('logout/', views.LogoutAPIView.as_view(), name='logout'),
 ]
+```
 
+```python
 # project level urls.py
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/auth/', include('myauthapp.urls'))
+
+    # SimpleJWT built-in token endpoints
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # Your app URLs
+    path('api/', include('myapp.urls')),
 ]
 ```
 
 ---
 
-**Testing Login API**
-
-- Create test user first.
+##### Step 6: Create Test User
 
 ```bash
 python manage.py shell
 ```
 
-```py
-from django.contrib.auth.hashers import make_password
-from testapp.models import Student   # adjust app name if different
+```python
+from django.contrib.auth.models import User
 
-Student.objects.create(
-    username="b2rsp",
-    password=make_password("password123"),
-    name="Bidur",
-    email="bidursapkota00@gmail.com"
+# Create test user
+user = User.objects.create_user(
+    username='student1',
+    email='student1@example.com',
+    password='testpass123',
+    first_name='John',
+    last_name='Doe'
 )
-```
 
-- Test Login API:
-
-```bash
-# Login
-curl -X POST http://127.0.0.1:8000/api/auth/login/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "b2rsp", "password": "password123"}'
-
-# Response:
-# {
-#   "message": "Login successful",
-#   "tokens": {
-#     "refresh": "eyJ...",
-#     "access": "eyJ..."
-#   },
-#   "student": {
-#     "id": 1,
-#     "name": "Bidur",
-#     "username": "b2rsp",
-#     "email": "bidursapkota00@gmail.com"
-#   }
-# }
-
-# Access Protected Dashboard
-curl http://127.0.0.1:8000/api/auth/dashboard/ \
-  -H "Authorization: Bearer <access_token>"
-
-# Logout (blacklist token)
-curl -X POST http://127.0.0.1:8000/api/auth/logout/ \
-  -H "Content-Type: application/json" \
-  -d '{"refresh": "<refresh_token>"}'
+print(f"Created user: {user.username}")
+exit()
 ```
 
 ---
 
-**Testing Registration API**
+##### API Testing Examples
 
-```bash
-# Register new student
-curl -X POST http://127.0.0.1:8000/api/auth/register/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "newuser",
-    "name": "New User",
-    "email": "newuser@example.com",
-    "password": "password123",
-    "confirm_password": "password123"
-  }'
+##### 1. Login (Get JWT Token)
 
-# Login with new credentials
-curl -X POST http://127.0.0.1:8000/api/auth/login/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "newuser", "password": "password123"}'
+**Endpoint:** `POST /api/token/`
+
+```json
+{
+  "username": "student1",
+  "password": "testpass123"
+}
 ```
+
+**Response (Success):**
+
+```json
+{
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+**Response (Invalid credentials):**
+
+```json
+{
+  "detail": "No active account found with the given credentials"
+}
+```
+
+---
+
+##### 2. Access Protected Dashboard
+
+**Endpoint:** `GET /api/dashboard/`
+
+**Headers:**
+
+```
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+```
+
+**Response:**
+
+```json
+{
+  "message": "Welcome student1!",
+  "user": {
+    "id": 1,
+    "username": "student1",
+    "email": "student1@example.com",
+    "first_name": "John",
+    "last_name": "Doe"
+  }
+}
+```
+
+**Response (No token or invalid token):**
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+---
+
+##### 3. Refresh Token
+
+**Endpoint:** `POST /api/token/refresh/`
+
+```json
+{
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+**Response:**
+
+```json
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+---
+
+##### 4. Logout (Blacklist Refresh Token)
+
+**Endpoint:** `POST /api/logout/`
+
+**Headers:**
+
+```
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+```
+
+**Body:**
+
+```json
+{
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+**Response:**
+
+```json
+{
+  "message": "Logout successful"
+}
+```
+
+**Error Response:**
+
+```json
+{
+  "error": "Invalid token"
+}
+```
+
+---
+
+##### Testing with Postman
+
+1. **Login:**
+   - Method: POST
+   - URL: `http://localhost:8000/api/token/`
+   - Body (JSON):
+     ```json
+     {
+       "username": "student1",
+       "password": "testpass123"
+     }
+     ```
+   - Copy the `access` token from response
+
+2. **Access Protected Endpoint:**
+   - Method: GET
+   - URL: `http://localhost:8000/api/dashboard/`
+   - Headers:
+     - Key: `Authorization`
+     - Value: `Bearer <paste_your_access_token>`
+
+3. **Logout:**
+   - Method: POST
+   - URL: `http://localhost:8000/api/logout/`
+   - Headers:
+     - Key: `Authorization`
+     - Value: `Bearer <paste_your_access_token>`
+   - Body (JSON):
+     ```json
+     {
+       "refresh": "<paste_your_refresh_token>"
+     }
+     ```
 
 ---
 
