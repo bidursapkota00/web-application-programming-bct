@@ -16,6 +16,18 @@
    - [5.2.3 HTTPS (HTTP Secure)](#523-https-http-secure)
    - [5.2.4 Secure Cookies](#524-secure-cookies)
    - [5.2.5 Environment Variables](#525-environment-variables)
+3. [5.3 Authentication](#53-authentication)
+   - [5.3.1 Password Security](#531-password-security)
+   - [5.3.2 Session-Based Authentication](#532-session-based-authentication)
+   - [5.3.3 Token-Based Authentication](#533-token-based-authentication)
+   - [5.3.4 JSON Web Tokens (JWT)](#534-json-web-tokens-jwt)
+   - [5.3.5 Refresh Tokens](#535-refresh-tokens)
+4. [5.4 Security in Full-Stack Apps](#54-security-in-full-stack-apps)
+   - [5.4.1 Same-Origin Policy (SOP)](#541-same-origin-policy-sop)
+   - [5.4.2 Cross-Origin Resource Sharing (CORS)](#542-cross-origin-resource-sharing-cors)
+   - [5.4.3 Session Hardening](#543-session-hardening)
+   - [5.4.4 Browser Security Headers](#544-browser-security-headers)
+5. [Questions](#questions)
 
 Web application security is the practice of **protecting** websites and web applications **from unauthorized access, data breaches, and malicious attacks.** As web applications handle sensitive user data, financial transactions, and critical business operations, security has become a fundamental requirement rather than an optional feature.
 
@@ -820,7 +832,7 @@ Add `.env` to your `.gitignore` file:
 
 ---
 
-## 5.3 Authentication Practices and Token Handling
+## 5.3 Authentication
 
 Authentication is the process of verifying the identity of a user, device, or system. It answers the question: "Who are you?" In web applications, authentication is the foundation of security, as it determines who can access the system and what actions they can perform.
 
@@ -828,7 +840,7 @@ This section covers password security, session management, and modern token-base
 
 ---
 
-### 5.3.1 Understanding Authentication vs. Authorization
+**Understanding Authentication vs. Authorization**
 
 Before diving into authentication practices, it is essential to understand the difference between authentication and authorization.
 
@@ -854,7 +866,7 @@ Authorization determines access. After authentication, authorization decides wha
 
 ---
 
-### 5.3.2 Password Security
+### 5.3.1 Password Security
 
 #### Why Passwords Need Protection
 
@@ -1022,7 +1034,7 @@ Password reset mechanisms must be secure:
 
 ---
 
-### 5.3.3 Session-Based Authentication
+### 5.3.2 Session-Based Authentication
 
 #### What are Sessions?
 
@@ -1114,7 +1126,7 @@ SESSION_SAVE_EVERY_REQUEST = True  # Update session on each request
 
 ---
 
-### 5.3.4 Token-Based Authentication
+### 5.3.3 Token-Based Authentication
 
 #### Why Token-Based Authentication?
 
@@ -1164,7 +1176,7 @@ The authentication server can be separate from the application server. This enab
 
 ---
 
-### 5.3.5 JSON Web Tokens (JWT)
+### 5.3.4 JSON Web Tokens (JWT)
 
 #### What is JWT?
 
@@ -1368,7 +1380,7 @@ urlpatterns = [
 
 ---
 
-### 5.3.6 Refresh Tokens
+### 5.3.5 Refresh Tokens
 
 #### The Problem with Access Tokens
 
@@ -1409,56 +1421,7 @@ Refresh tokens are high-value targets. Security measures:
 
 ---
 
-### 5.3.7 Multi-Factor Authentication (MFA)
-
-Multi-Factor Authentication adds additional layers of verification beyond passwords. It requires two or more independent factors:
-
-**Something You Know**
-
-Knowledge-based factors:
-
-- Passwords
-- PINs
-- Security questions
-
-**Something You Have**
-
-Possession-based factors:
-
-- Mobile phone (SMS codes, authenticator apps)
-- Hardware security keys (YubiKey)
-- Smart cards
-
-**Something You Are**
-
-Biometric factors:
-
-- Fingerprints
-- Facial recognition
-- Voice recognition
-- Retina scans
-
-#### Time-Based One-Time Passwords (TOTP)
-
-TOTP is a common MFA method used by authenticator apps (Google Authenticator, Authy). It generates time-dependent codes.
-
-**How TOTP Works:**
-
-1. Server generates a secret key for the user
-2. Secret is shared with the user's authenticator app (usually via QR code)
-3. Both server and app use the secret and current time to generate codes
-4. Codes change every 30 seconds
-5. User enters the current code during login
-
-**Benefits:**
-
-- Works without network connectivity
-- No SMS costs or delays
-- More secure than SMS-based MFA
-
----
-
-## 5.4 Security in Full-Stack Apps: CORS, Safe Sessions
+## 5.4 Security in Full-Stack Apps
 
 Modern full-stack applications often involve frontend and backend running on different origins. This architecture introduces security considerations around cross-origin communication and session management.
 
@@ -1919,184 +1882,7 @@ SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 ---
 
-### 5.4.5 Secure API Communication
-
-#### Transport Layer Security
-
-All API communication should use HTTPS. This applies to:
-
-- Frontend to backend communication
-- Backend to backend communication (microservices)
-- Third-party API calls
-
-Certificate validation should never be disabled in production.
-
-#### Request Validation
-
-**Validate Content-Type**
-
-Verify that the Content-Type header matches what the API expects. Reject requests with unexpected content types.
-
-**Validate Accept Header**
-
-Honor the Accept header and return appropriate error if the requested content type cannot be provided.
-
-**Request Size Limits**
-
-Implement limits on request body size to prevent denial-of-service attacks.
-
-```python
-# settings.py
-DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440  # 2.5 MB
-FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440  # 2.5 MB
-```
-
-#### Rate Limiting
-
-Rate limiting prevents abuse and brute-force attacks by limiting the number of requests from a client.
-
-**Types of Rate Limiting:**
-
-- **IP-based**: Limit requests per IP address
-- **User-based**: Limit requests per authenticated user
-- **Endpoint-based**: Different limits for different endpoints
-
-**Common Strategies:**
-
-- Fixed window: N requests per time window
-- Sliding window: Rolling window of time
-- Token bucket: Tokens replenish over time
-
-#### API Versioning
-
-Version your APIs to maintain backward compatibility and security updates:
-
-- URL path versioning: `/api/v1/users`
-- Header versioning: `Accept: application/vnd.api+json; version=1`
-- Query parameter: `/api/users?version=1`
-
-Deprecate and eventually remove old versions that may have security vulnerabilities.
-
----
-
-### 5.4.6 Frontend Security Considerations
-
-Security must be considered on both backend and frontend. While the backend is the ultimate authority, frontend security provides defense in depth.
-
-#### Secure Storage in the Browser
-
-**localStorage and sessionStorage**
-
-These storage mechanisms are accessible to JavaScript, making them vulnerable to XSS attacks.
-
-- Never store sensitive tokens in localStorage for high-security applications
-- sessionStorage is cleared when the tab closes, providing slightly better security
-- Consider using HttpOnly cookies for authentication tokens
-
-**Secure Memory Storage**
-
-Store tokens in JavaScript variables (memory) for the most security against XSS. However, this means tokens are lost on page refresh.
-
-```javascript
-// Example: Storing token in memory (not localStorage)
-let authToken = null;
-
-function setToken(token) {
-  authToken = token;
-}
-
-function getToken() {
-  return authToken;
-}
-```
-
-#### Input Handling on the Client
-
-While server-side validation is mandatory, client-side validation improves user experience and reduces unnecessary server requests.
-
-**Sanitize User Input Display**
-
-When displaying user-generated content, use safe methods:
-
-```javascript
-// DANGEROUS - Directly setting HTML
-element.innerHTML = userInput;
-
-// SAFE - Setting text content (no HTML interpretation)
-element.textContent = userInput;
-```
-
-**Use Modern Frameworks Safely**
-
-Modern frameworks like React, Vue, and Angular provide automatic escaping:
-
-```jsx
-// React - Safe by default
-<div>{userInput}</div>  // Escaped automatically
-
-// DANGEROUS - Bypasses escaping
-<div dangerouslySetInnerHTML={{__html: userInput}} />  // Avoid!
-```
-
-#### Subresource Integrity (SRI)
-
-When loading scripts or styles from CDNs, use SRI to ensure the file hasn't been tampered with.
-
-```html
-<script
-  src="https://cdn.example.com/library.js"
-  integrity="sha384-hash-value-here"
-  crossorigin="anonymous"
-></script>
-```
-
-If the file's hash doesn't match, the browser won't execute it.
-
----
-
-### Summary
-
-This chapter provided comprehensive coverage of web application security:
-
-**Section 5.1 - Common Vulnerabilities:**
-
-- **XSS (Cross-Site Scripting)**: Attackers inject malicious scripts that execute in users' browsers.
-- **SQL Injection**: Attackers manipulate database queries through malicious input.
-- **CSRF (Cross-Site Request Forgery)**: Attackers trick users into performing unwanted actions.
-- Django provides built-in protection against all three vulnerabilities through auto-escaping, ORM parameterization, and CSRF tokens.
-
-**Section 5.2 - Security Best Practices:**
-
-- **Input Validation**: Always validate user input on the server side using whitelists.
-- **Sanitization**: Clean input and encode output based on context to prevent injection attacks.
-- **HTTPS**: Encrypt all communications using TLS to protect data in transit.
-- **Secure Cookies**: Use Secure, HttpOnly, and SameSite attributes to protect cookies.
-- **Environment Variables**: Store sensitive configuration outside of source code.
-- **Defense in Depth**: Implement multiple layers of security for comprehensive protection.
-
-**Section 5.3 - Authentication Practices and Token Handling:**
-
-- **Password Hashing**: Never store plain text passwords; use bcrypt, Argon2, or PBKDF2.
-- **Salting**: Add random salts to prevent rainbow table attacks.
-- **Session Management**: Secure session IDs with proper cookie attributes and timeouts.
-- **JWT Authentication**: Stateless tokens for modern APIs with access and refresh token patterns.
-- **Multi-Factor Authentication**: Additional security layers beyond passwords.
-
-**Section 5.4 - Security in Full-Stack Apps:**
-
-- **Same-Origin Policy**: Browser security mechanism restricting cross-origin access.
-- **CORS**: Controlled relaxation of SOP for legitimate cross-origin requests.
-- **Session Hardening**: Regenerate session IDs, implement timeouts, and bind sessions securely.
-- **Security Headers**: CSP, X-Frame-Options, HSTS, and other headers for browser-enforced security.
-- **Frontend Security**: Secure storage, input handling, and subresource integrity.
-
-Security is an ongoing process requiring vigilance, continuous learning, and regular security audits. Always stay updated on new vulnerabilities and best practices.
-
----
-
-## Chapter 5: Examination Questions
-
-The following questions are designed for bachelor-level students. Each question carries 8 marks.
+## Questions
 
 1. Define Cross-Site Scripting (XSS). Differentiate between Stored XSS and Reflected XSS. Explain four potential impacts of XSS attacks on web applications. [2+2+4]
 
@@ -2104,46 +1890,40 @@ The following questions are designed for bachelor-level students. Each question 
 
 3. Define Cross-Site Request Forgery (CSRF). Explain how CSRF attacks exploit user sessions. Describe how Django's CSRF protection mechanism works with a code example. [2+3+3]
 
-4. Compare and contrast XSS, SQL Injection, and CSRF attacks based on: target, attack vector, what trust they exploit, and prevention methods. [8]
+4. What is input validation? Differentiate between whitelist (allowlist) and blacklist (denylist) validation approaches. Explain why server-side validation is mandatory even when client-side validation is implemented. [2+3+3]
 
-5. What is input validation? Differentiate between whitelist (allowlist) and blacklist (denylist) validation approaches. Explain why server-side validation is mandatory even when client-side validation is implemented. [2+3+3]
+5. Define input sanitization. Explain the difference between input validation and input sanitization. Describe HTML encoding and its role in preventing XSS attacks. [2+3+3]
 
-6. Define input sanitization. Explain the difference between input validation and input sanitization. Describe HTML encoding and its role in preventing XSS attacks. [2+3+3]
+6. What is HTTPS? Explain the three key security properties provided by HTTPS (encryption, data integrity, and authentication). Describe how to configure Django to enforce HTTPS. [2+4+2]
 
-7. What is HTTPS? Explain the three key security properties provided by HTTPS (encryption, data integrity, and authentication). Describe how to configure Django to enforce HTTPS. [2+4+2]
+7. Explain the purpose of the following cookie security attributes: Secure, HttpOnly, and SameSite. Write the Django settings to configure secure session cookies. [6+2]
 
-8. Explain the purpose of the following cookie security attributes: Secure, HttpOnly, and SameSite. Write the Django settings to configure secure session cookies. [6+2]
+8. What are environment variables? Explain why sensitive information like database passwords and API keys should be stored in environment variables instead of source code. Demonstrate how to use environment variables in Django settings. [2+4+2]
 
-9. What are environment variables? Explain why sensitive information like database passwords and API keys should be stored in environment variables instead of source code. Demonstrate how to use environment variables in Django settings. [2+4+2]
+9. Differentiate between authentication and authorization. Explain why storing passwords in plain text is dangerous. Describe the concept of password hashing and its key properties. [2+2+4]
 
-10. Differentiate between authentication and authorization. Explain why storing passwords in plain text is dangerous. Describe the concept of password hashing and its key properties. [2+2+4]
+10. What is password salting? Explain why simple hash functions like MD5 are not suitable for password hashing. Compare any two modern password hashing algorithms (bcrypt, Argon2, PBKDF2, or scrypt). [2+3+3]
 
-11. What is password salting? Explain why simple hash functions like MD5 are not suitable for password hashing. Compare any two modern password hashing algorithms (bcrypt, Argon2, PBKDF2, or scrypt). [2+3+3]
+11. Explain session-based authentication and its working mechanism. Describe three session security concerns (session hijacking, session fixation, and session prediction) and their prevention methods. [4+4]
 
-12. Explain session-based authentication and its working mechanism. Describe three session security concerns (session hijacking, session fixation, and session prediction) and their prevention methods. [4+4]
+12. What is token-based authentication? Explain four advantages of token-based authentication over session-based authentication. Describe the token-based authentication flow. [2+4+2]
 
-13. What is token-based authentication? Explain four advantages of token-based authentication over session-based authentication. Describe the token-based authentication flow. [2+4+2]
+13. Define JSON Web Token (JWT). Explain the three components of a JWT (header, payload, and signature). Describe why the signature is important for JWT security. [2+4+2]
 
-14. Define JSON Web Token (JWT). Explain the three components of a JWT (header, payload, and signature). Describe why the signature is important for JWT security. [2+4+2]
+14. Differentiate between symmetric (HMAC) and asymmetric (RSA) JWT signing algorithms. Explain four security considerations when implementing JWT authentication. [4+4]
 
-15. Differentiate between symmetric (HMAC) and asymmetric (RSA) JWT signing algorithms. Explain four security considerations when implementing JWT authentication. [4+4]
+15. What are refresh tokens? Explain the problem that refresh tokens solve in token-based authentication. Describe four security measures for handling refresh tokens. [2+2+4]
 
-16. What are refresh tokens? Explain the problem that refresh tokens solve in token-based authentication. Describe four security measures for handling refresh tokens. [2+2+4]
+16. Define Same-Origin Policy (SOP). Explain what constitutes "same origin" with examples. Describe what SOP restricts and what it allows in web browsers. [2+3+3]
 
-17. Define Same-Origin Policy (SOP). Explain what constitutes "same origin" with examples. Describe what SOP restricts and what it allows in web browsers. [2+3+3]
+17. What is Cross-Origin Resource Sharing (CORS)? Differentiate between simple requests and preflight requests. Explain four CORS response headers and their purposes. [2+2+4]
 
-18. What is Cross-Origin Resource Sharing (CORS)? Differentiate between simple requests and preflight requests. Explain four CORS response headers and their purposes. [2+2+4]
+18. Explain session hardening techniques including: session ID regeneration after login, session timeout implementation, and session binding. Write Django configuration for implementing session timeouts. [6+2]
 
-19. Explain session hardening techniques including: session ID regeneration after login, session timeout implementation, and session binding. Write Django configuration for implementing session timeouts. [6+2]
+19. What is Content Security Policy (CSP)? Explain four CSP directives and their purposes. Describe how CSP helps prevent XSS attacks. [2+4+2]
 
-20. What is Content Security Policy (CSP)? Explain four CSP directives and their purposes. Describe how CSP helps prevent XSS attacks. [2+4+2]
+20. Define the OWASP Top 10. List and briefly explain any four vulnerabilities from the OWASP Top 10 (2021 edition). Explain why developers should be aware of the OWASP Top 10. [2+4+2]
 
-21. Define the OWASP Top 10. List and briefly explain any four vulnerabilities from the OWASP Top 10 (2021 edition). Explain why developers should be aware of the OWASP Top 10. [2+4+2]
+21. What is Multi-Factor Authentication (MFA)? Explain the three categories of authentication factors with examples. Describe how Time-Based One-Time Passwords (TOTP) work. [2+3+3]
 
-22. Explain the concept of "Defense in Depth" in web application security. Describe four different layers of security that should be implemented in a web application. Write Django settings that implement multiple security headers. [2+4+2]
-
-23. What is Multi-Factor Authentication (MFA)? Explain the three categories of authentication factors with examples. Describe how Time-Based One-Time Passwords (TOTP) work. [2+3+3]
-
-24. Explain the following browser security headers: X-Frame-Options, X-Content-Type-Options, Referrer-Policy, and Permissions-Policy. Write Django settings to implement these security headers. [6+2]
-
-25. What is Subresource Integrity (SRI)? Explain why SRI is important when loading scripts from CDNs. Compare the security implications of storing authentication tokens in localStorage versus HttpOnly cookies. [2+2+4]
+22. Explain the following browser security headers: X-Frame-Options, X-Content-Type-Options, Referrer-Policy, and Permissions-Policy. Write Django settings to implement these security headers. [6+2]
