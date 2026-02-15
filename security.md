@@ -10,7 +10,12 @@
    - [5.1.1 Cross-Site Scripting (XSS)](#511-cross-site-scripting-xss)
    - [5.1.2 SQL Injection](#512-sql-injection)
    - [5.1.3 Cross-Site Request Forgery (CSRF)](#513-cross-site-request-forgery-csrf)
-2. [intro](#intro)
+2. [5.2 Security Best Practices](#52-security-best-practices)
+   - [5.2.1 Input Validation](#521-input-validation)
+   - [5.2.2 Input Sanitization](#522-input-sanitization)
+   - [5.2.3 HTTPS (HTTP Secure)](#523-https-http-secure)
+   - [5.2.4 Secure Cookies](#524-secure-cookies)
+   - [5.2.5 Environment Variables](#525-environment-variables)
 
 Web application security is the practice of **protecting** websites and web applications **from unauthorized access, data breaches, and malicious attacks.** As web applications handle sensitive user data, financial transactions, and critical business operations, security has become a fundamental requirement rather than an optional feature.
 
@@ -341,52 +346,7 @@ The `{% csrf_token %}` template tag generates a hidden input field containing th
 
 ---
 
-### 5.1.4 Comparison of XSS, SQL Injection, and CSRF
-
-| Aspect             | XSS                        | SQL Injection              | CSRF                         |
-| ------------------ | -------------------------- | -------------------------- | ---------------------------- |
-| **Target**         | User's browser             | Database server            | User's authenticated session |
-| **Attack Vector**  | Malicious scripts          | Malicious SQL              | Forged requests              |
-| **Exploits Trust** | User trusts website        | App trusts user input      | Website trusts browser       |
-| **Impact**         | Client-side code execution | Database manipulation      | Unauthorized actions         |
-| **Data Flow**      | Server → Client → Client   | Client → Server → Database | Client → Server              |
-| **Prevention**     | Output encoding, CSP       | Parameterized queries, ORM | CSRF tokens                  |
-
----
-
-### 5.1.5 OWASP Top 10
-
-OWASP stands for Open Web Application Security Project.
-
-It is a non-profit organization focused on improving the security of software, especially web applications.
-
-**Main Goals of OWASP**
-
-- Improve software security awareness
-- Provide free security tools & documentation
-- Help developers write secure code
-- Standardize web security best practices
-
-**The OWASP Top 10 is a globally recognized list of the most critical web application security risks.**
-
-The OWASP Top 10 is a standard awareness document for web application security. It represents a broad consensus about the most critical security risks to web applications. Understanding these risks helps developers build more secure applications.
-
-The OWASP Top 10 (2021 edition) includes:
-
-1. **Broken Access Control**: Failures to properly enforce what authenticated users are allowed to do.
-2. **Cryptographic Failures**: Failures related to cryptography that often lead to sensitive data exposure.
-3. **Injection**: Including SQL, NoSQL, OS, and LDAP injection when untrusted data is sent as part of commands.
-4. **Insecure Design**: A broad category representing design flaws rather than implementation bugs.
-5. **Security Misconfiguration**: Insecure default configurations, incomplete configurations, or ad hoc configurations.
-6. **Vulnerable and Outdated Components**: Using components with known vulnerabilities.
-7. **Identification and Authentication Failures**: Weaknesses in authentication mechanisms.
-8. **Software and Data Integrity Failures**: Code and infrastructure without integrity verification.
-9. **Security Logging and Monitoring Failures**: Insufficient logging, detection, monitoring, and active response.
-10. **Server-Side Request Forgery (SSRF)**: Fetching remote resources without validating user-supplied URLs.
-
----
-
-## 5.2 Security Best Practices: Input Validation, Sanitization, HTTPS, Secure Cookies, Environment Variables
+## 5.2 Security Best Practices
 
 Implementing security is not about adding a single feature but about adopting a security-first mindset throughout the development process. This section covers essential security best practices that every web developer should follow.
 
@@ -554,29 +514,6 @@ For database queries, special characters in user input are escaped so they are t
 **URL Encoding**
 
 Special characters in URLs are encoded using percent-encoding (e.g., space becomes `%20`).
-
-#### Output Encoding
-
-Output encoding, also called output escaping, is the process of encoding data when it is rendered in a specific context. This is crucial for preventing XSS attacks.
-
-Different contexts require different encoding:
-
-- **HTML Context**: HTML entity encoding
-- **JavaScript Context**: JavaScript escaping
-- **URL Context**: URL encoding
-- **CSS Context**: CSS escaping
-
-Django's template engine automatically applies HTML encoding when displaying variables.
-
-#### The Principle of Defense in Depth
-
-Security should be implemented in layers. Both input validation and output sanitization should be used together.
-
-- **Validate input**: Reject data that doesn't meet criteria
-- **Sanitize if needed**: Clean data that passes validation
-- **Encode output**: Ensure data is safe for its output context
-
-This multi-layered approach provides protection even if one layer fails.
 
 ---
 
@@ -845,7 +782,7 @@ For local development, managing many environment variables can be cumbersome. A 
 
 **The .env file:**
 
-```
+```bash
 # .env file (add to .gitignore!)
 DJANGO_SECRET_KEY=your-secret-key-here
 DJANGO_DEBUG=True
@@ -880,43 +817,6 @@ Add `.env` to your `.gitignore` file:
 .env.local
 .env.*.local
 ```
-
-#### Best Practices for Environment Variables
-
-1. **Always use environment variables for secrets**: Never hardcode sensitive values.
-2. **Provide sensible defaults for non-sensitive settings**: Makes development easier.
-3. **Document required environment variables**: Create a `.env.example` file with empty or dummy values.
-4. **Validate required variables**: Check that critical variables are set on application startup.
-5. **Use different values per environment**: Never reuse production secrets elsewhere.
-6. **Rotate secrets regularly**: Change API keys and passwords periodically.
-7. **Use secret management services in production**: Consider AWS Secrets Manager, HashiCorp Vault, or similar services.
-
----
-
-### 5.2.6 Defense in Depth
-
-Security is most effective when implemented in multiple layers. This principle, called "defense in depth," ensures that if one security measure fails, others still protect the application.
-
-**Layers of Defense:**
-
-1. **Network Security**: Firewalls, DDoS protection, WAF
-2. **Transport Security**: HTTPS/TLS encryption
-3. **Application Security**: Input validation, authentication, authorization
-4. **Data Security**: Encryption at rest, secure backups
-5. **Operational Security**: Logging, monitoring, incident response
-
-**Best Practices Summary:**
-
-- Validate all input on the server side
-- Encode output based on context
-- Use HTTPS for all connections
-- Configure secure cookie attributes
-- Store secrets in environment variables
-- Keep dependencies updated
-- Implement proper error handling (no sensitive info in errors)
-- Log security events for monitoring
-- Regularly audit and test security measures
-- Follow the principle of least privilege
 
 ---
 
