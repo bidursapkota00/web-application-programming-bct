@@ -2,7 +2,7 @@
 
 ![Bidur Sapkota](https://www.bidursapkota.com.np/images/gravatar.webp "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
 
-![Web Application Security by Bidur Sapkota](/test.webp "Web Application Security – Blog by Bidur Sapkota")
+![Web Application Security by Bidur Sapkota](/images/unit-5/16-web-app-security-1200.webp "Web Application Security – Blog by Bidur Sapkota")
 
 ## Table of Contents
 
@@ -823,7 +823,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 Add `.env` to your `.gitignore` file:
 
-```
+```text
 # .gitignore
 .env
 .env.local
@@ -1188,13 +1188,13 @@ JWTs are self-contained tokens that include all necessary information about the 
 
 A JWT consists of three parts separated by dots (`.`):
 
-```
+```text
 header.payload.signature
 ```
 
 **Example JWT:**
 
-```
+```text
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
 eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.
 SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
@@ -1253,11 +1253,8 @@ The signature ensures the token hasn't been tampered with. It is created by:
 3. Combining them with a dot
 4. Signing with the algorithm specified in the header
 
-```
-HMACSHA256(
-  base64UrlEncode(header) + "." + base64UrlEncode(payload),
-  secret
-)
+```js
+HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret);
 ```
 
 If anyone modifies the header or payload, the signature verification will fail.
@@ -1295,7 +1292,7 @@ Asymmetric algorithms (RS256, RS384, RS512, ES256) use a private key for signing
 
 **Authorization Header Format:**
 
-```
+```bash
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
@@ -1765,7 +1762,7 @@ The server sends a header specifying allowed sources for various resource types.
 
 **Example CSP Header:**
 
-```
+```bash
 Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.example.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:
 ```
 
@@ -1815,16 +1812,6 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 This adds the header: `X-Content-Type-Options: nosniff`
 
-#### X-XSS-Protection
-
-This legacy header enabled the browser's built-in XSS filter. Modern browsers are deprecating this in favor of CSP.
-
-```
-X-XSS-Protection: 1; mode=block
-```
-
-However, CSP is now the recommended approach for XSS protection.
-
 #### Referrer-Policy
 
 Controls how much referrer information is included with requests.
@@ -1847,7 +1834,7 @@ SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 Controls which browser features can be used on the page.
 
-```
+```bash
 Permissions-Policy: geolocation=(), camera=(), microphone=()
 ```
 
