@@ -1,12 +1,24 @@
 # Chapter 5: Web Application Security
 
-Web application security is the practice of protecting websites and web applications from unauthorized access, data breaches, and malicious attacks. As web applications handle sensitive user data, financial transactions, and critical business operations, security has become a fundamental requirement rather than an optional feature.
+![Bidur Sapkota](https://www.bidursapkota.com.np/images/gravatar.webp "Bidur Sapkota - Developer")&nbsp;[Bidur Sapkota](https://www.bidursapkota.com.np/)
+
+![Web Application Security by Bidur Sapkota](/test.webp "Web Application Security – Blog by Bidur Sapkota")
+
+## Table of Contents
+
+1. [5.1 Common Vulnerabilities](#51-common-vulnerabilities)
+   - [5.1.1 Cross-Site Scripting (XSS)](#511-cross-site-scripting-xss)
+   - [5.1.2 SQL Injection](#512-sql-injection)
+   - [5.1.3 Cross-Site Request Forgery (CSRF)](#513-cross-site-request-forgery-csrf)
+2. [intro](#intro)
+
+Web application security is the practice of **protecting** websites and web applications **from unauthorized access, data breaches, and malicious attacks.** As web applications handle sensitive user data, financial transactions, and critical business operations, security has become a fundamental requirement rather than an optional feature.
 
 Security vulnerabilities can lead to data theft, financial losses, reputation damage, legal consequences, and loss of user trust. Understanding common vulnerabilities and implementing security best practices is essential for every web developer.
 
 ---
 
-## 5.1 Common Vulnerabilities: XSS, SQL Injection, CSRF
+## 5.1 Common Vulnerabilities
 
 Web applications face numerous security threats. The three most common and dangerous vulnerabilities are Cross-Site Scripting (XSS), SQL Injection, and Cross-Site Request Forgery (CSRF). These vulnerabilities have been consistently listed in the OWASP (Open Web Application Security Project) Top 10 security risks for many years.
 
@@ -16,7 +28,7 @@ Web applications face numerous security threats. The three most common and dange
 
 #### What is XSS?
 
-Cross-Site Scripting (XSS) is a security vulnerability that allows attackers to inject malicious scripts into web pages viewed by other users. When a user visits an infected page, the malicious script executes in their browser with the same privileges as legitimate scripts from the trusted website.
+Cross-Site Scripting (XSS) is a security vulnerability that allows attackers to **inject malicious scripts into web pages viewed by other users.** When a user visits an infected page, the malicious script executes in their browser with the same privileges as legitimate scripts from the trusted website.
 
 The term "Cross-Site" refers to the ability of the attack to cross the boundaries between websites. The attacker's malicious code runs in the context of the victim's session on the trusted website.
 
@@ -342,7 +354,20 @@ The `{% csrf_token %}` template tag generates a hidden input field containing th
 
 ---
 
-### 5.1.5 OWASP Top 10 Overview
+### 5.1.5 OWASP Top 10
+
+OWASP stands for Open Web Application Security Project.
+
+It is a non-profit organization focused on improving the security of software, especially web applications.
+
+**Main Goals of OWASP**
+
+- Improve software security awareness
+- Provide free security tools & documentation
+- Help developers write secure code
+- Standardize web security best practices
+
+**The OWASP Top 10 is a globally recognized list of the most critical web application security risks.**
 
 The OWASP Top 10 is a standard awareness document for web application security. It represents a broad consensus about the most critical security risks to web applications. Understanding these risks helps developers build more secure applications.
 
