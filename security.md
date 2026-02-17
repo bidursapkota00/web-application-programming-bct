@@ -758,37 +758,7 @@ The Twelve-Factor App methodology recommends storing configuration in the enviro
 - **Cloud Service Credentials**: AWS, Azure, GCP credentials
 - **Feature Flags**: Environment-specific feature toggles
 
-#### Using Environment Variables in Django
-
-**Example: Configuring Django with Environment Variables**
-
-```python
-# settings.py
-import os
-
-# Get secret key from environment (never commit to code)
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-
-# Debug should be False in production
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
-
-# Database configuration from environment
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-    }
-}
-
-# Allowed hosts from environment (comma-separated)
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
-```
-
-#### Using .env Files for Local Development
+#### Using Environment Variables with .env Files for Local Development
 
 For local development, managing many environment variables can be cumbersome. A `.env` file provides a convenient way to set them.
 
@@ -805,6 +775,12 @@ DB_HOST=localhost
 ALLOWED_HOSTS=localhost,127.0.0.1
 ```
 
+**Install python-dotenv**
+
+```bash
+pip install python-dotenv
+```
+
 **Using python-dotenv:**
 
 ```python
@@ -816,6 +792,8 @@ import os
 load_dotenv()
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 # ... rest of settings
 ```
 
