@@ -506,136 +506,6 @@ Common authentication approaches:
 
 ---
 
-## Testing the API
-
-You can test the API using Thunder Client (VS Code extension), the DRF browsable API, or any API testing tool.
-
-**Using Thunder Client (VS Code Extension):**
-
-Thunder Client is a lightweight REST API client built into VS Code. Follow these steps to test the API:
-
-**Step 1: Install Thunder Client**
-
-1. Open VS Code
-2. Go to Extensions (Ctrl+Shift+X)
-3. Search for "Thunder Client"
-4. Click Install
-
-**Step 2: Open Thunder Client**
-
-1. Click the Thunder Client icon in the VS Code sidebar (lightning bolt icon)
-2. Click "New Request" button
-
-**Step 3: GET All Books (List)**
-
-1. Set the method dropdown to `GET`
-2. Enter the URL: `http://localhost:8000/api/books/`
-3. Click "Send"
-4. You will see the JSON response with all books in the Response section
-
-**Step 4: GET a Specific Book**
-
-1. Click "New Request"
-2. Set method to `GET`
-3. Enter URL: `http://localhost:8000/api/books/1/`
-4. Click "Send"
-5. You will see the details of book with ID 1
-
-**Step 5: Filter Books by Author**
-
-1. Click "New Request"
-2. Set method to `GET`
-3. Enter URL: `http://localhost:8000/api/books/`
-4. Click on the "Query" tab below the URL
-5. Add a parameter: Key = `author`, Value = `orwell`
-6. Click "Send"
-7. You will see only books by authors matching "orwell"
-
-**Step 6: POST - Create a New Book**
-
-1. Click "New Request"
-2. Set method to `POST`
-3. Enter URL: `http://localhost:8000/api/books/`
-4. Click on the "Body" tab
-5. Select "JSON" from the dropdown
-6. Enter the following JSON:
-
-```json
-{
-  "title": "The Catcher in the Rye",
-  "author": "J.D. Salinger",
-  "year": 1951
-}
-```
-
-7. Click "Send"
-8. You will see a 201 Created response with the new book data
-
-**Step 7: PUT - Update a Book (Full Replacement)**
-
-1. Click "New Request"
-2. Set method to `PUT`
-3. Enter URL: `http://localhost:8000/api/books/1/`
-4. Click on the "Body" tab
-5. Select "JSON"
-6. Enter the following JSON (all required fields):
-
-```json
-{
-  "title": "The Great Gatsby - Revised Edition",
-  "author": "F. Scott Fitzgerald",
-  "year": 1926
-}
-```
-
-7. Click "Send"
-8. Book with ID 1 will be completely replaced with new data
-
-**Step 8: PATCH - Partial Update**
-
-1. Click "New Request"
-2. Set method to `PATCH`
-3. Enter URL: `http://localhost:8000/api/books/1/`
-4. Click on the "Body" tab
-5. Select "JSON"
-6. Enter only the field you want to update:
-
-```json
-{
-  "year": 2025
-}
-```
-
-7. Click "Send"
-8. Only the year field will be updated, other fields remain unchanged
-
-**Step 9: DELETE - Remove a Book**
-
-1. Click "New Request"
-2. Set method to `DELETE`
-3. Enter URL: `http://localhost:8000/api/books/2/`
-4. Click "Send"
-5. Book with ID 2 will be deleted
-6. You will see a success message in the response
-
-**Thunder Client Tips:**
-
-- Save your requests to a Collection for reuse
-- Use Environment variables for the base URL (e.g., `{{base_url}}/api/books/`)
-- View response headers, status codes, and response time in the Response panel
-- Use the "Tests" tab to add automated assertions
-
-**Using the DRF Browsable API:**
-
-Open `http://localhost:8000/api/books/` in your browser. DRF provides a user-friendly interface where you can:
-
-- View the list of books
-- Click on individual books to see details
-- Use the built-in forms to create, update, or delete books
-- See the raw JSON responses
-
----
-
 ## JSON versus XML Data Exchange
 
 **Introduction to Data Exchange Formats**
@@ -2037,34 +1907,6 @@ python manage.py runserver
 
 ---
 
-**Testing with cURL**
-
-```bash
-# Create Registration (multipart/form-data for file upload)
-curl -X POST http://127.0.0.1:8000/api/registration/ \
-  -F "name=John Doe" \
-  -F "gender=M" \
-  -F "hobbies=[\"football\", \"basketball\"]" \
-  -F "appointment=2026-02-15T10:30:00" \
-  -F "country=Nepal" \
-  -F "email=john@example.com" \
-  -F "phone=9812345678" \
-  -F "resume=@/path/to/resume.pdf" \
-  -F "password=Password@123" \
-  -F "confirm_password=Password@123"
-
-# Get All Registrations
-curl http://127.0.0.1:8000/api/registration/
-
-# Get Single Registration
-curl http://127.0.0.1:8000/api/registration/1/
-
-# Delete Registration
-curl -X DELETE http://127.0.0.1:8000/api/registration/1/
-```
-
----
-
 ---
 
 ---
@@ -2631,45 +2473,6 @@ urlpatterns = [
 
 ---
 
-**Testing Patient API**
-
-```bash
-# Create Patient
-curl -X POST http://127.0.0.1:8000/api/patients/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Ram Sharma",
-    "mobile": "9812345678",
-    "gender": "M",
-    "address": "Kathmandu, Nepal",
-    "dob": "1990-05-15",
-    "doctor_name": "Dr. Hari Prasad"
-  }'
-
-# Get All Patients
-curl http://127.0.0.1:8000/api/patients/
-
-# Get Single Patient
-curl http://127.0.0.1:8000/api/patients/1/
-
-# Update Patient
-curl -X PUT http://127.0.0.1:8000/api/patients/1/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Ram Sharma",
-    "mobile": "9823456789",
-    "gender": "M",
-    "address": "Lalitpur, Nepal",
-    "dob": "1990-05-15",
-    "doctor_name": "Dr. Hari Prasad"
-  }'
-
-# Delete Patient
-curl -X DELETE http://127.0.0.1:8000/api/patients/1/
-```
-
----
-
 ---
 
 **Design REST API to store user data and perform following validation rules:**
@@ -2898,41 +2701,6 @@ urlpatterns = [
 
 ---
 
-**Testing User API**
-
-```bash
-# Create User
-curl -X POST http://127.0.0.1:8000/api/users/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "full_name": "John Doe",
-    "email": "john@example.com",
-    "username": "john123",
-    "password": "securepassword123"
-  }'
-
-# Get All Users
-curl http://127.0.0.1:8000/api/users/
-
-# Get Single User
-curl http://127.0.0.1:8000/api/users/1/
-
-# Update User
-curl -X PUT http://127.0.0.1:8000/api/users/1/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "full_name": "John Updated",
-    "email": "johnupdated@example.com",
-    "username": "john456",
-    "password": "newpassword123"
-  }'
-
-# Delete User
-curl -X DELETE http://127.0.0.1:8000/api/users/1/
-```
-
----
-
 ---
 
 **Write a Django REST API to upload a file and validate:**
@@ -3109,25 +2877,6 @@ import os
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-```
-
----
-
-**Testing File Upload API**
-
-```bash
-# Upload File
-curl -X POST http://127.0.0.1:8000/api/files/ \
-  -F "file=@/path/to/image.jpg"
-
-# Get All Files
-curl http://127.0.0.1:8000/api/files/
-
-# Get Single File
-curl http://127.0.0.1:8000/api/files/1/
-
-# Delete File
-curl -X DELETE http://127.0.0.1:8000/api/files/1/
 ```
 
 ---
@@ -3338,27 +3087,6 @@ if settings.DEBUG:
 
 ---
 
-**Testing Project Submission API**
-
-```bash
-# Create Submission (multipart/form-data for file upload)
-curl -X POST http://127.0.0.1:8000/api/submissions/ \
-  -F "tu_registration_number=TU-2024-001" \
-  -F "email=student@example.com" \
-  -F "project_file=@/path/to/project.pdf"
-
-# Get All Submissions
-curl http://127.0.0.1:8000/api/submissions/
-
-# Get Single Submission
-curl http://127.0.0.1:8000/api/submissions/1/
-
-# Delete Submission
-curl -X DELETE http://127.0.0.1:8000/api/submissions/1/
-```
-
----
-
 ---
 
 ## Lab: CRUD with DRF
@@ -3537,37 +3265,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/notes/', include('notes.urls')),
 ]
-```
-
----
-
-**Testing Notes API**
-
-```bash
-# Create Note
-curl -X POST http://127.0.0.1:8000/api/notes/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "My First Note",
-    "description": "This is the content of my first note"
-  }'
-
-# Get All Notes
-curl http://127.0.0.1:8000/api/notes/
-
-# Get Single Note
-curl http://127.0.0.1:8000/api/notes/1/
-
-# Update Note
-curl -X PUT http://127.0.0.1:8000/api/notes/1/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Updated Title",
-    "description": "Updated description content"
-  }'
-
-# Delete Note
-curl -X DELETE http://127.0.0.1:8000/api/notes/1/
 ```
 
 ---
@@ -3797,39 +3494,6 @@ urlpatterns = [
 - `PATCH /api/grocery/<id>/` - Partial update grocery item
 - `DELETE /api/grocery/<id>/` - Delete grocery item
 - `POST /api/grocery/<id>/toggle/` - Toggle completed status
-
----
-
-**Testing Grocery API**
-
-```bash
-# Create Grocery Item
-curl -X POST http://127.0.0.1:8000/api/grocery/ \
-  -H "Content-Type: application/json" \
-  -d '{"name": "milk"}'
-
-# Get All Items
-curl http://127.0.0.1:8000/api/grocery/
-
-# Get Single Item
-curl http://127.0.0.1:8000/api/grocery/1/
-
-# Update Item (full update)
-curl -X PUT http://127.0.0.1:8000/api/grocery/1/ \
-  -H "Content-Type: application/json" \
-  -d '{"name": "whole milk", "completed": false}'
-
-# Toggle Completed Status
-curl -X POST http://127.0.0.1:8000/api/grocery/1/toggle/
-
-# Partial Update (just mark as completed)
-curl -X PATCH http://127.0.0.1:8000/api/grocery/1/ \
-  -H "Content-Type: application/json" \
-  -d '{"completed": true}'
-
-# Delete Item
-curl -X DELETE http://127.0.0.1:8000/api/grocery/1/
-```
 
 ---
 
