@@ -5053,6 +5053,8 @@ MIDDLEWARE = [
 
 **Creating custom middleware**
 
+<br>
+
 **Logging Middleware**
 
 Logging helps track application behavior, debug issues, and monitor performance.
@@ -5107,6 +5109,90 @@ MIDDLEWARE = [
 ```text
 /login/ took 0.08 seconds
 /dashboard/ took 0.34 seconds
+```
+
+<br>
+
+**Error Handling Middleware**
+
+**Update myproject/middleware.py**
+
+```py
+from django.http import JsonResponse
+
+# ...
+
+def error_handling_middleware(get_response):
+
+    def middleware(request):
+        return get_response(request)
+
+    def process_exception(request, exception):
+        print(f"Error {request.method} on {request.path}")
+
+        if isinstance(exception, PermissionError):
+            return JsonResponse({"error": "Forbidden", "detail": str(exception)}, status=403)
+
+        if isinstance(exception, FileNotFoundError):
+            return JsonResponse({"error": "Not Found", "detail": str(exception)}, status=404)
+
+        if isinstance(exception, ValueError):
+            return JsonResponse({"error": "Bad Request", "detail": str(exception)}, status=400)
+
+        return JsonResponse({"error": "Internal Server Error", "detail": "An unexpected error occurred."}, status=500)
+
+    middleware.process_exception = process_exception
+    return middleware
+```
+
+**Add views to trigger errors**
+
+```py
+from django.http import HttpResponse
+
+def trigger_value_error(request):
+    raise ValueError("Invalid input: age cannot be negative")
+
+def trigger_permission_error(request):
+    raise PermissionError("You do not have access to this resource")
+
+def trigger_generic_error(request):
+    raise RuntimeError("Something went catastrophically wrong")
+
+def safe_view(request):
+    return HttpResponse("Everything is fine")
+```
+
+**Update app level urls.py**
+
+```py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('value-error/', views.trigger_value_error, name='value_error'),
+    path('permission-error/', views.trigger_permission_error,
+         name='permission_error'),
+    path('generic-error/', views.trigger_generic_error, name='generic_error'),
+    path('safe/', views.safe_view, name='safe'),
+]
+```
+
+**Update settings.py**
+
+```py
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'myproject.middleware.error_handling_middleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'myproject.middleware.request_timing_middleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
 ```
 
 ---
@@ -6594,8 +6680,8 @@ pytest uitest.py
   </head>
   <body>
     <form action="#" onsubmit="handleSubmit(event)">
-      <input type="text" name="username" />
-      <input type="password" name="password" />
+      Username: <input type="text" name="username" required /><br /><br />
+      Password: <input type="password" name="password" required /><br /><br />
       <button type="submit" id="login-button">Submit</button>
     </form>
     <script>
@@ -6638,7 +6724,7 @@ Cross-Site Scripting (XSS) is a security vulnerability that allows attackers to 
 
 **Demo**
 
-**Update `notes/add.html`**
+**Update `notes/index.html`**
 
 ```html
 <td>{{ note.description|safe }}</td>
