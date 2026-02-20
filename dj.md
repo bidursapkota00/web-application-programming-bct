@@ -5183,8 +5183,7 @@ urlpatterns = [
 ```py
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'myproject.middleware.error_handling_middleware',
+    'myproject.middleware.error_handling_middleware', # Add this above sessions
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'myproject.middleware.request_timing_middleware',
