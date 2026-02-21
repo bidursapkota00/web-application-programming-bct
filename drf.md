@@ -12,14 +12,18 @@
 4. [Endpoints and URL Design](#endpoints-and-url-design)
 5. [Resource Modeling](#resource-modeling)
 6. [API Structure Best Practices](#api-structure-best-practices)
-7. [Testing the API](#testing-the-api)
-8. [JSON versus XML Data Exchange](#json-versus-xml-data-exchange)
-9. [Data Validation and Serialization](#data-validation-and-serialization)
-10. [Microservices](#microservices)
-11. [Questions](#questions)
-12. [Lab: CRUD with DRF](#lab-crud-with-drf)
+7. [JSON versus XML Data Exchange](#json-versus-xml-data-exchange)
+8. [Data Validation and Serialization](#data-validation-and-serialization)
+9. [Microservices](#microservices)
+10. [Questions](#questions)
+    - [Complete Form Validation API](#complete-form-validation-api)
+    - [Authentication with JWT](#authentication-with-jwt)
+      - [Testing API with Postman](#testing-api-with-postman)
+    - [More Questions](#more-questions)
+11. [Lab: CRUD with DRF](#lab-crud-with-drf)
     - [Notes API](#notes-api)
     - [Grocery Bud API](#grocery-bud-api)
+      - [Integrating React](#integrating-react)
 
 ## API Basics
 
@@ -1434,7 +1438,7 @@ An API Gateway is a server that acts as a single entry point for all client requ
 
 13. How do you parse JSON data in Python using the `json` module? How do you convert Python dictionary back to JSON string? Write a Python program to parse a JSON string containing book information (id, title, author, year, genres array), access and print each field, modify the data (add rating, append to genres), and convert back to JSON. [2+2+4]
 
-14. How do you parse XML data in Python using `xml.etree.ElementTree`? Write a Python program to parse an XML string containing book information with nested elements, access attributes and element text, extract array-like elements (genres), modify the XML (add new elements), and convert back to string. [2+6]
+14. How do you parse XML data in Python using `xml.etree.ElementTree`? Write a Python program to parse an XML string containing book information with nested elements, access attributes and element text, extract array-like elements (genres), modify the XML (add new elements), and convert back to XML string. [2+6]
 
 15. Define serialization in the context of Django REST Framework. Define deserialization and explain why it is important. Explain the complete serialization and deserialization flow in Django REST Framework for both incoming requests and outgoing responses with step-by-step process. [2+2+4]
 
@@ -1911,6 +1915,8 @@ python manage.py runserver
 
 ---
 
+#### Authentication with JWT
+
 **Write an API view that accepts username and password as arguments and check with student table, if credential match, return JWT token otherwise display 'Invalid username/password'.**
 
 ---
@@ -2207,7 +2213,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 
 ---
 
-##### Testing with Postman
+##### Testing API with Postman
 
 1. **Login:**
    - Method: POST
@@ -2244,6 +2250,8 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 ---
 
 ---
+
+#### More Questions
 
 **Write server side API to create and validate patient data with following rule and store given data into 'patients' table with details (name, patient_id, mobile, gender, address, dob, doctor name):**
 
@@ -3388,6 +3396,7 @@ class GroceryDetailAPIView(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk):
+        """Full update"""
         item = self.get_object(pk)
         if not item:
             return Response(
@@ -3404,7 +3413,7 @@ class GroceryDetailAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, pk):
-        """Partial update - used for toggling completed status"""
+        """Partial update - can be used for toggling completed status"""
         item = self.get_object(pk)
         if not item:
             return Response(
@@ -3516,4 +3525,156 @@ exit()
 
 ---
 
+### Integrating React
+
+**First, update django backend api to resolve CORS error**
+
+You need to install `django-cors-headers`:
+
+```bash
+pip install django-cors-headers
+```
+
+Then in your `settings.py`:
+
+```python
+INSTALLED_APPS = [
+    ...
+    "corsheaders",
+]
+
+MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # must be as high as possible
+    "django.middleware.common.CommonMiddleware",
+    ...
+]
+
+# Allow your Vite dev server
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+```
+
 ---
+
+**Now, Complete the Frontend with React for Grocery Bud from [Unit 2: React.js](https://www.bidursapkota.com.np/blogs/web-application-programming-complete-guide/react#basic-project-grocery-bud)**
+
+#### Update App.jsx
+
+- <p style="color: red; font-style: bold;">Remove functions getLocalStorage and setLocalStorage</p>
+- <p style="color: red; font-style: bold;">Remove Variable initialList</p>
+
+<br>
+
+**Update initial items state to be empty list**
+
+```jsx
+const [items, setItems] = useState([]);
+```
+
+**Add server url**
+
+Can be added above App component
+
+```jsx
+const BASE_URL = "http://127.0.0.1:8000/api/grocery";
+```
+
+**Add useEffect to load initial data list from server**
+
+Add following code inside App component
+
+```jsx
+useEffect(() => {
+  const fetchItems = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/`);
+      if (!res.ok) throw new Error("Failed to fetch items");
+      const data = await res.json();
+      setItems(data);
+    } catch (err) {
+      toast.error("Could not load grocery list");
+    }
+  };
+  fetchItems();
+}, []);
+```
+
+**Update addItem function**
+
+```jsx
+const addItem = async (itemName) => {
+  try {
+    const res = await fetch(`${BASE_URL}/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: itemName, completed: false }),
+    });
+    if (!res.ok) throw new Error();
+    const newItem = await res.json();
+    setItems((prev) => [...prev, newItem.data]);
+    toast.success("Grocery item added");
+  } catch {
+    toast.error("Could not add item");
+  }
+};
+```
+
+**Update editCompleted function**
+
+```jsx
+const editCompleted = async (itemId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${itemId}/toggle/`, {
+      method: "POST",
+    });
+    if (!res.ok) throw new Error();
+    const updated = await res.json();
+    setItems((prev) =>
+      prev.map((item) => (item.id === itemId ? updated.data : item)),
+    );
+  } catch {
+    toast.error("Could not update item");
+  }
+};
+```
+
+**Update removeItem function**
+
+```jsx
+const removeItem = async (itemId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${itemId}/`, { method: "DELETE" });
+    if (!res.ok) throw new Error();
+    setItems((prev) => prev.filter((item) => item.id !== itemId));
+    toast.success("Item deleted");
+  } catch {
+    toast.error("Could not delete item");
+  }
+};
+```
+
+**Update updateItemName function**
+
+```jsx
+const updateItemName = async (newName) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${editId}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newName }),
+    });
+    if (!res.ok) throw new Error();
+    const updated = await res.json();
+    setItems((prev) =>
+      prev.map((item) => (item.id === editId ? updated.data : item)),
+    );
+    setEditId(null);
+    toast.success("Item updated");
+  } catch {
+    toast.error("Could not update item");
+  }
+};
+```
+
+**All set. You should now see your Grocery Bud in action integrated with Django Rest APIs.**
